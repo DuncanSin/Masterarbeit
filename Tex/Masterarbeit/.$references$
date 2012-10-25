@@ -4,6 +4,7 @@
 @MANUAL{TIC6A816x,
   title = {TMS320C6A816x C6000 DSP+ARM Processor},
   organization = {Texas Instruments},
+  file = {:E\:\\Wolpers\\Masterarbeit\\Documents\\tms320c6a8168.pdf:PDF},
   owner = {wolpers},
   timestamp = {2012.10.25}
 }
