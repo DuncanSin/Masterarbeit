@@ -1,10 +1,31 @@
 % This file was created with JabRef 2.8.1.
 % Encoding: Cp1252
 
+@MISC{evm8168,
+  author = {{Texas Instruments}},
+  title = {DM816x/AM389x Evaluation Module},
+  howpublished = {http://www.ti.com/tool/tmdxevm8168},
+  month = {Oktober},
+  year = {2012},
+  owner = {wolpers},
+  timestamp = {2012.10.25},
+  url = {http://www.ti.com/tool/tmdxevm8168}
+}
+
 @MANUAL{TIC6A816x,
   title = {TMS320C6A816x C6000 DSP+ARM Processor},
   organization = {Texas Instruments},
+  year = {2012},
   file = {:E\:\\Wolpers\\Masterarbeit\\Documents\\tms320c6a8168.pdf:PDF},
+  owner = {wolpers},
+  timestamp = {2012.10.25}
+}
+
+@MANUAL{TechRef,
+  title = {DM816x/C6A816x/AM389x Evaluation Module: Technical Reference},
+  organization = {Spectrum Digital, Inc.},
+  month = {Oktober},
+  year = {2011},
   owner = {wolpers},
   timestamp = {2012.10.25}
 }
