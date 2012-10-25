@@ -21,6 +21,15 @@
   timestamp = {2012.10.25}
 }
 
+@MANUAL{TechRef,
+  title = {DM816x/C6A816x/AM389x Evaluation Module: Technical Reference},
+  organization = {Spectrum Digital, Inc.},
+  month = {Oktober},
+  year = {2011},
+  owner = {wolpers},
+  timestamp = {2012.10.25}
+}
+
 @comment{jabref-meta: selector_review:}
 
 @comment{jabref-meta: selector_publisher:}
