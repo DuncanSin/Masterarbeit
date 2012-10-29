@@ -1,1 +1,166 @@
+\documentclass[12pt,a4paper,oneside,titlepage]{report}
 
+%\textwidth=15cm
+%\hoffset=-1 cm
+\usepackage{ngerman}
+\usepackage[latin1]{inputenc}
+\usepackage{ae}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{dsfont}
+\usepackage{listings}
+%\usepackage{amsfonts,textcomp}
+%\usepackage{calc}
+
+\usepackage{makeidx,showidx} \makeindex
+\usepackage{multirow}
+\usepackage{tabularx}
+\usepackage{subfigure}
+\usepackage{epic}
+\usepackage{longtable}
+\usepackage{rotating}
+\usepackage{float}
+\usepackage{fancyvrb}
+%\usepackage{glossary}
+%URL Farb und Link Anpassung
+%\usepackage{fancyhdr}
+\usepackage{color}
+\usepackage{hyperref}
+\usepackage{lscape}
+\definecolor{black}{rgb}{0,0,0}
+\definecolor{darkblue}{rgb}{0,0,0.5}
+\hypersetup{colorlinks, linkcolor=black, urlcolor=darkblue, citecolor=black, pdftitle={Platzhalter}, pdfauthor={Kristian Wolpers}, pdfsubject={Bachelorarbeit, September 2010}}
+
+
+\renewcommand{\arraystretch}{1.5}
+\newcommand\textsubscript[1]{\ensuremath{{}_{\text{#1}}}}
+
+\addtolength{\headheight}{0,3cm}
+\addtolength{\headsep}{-0,3cm}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{12pt plus 6pt minus 3pt}
+\setlength{\partopsep}{0pt}
+\addtolength{\topmargin}{-0,6cm}
+\addtolength{\oddsidemargin}{-0,6cm}
+\addtolength{\textwidth}{2cm}
+\addtolength{\textheight}{2cm}
+
+\restylefloat{figure}
+\IfFileExists{url.sty}{\usepackage{url}}
+
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+
+
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\sectionmark}[1]{\markright{ Kapitel  \thesection\ \it #1}}
+\renewcommand{\chaptermark}[1]{\markright{ Kapitel  \thechapter\ \it #1}}
+
+\lhead{\nouppercase{\rightmark}}
+\rhead{\thepage}
+\cfoot{}
+
+% Damit auch die Titelseiten fancy sind!
+\makeatletter
+\let\ps@plain=\ps@empty
+\makeatother
+
+%Fourier-Korrespondenz link  *-o
+
+\newcommand{\ftranl}{\bullet\!\!-\!\!\circ}
+
+%
+
+%Fourier-Korrespondenz rechts  o-*
+
+\newcommand{\ftranr}{\circ\!\!-\!\!\bullet} 
+
+%
+
+%Fourier-Korrespondenz unten o
+
+%                            |
+
+%                            *
+
+\newcommand{\ftranb}{{\setlength{\unitlength}{12pt}\begin{picture}(0.5,1.6)\put(0,1){$\circ$}\put(0.186,0.186){\rule[2.5pt]{0.6pt}{7.5pt}}\put(0,0){$\bullet$}\end{picture}}}
+
+%
+
+%Fourier-Korrespondenz oben  *
+
+%                            |
+
+%                            o
+
+\newcommand{\ftrant}{{\setlength{\unitlength}{12pt}\begin{picture}(0.5,1.6)\put(0,1){$\bullet$}\put(0.186,0.186){\rule[2.5pt]{0.6pt}{7.5pt}}\put(0,0){$\circ$}\end{picture}}}
+
+\begin{document}
+
+% Listing Package definieren
+\lstset{
+framexleftmargin=6mm,
+framexrightmargin=0mm,
+framextopmargin=2mm,
+framexbottommargin=2mm,
+frame=lines,
+basicstyle=\scriptsize, % \footnotesize,
+keywordstyle=\bfseries,
+identifierstyle=,
+commentstyle=\color{white},
+%stringstyle=\ttfamily,
+showstringspaces=false,
+numbers=left,
+numberstyle=\tiny,
+xleftmargin=18pt
+%morekeywords={MV,MACI_U8,MACPLZI_U8,SUB_16,PERMREG0_8,ABSADDI_8,CLIP_U8,SMVI,SUBICS_8,SUBCR_8,MVCR_8,V0R10,V1R23,V1R7,V0R28,V1R4,V1R0,V1R1,V0CONDSEL}
+}
+
+\pagenumbering{alph}
+
+\input{misc/deckblatt}
+\input{misc/clearpage}
+\input{misc/titel}
+\include{misc/Erklaer}
+%\include{Verschwiegenheit}
+\pagenumbering{Roman}                   % Römische Seitennummern über den Vorspann
+\setcounter{secnumdepth}{4}             % Nur section und subsection numerieren
+%Inhaltsverzeichnis erstellen                                        
+{\setlength{\parskip}{2pt}
+\pdfbookmark[1]{Inhaltsverzeichnis}{toc}
+\tableofcontents}                   
+%Abbildungsverzeichnis erstellen
+{\setlength{\parskip}{2pt}
+\listoffigures}
+\newpage
+\pagenumbering{arabic}
+
+\sloppy                            % be a bit more tolerant
+\hbadness2000 \vbadness2000
+
+% Disable single lines at the start of a paragraph (Schusterjungen)
+\clubpenalty = 10000
+%
+% Disable single lines at the end of a paragraph (Hurenkinder)
+\widowpenalty = 10000 \displaywidowpenalty = 10000
+
+\input{Board/Board}
+
+%bibtex Referenzen in bib datei
+\bibliography{references}
+\bibliographystyle{Macros/unsrtdin}
+%\bibliographystyle{unsrt}
+%Literaturverzeichnis ins Inhaltsverzeichnis
+\addcontentsline{toc}{chapter}{Literaturverzeichnis}
+
+\appendix %%Anhang
+\renewcommand{\chaptermark}[1]{\markright{Appendix \thechapter\ \it #1}}
+\renewcommand{\sectionmark}[1]{\markright{Appendix \thechapter\ \it #1}}
+\renewcommand{\appendixname}{Anhang}
+\renewcommand{\tablename}{Table}
+\renewcommand{\figurename}{Figure}
+
+\input{Misc/clearpage}
+
+\end{document}

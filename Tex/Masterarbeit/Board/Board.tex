@@ -1,16 +1,18 @@
 \chapter{Das EVM8168-Entwicklungsboard}
+\label{sec:board}
+\rm
 Für die in den folgenden Kapiteln beschriebenen Arbeitsschritte zur Portierung, Optimierung und Analyse des Programmes wurde ein EVM8168-Entwicklungsboard verwendet, welches von der Firma Texas Instruments in Zusammenarbeit mit der Firma Spectrum Digital entwickelt wurde.
 Dieses Board kann mit Hilfe eines DM816x (DaVinci\texttrademark) ARM-Prozessors entweder selber Programme ausführen oder es können auch die beiden  ARM-Prozessoren C6A816x (Integra\texttrademark) oder AM389x (Sitara\texttrademark) emuliert werden. 
-Da für diese Arbeit einzig der Integra\texttrademark verwendet wurde, soll in \ref{sec:evm816} zunächst das Board an sich und dann in \ref{sec:integra} speziell der Integra\texttrademark betrachtet werden.
+Da für diese Arbeit einzig der Integra\texttrademark verwendet wurde, soll in Kapitel~\ref{sec:evm816} zunächst das Board an sich und dann in \ref{sec:integra} speziell der Integra\texttrademark betrachtet werden.
 
 \section{Aufbau des EVM8168} \label{sec:evm816}
-Wie in \cite{TechRef} beschrieben bietet das EVM8168-Entwicklungsboard eine Standalone-Plattform um Programme für DaVinci\texttrademark, Integra\texttrademark oder Sitara\texttrademark Prozessoren der Firma Texas Instruments zu entwickeln und debuggen. Hierfür ist neben dem DaVinci\texttrademark noch weitere On-Board Perepherie auf dem Board aufgebracht. Unter anderem Anschlüsse für Gigabit Ethernet, VGA, HDMI und USB, sowie einen DSP.
+Wie in \cite{spec} beschrieben bietet das EVM8168-Entwicklungsboard eine Standalone-Plattform um Programme für DaVinci\texttrademark, Integra\texttrademark oder Sitara\texttrademark Prozessoren der Firma Texas Instruments zu entwickeln und debuggen. Hierfür ist neben dem DaVinci\texttrademark noch weitere On-Board Perepherie auf dem Board aufgebracht. Unter anderem Anschlüsse für Gigabit Ethernet, VGA, HDMI und USB, sowie einen DSP.
 Für die in dieser Arbeit beschriebene Soundklassifikation wichtig sind außerdem Die Anschlüsse für  Line-In, Mic-In und Line-Out, sowie der integrierte AIC3106 Codec, welcher den eingehenden Soundstream für den DSP vorbereitet.
-\ref{fig:top_ti816x_evm} zeigt eine Draufsicht auf das Entwicklungsboard und die unterhalb dessen angebrachte Daughtercard mit weiteren Anschlussmöglichkeiten.
+Abbildung~\ref{fig:top_ti816x_evm} zeigt eine Draufsicht auf das Entwicklungsboard und die unterhalb dessen angebrachte Daughtercard mit weiteren Anschlussmöglichkeiten.
 
 \begin{figure}[htbp]
 	\centering
-		\includegraphics{../../Pictures/top_ti816x_evm.png}
+		\includegraphics[scale=0.4]{../../Pictures/top_ti816x_evm.png}
 	\caption{Draufsicht auf das EVM8168}
 	\label{fig:top_ti816x_evm}
 \end{figure}

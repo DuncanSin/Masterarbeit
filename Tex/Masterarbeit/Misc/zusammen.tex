@@ -1,0 +1,12 @@
+\chapter{Zusammenfassung}
+\label{Ch7}
+\rm
+
+Am Institut für Mikroelektronische Systeme der Leibniz Universität Hannover wird ein Demonstrationssystem für Echtzeit-Bild- und Video-Signalverarbeitung entwickelt. Das System ist FPGA-basiert und besitzt internen und externen Speicher sowie mehrere Bearbeitungseinheiten für verschiedene Bildverarbeitungsalgorithmen. Die internen Teil-Module sind über den Module Interconnect Bus (MIB) verbunden. Für eine Kommunikation mit einem RISC oder Host-PC steht ein Data-Interface zur Verfügung.
+
+Aufgabe dieser Studienarbeit war es, eine Recheneinheit für den Labeling-Algorithmus zu entwerfen und diese als Processing-Element (PE) in das Gesamtsystem zu integrieren. Dabei greift die Labeling-Einheit auf die Ausgaben vorheriger PEs zu, die mit Filteroperationen das Eingangsbild vorverarbeitet und in ein Binärbild umgewandelt haben. Der Speicherort der Ein- und Ausgangsdaten stellt das DDR-RAM des Demonstrationssystems dar. Für die  Labeling-Prozedur wurde eine Fenstererweiterung eingeführt und ein neues Verfahren zur Verarbeitung von Label-Äquivalenzen entwickelt. Durch diese Maßnahmen wurde eine deutliche Verkürzung der Bearbeitungszeit erreicht. Als ein besonderes Feature ist eine Behandlung von Region of Interests (ROI) möglich, welche nur einen geforderten Bildbereich bearbeitet und somit Rechenaufwand reduziert.
+
+Das Modul liegt auf RTL- und Gatterebene als verifizierter VHDL-Quelltext vor, welcher für MIB-Busbreiten von 64 und 128 Bit synthetisiert werden kann. Eine Synthese mit der Software Synplify Pro 8.8.0.4 ergab für einen Virtex-II Pro FPGA eine maximale Taktfrequenz von 166,3 MHz.
+
+Eine Performace-Analyse auf dem ChipIt Gold Edition Pro ergab mit einem Testbild eine Verarbeitungsrate von 574 PAL-Bilder pro Sekunde bei einem Systemtakt von 140 MHz. Wird das Modul hingegen nicht in einer Verfahrenskette eingesetzt, reduzierte sich die Bildrate auf 44 Bilder pro Sekunde da das Data-Interface zum Host-PC einen Flaschenhals darstellt.
+
