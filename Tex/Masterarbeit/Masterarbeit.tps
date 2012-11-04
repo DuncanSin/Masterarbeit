@@ -4,14 +4,14 @@ Version=2
 
 [SessionInfo]
 ActiveTab=2
-FrameCount=4
-ActiveFrame=3
+FrameCount=5
+ActiveFrame=0
 
 [Frame0]
 Columns=1
 Rows=1
-Flags=0
-ShowCmd=1
+Flags=2
+ShowCmd=3
 MinPos.x=-1
 MinPos.y=-1
 MaxPos.x=-8
@@ -24,16 +24,16 @@ Class=CLatexEdit
 Document=Board\Board.tex
 
 [Frame0_Row0]
-cyCur=310
+cyCur=563
 cyMin=10
 
 [Frame0_Col0]
-cxCur=1002
+cxCur=1213
 cxMin=10
 
 [Frame0_View0,0]
-Cursor.row=17
-Cursor.column=12
+Cursor.row=22
+Cursor.column=54
 TopSubLine=0
 
 [Frame1]
@@ -61,9 +61,9 @@ cxCur=862
 cxMin=10
 
 [Frame1_View0,0]
-Cursor.row=150
-Cursor.column=24
-TopSubLine=133
+Cursor.row=0
+Cursor.column=0
+TopSubLine=0
 
 [Frame2]
 Columns=1
@@ -97,29 +97,58 @@ TopSubLine=1
 [Frame3]
 Columns=1
 Rows=1
-Flags=2
-ShowCmd=3
+Flags=0
+ShowCmd=1
 MinPos.x=-1
 MinPos.y=-1
 MaxPos.x=-8
 MaxPos.y=-30
-NormalPos.left=75
-NormalPos.top=75
-NormalPos.right=1134
-NormalPos.bottom=484
+NormalPos.left=50
+NormalPos.top=50
+NormalPos.right=1109
+NormalPos.bottom=459
 Class=CLatexEdit
-Document=references.bib
+Document=References\references.bib
 
 [Frame3_Row0]
-cyCur=563
+cyCur=350
 cyMin=10
 
 [Frame3_Col0]
-cxCur=1213
+cxCur=1022
 cxMin=10
 
 [Frame3_View0,0]
-Cursor.row=9
-Cursor.column=20
+Cursor.row=32
+Cursor.column=0
+TopSubLine=12
+
+[Frame4]
+Columns=1
+Rows=1
+Flags=0
+ShowCmd=1
+MinPos.x=-1
+MinPos.y=-1
+MaxPos.x=-8
+MaxPos.y=-30
+NormalPos.left=150
+NormalPos.top=150
+NormalPos.right=1209
+NormalPos.bottom=559
+Class=CLatexEdit
+Document=referenzen\referenzen.bib
+
+[Frame4_Row0]
+cyCur=350
+cyMin=10
+
+[Frame4_Col0]
+cxCur=1022
+cxMin=10
+
+[Frame4_View0,0]
+Cursor.row=0
+Cursor.column=0
 TopSubLine=0
 

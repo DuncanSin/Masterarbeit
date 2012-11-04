@@ -1,0 +1,376 @@
+% This file was created with JabRef 2.5.
+% Encoding: Cp1252
+
+@BOOK{Banz2010,
+  title = {Instruction Set Extension for High Troughput Cost Function Computation
+	in Stereo Image Processing},
+  publisher = {to be submitted},
+  year = {2010},
+  author = {Banz, Christian and Dolar, Carsten and Cholewa, Fabian and Blume,
+	Holger},
+  owner = {wolpers},
+  timestamp = {2010.10.22}
+}
+
+@ARTICLE{Blume1997,
+  author = {H. Blume},
+  title = {Nichtlineare fehlertolerante Interpolation von Zwischenbildern},
+  journal = {Dissertation an der Universit\"{a}t Dortmund},
+  year = {1997},
+  volume = {10},
+  pages = {60-68},
+  number = {503}
+}
+
+@BOOK{OpenCV,
+  title = {Learning OpenCV - Computer Vision with the OpenCV Library},
+  publisher = {O{\textquoteright}Reilly Media Inc.},
+  year = {2008},
+  author = {Gary Bradski and Adrian Kaehler},
+  url = {http://oreilly.com/catalog/9780596516130}
+}
+
+@BOOK{Bronstein1991,
+  title = {{Taschenbuch der Mathematik}},
+  year = {1991},
+  author = {I.N. Bronstein and K.A. Semendjajew},
+  added-at = {2006-07-14T23:22:09.000+0200},
+  biburl = {http://www.bibsonomy.org/bibtex/2c211a02d6e638ffd8993325f38f222f0/mobst},
+  interhash = {9e2c33106c0511d5a41d654f7fc49fda},
+  intrahash = {c211a02d6e638ffd8993325f38f222f0},
+  journal = {Auflage, BG Teubner Verlagsgesellschaft, Stuttgart Leipzig und Verlag
+	Nauka, Moskau},
+  keywords = {Elektrotechnik}
+}
+
+@ARTICLE{Cafforio1976,
+  author = {Cafforio, C. and Rocca, F.},
+  title = {Methods for measuring small displacements of television images},
+  journal = {Information Theory, IEEE Transactions on},
+  year = {1976},
+  volume = {22},
+  pages = { 573 - 579},
+  number = {5},
+  month = {sep.},
+  abstract = { Various techniques are described to measure, small displacements
+	of television images. If two successive video frames are considered,
+	their differences are approximately a linear combination of the components
+	of the displacement of the object. If all the points of the frame
+	undergo the same movement, then the velocity estimation problem is
+	solved using linear estimation. However, if some points belong to
+	the moving object and the others to the background, the problem can
+	be stated in the same way only if an algorithm is available to segment
+	the image into fixed and moving areas. Afterwards, linear estimation
+	can be applied to the moving area only. In this paper a segmentation
+	algorithm is proposed which uses dynamic programming (Viterbi algorithm
+	with three states). A more complex situation arises when the points
+	belonging to the moving area are subjected to different movements.
+	The problem can be solved once more using dynamic programming if
+	the displacement components are quantized into(2M + 1) (2M + 1)values,
+	and the number of states of the Viterbi algorithm is augmented to(2M
+	+ 1)^{2}. To reduce the technical difficulties of this approach,
+	a simpler method that makes possible the estimation of thenmost probable
+	displacements is proposed. Then the image is segmented into n moving
+	areas with different displacements and a background area using a
+	Viterbi algorithm withn + 1states. Experimental results show that
+	the precision obtainable is about 0.1 pel when the displacements
+	are up to 2-3 pels, the object had approximate dimensions of90 times
+	90pels, and the signal-to-noise ratio was higher than 33 dB.},
+  doi = {10.1109/TIT.1976.1055602},
+  issn = {0018-9448},
+  keywords = { Displacement measurement; Image analysis; Velocity measurement; Viterbi
+	estimation;}
+}
+
+@ARTICLE{Morandi1987,
+  author = {De Castro, E. and Morandi, C.},
+  title = {Registration of Translated and Rotated Images Using Finite Fourier
+	Transforms},
+  journal = {Pattern Analysis and Machine Intelligence, IEEE Transactions on},
+  year = {1987},
+  volume = {PAMI-9},
+  pages = {700 -703},
+  number = {5},
+  month = {sep.},
+  abstract = {A well-known method for image registration is based on a conventional
+	correlation between phase-only, or whitened, versions of the two
+	images to be realigned. The method, covering rigid translational
+	movements, is characterized by an outstanding robustness against
+	correlated noise and disturbances, such as those encountered with
+	nonuniform, time varying illumination. This correspondence discusses
+	an extension of the method to cover both translational and rotational
+	movements.},
+  doi = {10.1109/TPAMI.1987.4767966},
+  issn = {0162-8828}
+}
+
+@ARTICLE{Gonzalez2000,
+  author = {Ricardo E. Gonzalez},
+  title = {Xtensa: A Configurable and Extensible Processor},
+  journal = {IEEE Micro},
+  year = {2000},
+  volume = {20},
+  pages = {60--70},
+  __markedentry = {[DuncanSin]},
+  address = {Los Alamitos, CA, USA},
+  doi = {http://doi.ieeecomputersociety.org/10.1109/40.848473},
+  file = {:C\:\\Users\\DuncanSin\\Desktop\\Bachelorarbeit\\Gonzales2000.pdf:PDF},
+  issn = {0272-1732},
+  owner = {DuncanSin},
+  publisher = {IEEE Computer Society},
+  timestamp = {2010.08.29}
+}
+
+@ARTICLE{deHaan1993,
+  author = {de Haan, G. and Biezen, P.W.A.C. and Huijgen, H. and Ojo, O.A.},
+  title = {True-motion estimation with 3-D recursive search block matching},
+  journal = {Circuits and Systems for Video Technology, IEEE Transactions on},
+  year = {1993},
+  volume = {3},
+  pages = {368 -379, 388},
+  number = {5},
+  month = {oct.},
+  abstract = {A new recursive block-matching motion estimation algorithm with only
+	eight candidate vectors per block is presented. A fast convergence
+	and a high accuracy, also in the vicinity of discontinuities in the
+	velocity plane, was realized with such new techniques as bidirectional
+	convergence and convergence accelerators. A new search strategy,
+	asynchronous cyclic search, which allows a highly efficient implementation,
+	is presented. A new block erosion postprocessing proposal further
+	effectively eliminates block structures from the generated vector
+	field. Measured with criteria relevant for the field rate conversion
+	application, the new motion estimator is shown to have a superior
+	performance over alternative algorithms, while its complexity is
+	significantly less},
+  doi = {10.1109/76.246088},
+  issn = {1051-8215},
+  keywords = {3D recursive block-matching motion estimation algorithm;asynchronous
+	cyclic search;bidirectional convergence;block erosion postprocessing
+	proposal;convergence accelerators;field rate conversion application;generated
+	vector field;motion estimator;performance;search strategy;true-motion
+	estimation;velocity plane discontinuities;convergence of numerical
+	methods;motion estimation;search problems;}
+}
+
+@TECHREPORT{Horn1981,
+  author = {Horn, Berthold K.P. and Schunck, Brian G.},
+  title = {Determining Optical Flow},
+  year = {1980},
+  address = {Cambridge, MA, USA},
+  file = {:C\:\\Users\\DuncanSin\\Desktop\\Bachelorarbeit\\Horn1981.pdf:PDF},
+  publisher = {Massachusetts Institute of Technology},
+  source = {http://www.ncstrl.org:8900/ncstrl/servlet/search?formname=detail\&id=oai%3Ancstrlh%3Amitai%3AMIT-AILab%2F%2FAIM-572}
+}
+
+@ARTICLE{Jain1981,
+  author = {Jain, J. and Jain, A.},
+  title = {Displacement Measurement and Its Application in Interframe Image
+	Coding},
+  journal = {Communications, IEEE Transactions on},
+  year = {1981},
+  volume = {29},
+  pages = { 1799 - 1808},
+  number = {12},
+  month = {dec.},
+  abstract = { A new technique for estimating interframe displacement of small blocks
+	with minimum mean square error is presented. An efficient algorithm
+	for searching the direction of displacement has been described. The
+	results of applying the technique to two sets of images are presented
+	which show 8-10 dB improvement in interframe variance reduction due
+	to motion compensation. The motion compensation is applied for analysis
+	and design of a hybrid coding scheme and the results show a factor
+	of two gain at low bit rates.},
+  doi = {10.1109/TCOM.1981.1094950},
+  issn = {0090-6778},
+  keywords = { Image analysis, motion; Image coding; Image motion analysis;}
+}
+
+@ARTICLE{Lang2000,
+  author = {Lang, Tom\'{a}s and Antelo, Elisardo},
+  title = {CORDIC-Based Computation of ArcCos and \sqrt{1 - t^2}},
+  journal = {J. VLSI Signal Process. Syst.},
+  year = {2000},
+  volume = {25},
+  pages = {19--38},
+  number = {1},
+  address = {Hingham, MA, USA},
+  doi = {http://dx.doi.org/10.1023/A:1008121502359},
+  file = {:C\:\\Users\\DuncanSin\\Desktop\\Bachelorarbeit\\tomas2000.pdf:PDF},
+  issn = {0922-5773},
+  publisher = {Kluwer Academic Publishers}
+}
+
+@BOOK{Leibson2006,
+  title = {Designing SOCs with Configured Cores: Unleashing the Tensilica Xtensa
+	and Diamond Cores (Systems on Silicon)},
+  publisher = {Morgan Kaufmann Publishers Inc.},
+  year = {2006},
+  author = {Leibson, Steve},
+  address = {San Francisco, CA, USA},
+  isbn = {0123724988}
+}
+
+@ARTICLE{Limb1975,
+  author = {Limb, J. and Murphy, J.},
+  title = {Measuring the Speed of Moving Objects from Television Signals},
+  journal = {Communications, IEEE Transactions on},
+  year = {1975},
+  volume = {23},
+  pages = { 474 - 478},
+  number = {4},
+  month = {apr.},
+  abstract = {Very simple techniques for estimating the speed of a moving object
+	from a television signal are described. They assume that frame storage
+	is available. One technique requires little more than two threshold
+	circuits and two counters. The accuracy of one technique is better
+	than #177; 10 percent, quite sufficient to enable the measure to
+	be used as a control signal for the efficient coding of television
+	type signals.},
+  doi = {10.1109/TCOM.1975.1092828},
+  issn = {0090-6778},
+  keywords = { Image coding; TV transmission; Velocity measurement;}
+}
+
+@MANUAL{DuA,
+  title = {Vorlesungsskript Datenstrukturen und Algorithmen},
+  author = {Prof. Dr. Udo Lipeck},
+  organization = {Leibniz Universität Hannover},
+  year = {WS 2009/10},
+  owner = {wolpers},
+  timestamp = {2010.10.14}
+}
+
+@INPROCEEDINGS{Lucas1981,
+  author = {Lucas, Bruce D. and Kanade, Takeo},
+  title = {An iterative image registration technique with an application to
+	stereo vision},
+  booktitle = {IJCAI'81: Proceedings of the 7th international joint conference on
+	Artificial intelligence},
+  year = {1981},
+  pages = {674--679},
+  address = {San Francisco, CA, USA},
+  publisher = {Morgan Kaufmann Publishers Inc.},
+  file = {:C\:\\Users\\DuncanSin\\Desktop\\Bachelorarbeit\\Lucas1981.pdf:PDF},
+  location = {Vancouver, BC, Canada}
+}
+
+@ARTICLE{Netravali1979,
+  author = {A. N. Netravali and J. D. Robbins},
+  title = {Motion Compensated television coding: Part I},
+  journal = {The Bell Systems Technical Journal},
+  year = {1979},
+  volume = {58},
+  pages = {631-670},
+  number = {3},
+  month = {March},
+  owner = {wolpers},
+  timestamp = {2010.09.08}
+}
+
+@BOOK{cordic,
+  title = {Computer arithmetic: algorithms and hardware designs},
+  publisher = {Oxford University Press},
+  year = {2000},
+  author = {Parhami, Behrooz},
+  pages = {459-477},
+  address = {Oxford, UK},
+  edition = {2. ED},
+  isbn = {0-19-512583-5}
+}
+
+@ARTICLE{Reddy1996,
+  author = {Reddy, B.S. and Chatterji, B.N.},
+  title = {An FFT-based technique for translation, rotation, and scale-invariant
+	image registration},
+  journal = {Image Processing, IEEE Transactions on},
+  year = {1996},
+  volume = {5},
+  pages = {1266 -1271},
+  number = {8},
+  month = {aug.},
+  abstract = {This correspondence discusses an extension of the well-known phase
+	correlation technique to cover translation, rotation, and scaling.
+	Fourier scaling properties and Fourier rotational properties are
+	used to find scale and rotational movement. The phase correlation
+	technique determines the translational movement. This method shows
+	excellent robustness against random noise},
+  doi = {10.1109/83.506761},
+  issn = {1057-7149},
+  keywords = {FFT-based technique;Fourier rotational properties;Fourier scaling
+	properties;image registration;phase correlation technique;random
+	noise;robustness;rotation invariance;scaling invariance;translation
+	invariance;correlation methods;fast Fourier transforms;image matching;image
+	registration;random noise;}
+}
+
+@CONFERENCE{Rocca1969,
+  author = {F. Rocca},
+  title = {Television bandwidth compression utilizing frame-to-frame correlation
+	and movement compensation},
+  booktitle = {Symposium Return Bandwidth Compression},
+  year = {1969},
+  month = {April},
+  publisher = {MIT},
+  owner = {wolpers},
+  timestamp = {2010.09.08}
+}
+
+@BOOK{Salmela2009,
+  title = {Implementations of Baseband Functions for Digital Receivers},
+  publisher = {Tampere University of Technology},
+  year = {2009},
+  author = {Perttu Salmela},
+  pages = {99-113},
+  owner = {wolpers},
+  timestamp = {2010.09.17}
+}
+
+@BOOK{Blume2000,
+  title = {Mehrdimensionale Signalverarbeitung, Bd.2, Architekturen und Anwendungen
+	für Bilder und Bildsequenzen},
+  publisher = {Teubner Verlag},
+  year = {2000},
+  author = {Schröder, Hartmut and Blume, Holger},
+  pages = {199-246},
+  isbn = {351906197X},
+  owner = {wolpers},
+  timestamp = {2010.09.07}
+}
+
+@INPROCEEDINGS{Stein2004,
+  author = {Fridtjof Stein},
+  title = {Efficient Computation of Optical Flow Using the Census Transform},
+  booktitle = {DAGM-Symposium},
+  year = {2004},
+  pages = {79-86},
+  bibsource = {DBLP, http://dblp.uni-trier.de},
+  ee = {http://springerlink.metapress.com/openurl.asp?genre=article{\&}issn=0302-9743{\&}volume=3175{\&}spage=79},
+  file = {:C\:\\Users\\DuncanSin\\Desktop\\Bachelorarbeit\\Stein2004.pdf:PDF}
+}
+
+@INPROCEEDINGS{Zabih1994,
+  author = {Ramin Zabih and John Woodfill},
+  title = {Non-parametric Local Transforms for Computing Visual Correspondence},
+  year = {1994},
+  pages = {151--158},
+  publisher = {Springer-Verlag},
+  file = {:C\:\\Users\\DuncanSin\\Desktop\\Bachelorarbeit\\census.pdf:PDF}
+}
+
+@BOOK{Xtensa,
+  title = {Xtensa lx2 data book},
+  year = {2008},
+  address = {www.tensilica.com},
+  month = {November},
+  owner = {wolpers},
+  timestamp = {2010.09.13}
+}
+
+@comment{jabref-meta: selector_author:}
+
+@comment{jabref-meta: selector_journal:}
+
+@comment{jabref-meta: selector_keywords:}
+
+@comment{jabref-meta: selector_publisher:}
+
