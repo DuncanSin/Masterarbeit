@@ -2,14 +2,25 @@
 \label{board}
 \rm
 
-Für die in den folgenden Kapiteln beschriebenen Arbeitsschritte zur Portierung, Optimierung und Analyse des Programmes wurde ein EVM8168-Entwicklungsboard verwendet, welches von der Firma Texas Instruments in Zusammenarbeit mit der Firma Spectrum Digital entwickelt wurde.
-Dieses Board kann mit Hilfe eines DM816x (DaVinci\texttrademark) ARM-Prozessors entweder selber Programme ausführen oder es können auch die beiden  ARM-Prozessoren C6A816x (Integra\texttrademark) oder AM389x (Sitara\texttrademark) emuliert werden. 
-Da in dieser Arbeit der DaVinci\texttrademark-Prcessor verwendet wird, soll in Kapitel~\ref{sec:evm816} zunächst das Board an sich und dann in Kapitel~\ref{sec:davinci} speziell der DaVinci\texttrademark betrachtet werden.
+Für die in den folgenden Kapiteln beschriebenen Arbeitsschritte zur Optimierung und Analyse des Programmes wurde ein EVM8168-Entwicklungsboard verwendet, welches von der Firma Texas Instruments in Zusammenarbeit mit der Firma Spectrum Digital entwickelt wurde.
+Dieses Board kann mit Hilfe eines DM816x (DaVinci\texttrademark) ARM-Prozessors entweder selber Programme ausführen oder es können auch die beiden ARM-Prozessoren C6A816x (Integra\texttrademark) oder AM389x (Sitara\texttrademark) emuliert werden. 
+
 
 \section{Aufbau des EVM8168} \label{sec:evm816}
-Wie in \cite{spec} beschrieben bietet das EVM8168-Entwicklungsboard eine Standalone-Plattform um Programme für DaVinci\texttrademark, Integra\texttrademark oder Sitara\texttrademark Prozessoren der Firma Texas Instruments zu entwickeln und debuggen. Hierfür ist neben dem DaVinci\texttrademark noch weitere On-Board Perepherie auf dem Board aufgebracht. Unter anderem Anschlüsse für Gigabit Ethernet, VGA, HDMI und USB, sowie einen DSP.
+Wie in \cite{spec} beschrieben bietet das EVM8168-Entwicklungsboard eine Standalone-Plattform um Programme für DaVinci\texttrademark, Integra\texttrademark~oder Sitara\texttrademark~Prozessoren der Firma Texas Instruments zu entwickeln und zu debuggen. Hierfür sind neben dem DaVinci\texttrademark~noch weitere On-Board Perepherie auf dem Board aufgebracht, die im folgenden teilweise näher erklärt werden sollen.
+Das EVM8168-Board hat unteranderem folgende Komponenten integiert:
+
+\begin{itemize}
+	\item DM8168- (DaVinci\texttrademark-)ARMprozessor (\textbf{Kapitel~\ref{sec:davinci}}) mit NEON-Einheit (\textbf{Kapitel~\ref{sec:neon}})
+	\item C674x-DSP (\textbf{Kapitel \ref{sec:c674x}})
+	\item Gigabit Ethernet
+	\item HDMI
+	\item VGA
+	\item USB
+\end{itemize}
+
 Für die in dieser Arbeit beschriebene Soundklassifikation wichtig sind außerdem die Anschlüsse für  Line-In, Mic-In und Line-Out, sowie der integrierte AIC3106 Codec, welcher den eingehenden Soundstream für den DSP vorbereitet.
-Abbildung~\ref{fig:top_ti816x_evm} zeigt eine Draufsicht auf das Entwicklungsboard und die unterhalb dessen angebrachte Daughtercard mit weiteren Anschlussmöglichkeiten.
+\testbf{Abbildung~\ref{fig:top_ti816x_evm}} zeigt eine Draufsicht auf das Entwicklungsboard und die unterhalb dessen angebrachte Daughtercard mit weiteren Anschlussmöglichkeiten.
 
 \begin{figure}[htbp]
 	\centering
@@ -21,3 +32,5 @@ Abbildung~\ref{fig:top_ti816x_evm} zeigt eine Draufsicht auf das Entwicklungsboa
 
 
 \section{Der DaVinci\texttrademark}\label{sec:davinci}
+\subsection{Die NEON-Einheit}\label{sec:neon}
+\section{Der C674x-DSP-Prozessor}\label{sec:c674x}
