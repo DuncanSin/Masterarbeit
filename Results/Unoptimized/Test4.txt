@@ -1,0 +1,25 @@
+Testcase 4: AmplitudeOfMaximumInChromagram, SubBandEnergyRatio, SpectralCrestFactor
+Opened ../../blues.00000.au
+total extraction time: 2.113
+Time to extract FFT: 1.336 seconds (1293 windows)
+Time to extract FFT: 1.03326 seconds (1000 windows)
+Time to extract FFT: 0.632276 %
+Time to extract MagnitudeOfSpectrum: 0.041 seconds (1293 windows)
+Time to extract MagnitudeOfSpectrum: 0.0317092 seconds (1000 windows)
+Time to extract MagnitudeOfSpectrum: 0.0194037 %
+Time to extract AmplitudeOfSpectrum: 0.688 seconds (1293 windows)
+Time to extract AmplitudeOfSpectrum: 0.532096 seconds (1000 windows)
+Time to extract AmplitudeOfSpectrum: 0.325603 %
+Time to extract SpectralCrestFactor: 0.006 seconds (1293 windows)
+Time to extract SpectralCrestFactor: 0.00464037 seconds (1000 windows)
+Time to extract SpectralCrestFactor: 0.00283956 %
+Time to extract SubBandEnergyRatio: 0.027 seconds (1293 windows)
+Time to extract SubBandEnergyRatio: 0.0208817 seconds (1000 windows)
+Time to extract SubBandEnergyRatio: 0.012778 %
+Time to extract Chroma: 0.011 seconds (1293 windows)
+Time to extract Chroma: 0.00850735 seconds (1000 windows)
+Time to extract Chroma: 0.00520587 %
+Time to extract AmplitudeOfMaximumInChromagram: 0.004 seconds (1293 windows)
+Time to extract AmplitudeOfMaximumInChromagram: 0.00309358 seconds (1000 windows)
+Time to extract AmplitudeOfMaximumInChromagram: 0.00189304 %
+Extraction took 21280000 clicks and had a runtime of 21.280001 secounds.
