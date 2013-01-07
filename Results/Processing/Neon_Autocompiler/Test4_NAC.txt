@@ -1,0 +1,46 @@
+<commandList>
+	<command enabled="1" source="amplitude" feature="SpectralCrestFactor" name="setFeature"/>
+	<command enabled="1" source="amplitude" feature="SubBandEnergyRatio" name="setFeature"/>
+	<command enabled="1" source="amplitude" feature="FundamentalFrequency" name="setFeature"/>
+	<command enabled="1" source="amplitude" feature="Tristimulus" name="setFeature"/>
+	<command enabled="1" source="chroma" feature="AmplitudeOfMaximumInChromagram" name="setFeature"/>
+	<command feature="SpectralCrestFactor" name="setProcessing">
+		<type name="RunningMeanDeviation" enabled="1"/>
+		<type name="ModulationSpectralAnalysis" enabled="1"/>
+	</command>
+	<command feature="SubBandEnergyRatio" name="setProcessing">
+		<type name="RunningMeanDeviation" enabled="1"/>
+		<type name="ModulationSpectralAnalysis" enabled="1"/>
+	</command>
+	<command feature="FundamentalFrequency" name="setProcessing">
+		<type name="RunningMeanDeviation" enabled="1"/>
+		<type name="ModulationSpectralAnalysis" enabled="1"/>
+	</command>
+	<command feature="Tristimulus" name="setProcessing">
+		<type name="RunningMeanDeviation" enabled="1"/>
+		<type name="ModulationSpectralAnalysis" enabled="1"/>
+	</command>
+	<command feature="AmplitudeOfMaximumInChromagram" name="setProcessing">
+		<type name="RunningMeanDeviation" enabled="1"/>
+		<type name="ModulationSpectralAnalysis" enabled="1"/>
+	</command>
+	<command name="setExtractionConfig" outputLocation="" enabled="1" startPos="0" endPos="1" N="512" Nhop="512">
+		<files>
+			<file name="/home/root/blues.00000.au"/>
+		</files>
+	</command>
+	<command name="setProcessingConfig" outputLocation="" keepInternal="0" enabled="1"/>
+	<command name="start"/>
+	<command name="getProcessingPerformance" complete="1"/>
+</commandList>
+
+Opened /home/root/blues.00000.au
+start extraction File /home/root/blues.00000.au
+<info name="start extraction File /home/root/blues.00000.au"/>
+extraction started
+extraction finished
+generate feature vector
+<signal name="ready"/>
+Time to process features: 
+=> 42.02 ms (1293 windows)
+=> 32.4981 ms (1000 windows)

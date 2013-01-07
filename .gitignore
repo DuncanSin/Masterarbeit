@@ -25,3 +25,8 @@
 *.maf
 *.mtc
 *.mtc0
+
+/Tex/Masterarbeit.pdf
+/Tex/Masterarbeit.tps
+/Tex/References/references.bib.bak
+/Tex/tmp$.@@@

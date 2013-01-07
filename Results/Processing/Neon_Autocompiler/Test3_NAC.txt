@@ -1,0 +1,37 @@
+<commandList>
+	<command enabled="1" source="time" feature="ZeroCrossingRate" name="setFeature"/>
+	<command enabled="1" source="time" feature="RootMeanSquare" name="setFeature"/>
+	<command enabled="1" source="time" feature="LowEnergy" name="setFeature"/>
+	<command feature="MFCC" type="RunningMeanDeviation" enabled="1" name="setProcessing"/>
+	<command feature="ZeroCrossingRate" name="setProcessing">
+		<type name="RunningMeanDeviation" enabled="1"/>
+		<type name="ModulationSpectralAnalysis" enabled="1"/>
+	</command>
+	<command feature="RootMeanSquare" name="setProcessing">
+		<type name="RunningMeanDeviation" enabled="1"/>
+		<type name="ModulationSpectralAnalysis" enabled="1"/>
+	</command>
+	<command feature="LowEnergy" name="setProcessing">
+		<type name="RunningMeanDeviation" enabled="1"/>
+		<type name="ModulationSpectralAnalysis" enabled="1"/>
+	</command>
+	<command name="setExtractionConfig" outputLocation="" enabled="1" startPos="0" endPos="1" N="512" Nhop="512">
+		<files>
+			<file name="/home/root/blues.00000.au"/>
+		</files>
+	</command>
+	<command name="setProcessingConfig" outputLocation="" keepInternal="0" enabled="1"/>
+	<command name="start"/>
+	<command name="getProcessingPerformance" complete="1"/>
+</commandList>
+
+Opened /home/root/blues.00000.au
+start extraction File /home/root/blues.00000.au
+<info name="start extraction File /home/root/blues.00000.au"/>
+extraction started
+extraction finished
+generate feature vector
+<signal name="ready"/>
+Time to process features: 
+=> 9.06 ms (1293 windows)
+=> 7.00696 ms (1000 windows)
