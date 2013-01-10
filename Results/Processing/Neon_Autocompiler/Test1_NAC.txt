@@ -1,13 +1,8 @@
 <commandList>
-	<command enabled="1" source="time" feature="ZeroCrossingRate" name="setFeature"/>
 	<command enabled="1" source="amplitude" feature="SpectralCentroid" name="setFeature"/>
 	<command enabled="1" source="amplitude" feature="MFCC" name="setFeature"/>
 	<command enabled="1" source="amplitude" feature="SpectralFlux" name="setFeature"/>
 	<command enabled="1" source="amplitude" feature="SpectralRolloff" name="setFeature"/>
-	<command feature="ZeroCrossingRate" name="setProcessing">
-		<type name="RunningMeanDeviation" enabled="1"/>
-		<type name="ModulationSpectralAnalysis" enabled="0"/>
-	</command>
 	<command feature="SpectralCentroid" name="setProcessing">
 		<type name="RunningMeanDeviation" enabled="1"/>
 		<type name="ModulationSpectralAnalysis" enabled="0"/>
@@ -42,5 +37,5 @@ extraction finished
 generate feature vector
 <signal name="ready"/>
 Time to process features: 
-=> 1.5 ms (1293 windows)
-=> 1.16009 ms (1000 windows)
+=> 1.41 ms (1293 windows)
+=> 1.09049 ms (1000 windows)

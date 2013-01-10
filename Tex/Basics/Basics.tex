@@ -1,6 +1,47 @@
 \chapter{Grundlagen}
-\label{grund}
+\label{ch:grund}
 \rm
+
+\section{Algorithmen}\label{sec:alg}
+In diesem Kapitel sollen die Extraktionsalgorithmen vorgestellt werden, aus denen die im \textbf{Kapitel \ref{ch:optimization}} beschriebenen FeatureSets zusammengesetzt sind, die für die Laufzeitanalyse des Codes verwendet werden. Hierfür werden diese in zwei Bereiche unterteilt, einmal die Features, welche im Zeitbereich arbeiten (\textbf{\ref{subsec:zeit}}) und diese die im Frequenzbereich arbeiten (\textbf{\ref{subsec:freq}}). Diese Unterteilung wurde aus \cite{haller} übernommen.
+
+
+\subsection{Features des Zeitbreichs}\label{subsec:zeit}
+
+\subsubsection{LowEnergy}\label{subsubsec:low}
+
+\subsubsection{RootMeanSquare}\label{subsec:root}
+
+\subsubsection{ZeroCrossingRate}\label{subsubsec:zero}
+
+
+\subsection{Features des Frequenzbereichs}\label{subsec:freq}
+
+\subsubsection{FFT}\label{subsec:fft}
+
+\subsubsection{Chromavektor}\label{subsubsec:Chromavektor}
+
+\subsubsection{AmplitudeOfMaximumInChromagram}\label{subsec:amp}
+
+\subsubsection{Magnitude}\label{subsec:mag}
+
+\subsubsection{MFCC}\label{subsec:mfcc}
+
+\subsubsection{NormalizedAudioSpectrumEnvelope}\label{subsec:nase}
+
+\subsubsection{OctaveSpectralContrast}\label{subsec:osc}
+
+\subsubsection{SpectralCentroid}\label{subsec:speccen}
+
+\subsubsection{SpectralCrestFactor}\label{subsec:speccr}
+
+\subsubsection{SpectralFlux}\label{subsec:specfl}
+
+\subsubsection{SpectralRolloff}\label{subsec:specrol}
+
+\subsubsection{SubBandEnergyRatio}\label{subsec:sub}
+
+
 
 \section{Profiling}\label{sec:prof}
 Der Begriff Profiling bescheibt Methoden, mit denen das Verhalten von Applikationen auf Systemebene analysiert werden können, hierzu zählen Analysen der Laufzeit, der Schreib- und Lesezugriffe und auch die Verhältnisse von Instuktionen und Takten zueinander. Im Folgenden werden nun Beispielhaft die Profilingmethoden der Laufzeitmessung, der richtigen Vorhersagen des Vorladens in den Cache (sog. Cache Hits), sowie die Betrachtungen des Verhältnisses von Takt und Instuktionen (Instructions per Cycle (IPC) und Cycle per Instruction (CPI)).
