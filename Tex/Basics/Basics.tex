@@ -3,43 +3,129 @@
 \rm
 
 \section{Algorithmen}\label{sec:alg}
-In diesem Kapitel sollen die Extraktionsalgorithmen vorgestellt werden, aus denen die im \textbf{Kapitel \ref{ch:optimization}} beschriebenen FeatureSets zusammengesetzt sind, die für die Laufzeitanalyse des Codes verwendet werden. Hierfür werden diese in zwei Bereiche unterteilt, einmal die Features, welche im Zeitbereich arbeiten (\textbf{\ref{subsec:zeit}}) und diese die im Frequenzbereich arbeiten (\textbf{\ref{subsec:freq}}). Diese Unterteilung wurde aus \cite{haller} übernommen.
+In diesem Kapitel sollen die Extraktionsalgorithmen vorgestellt werden, aus denen die im \textbf{Kapitel \ref{ch:optimization}} beschriebenen FeatureSets zusammengesetzt sind, die für die Laufzeitanalyse des Codes verwendet werden. Hierfür werden diese in zwei Bereiche unterteilt, einmal die Features, welche im Zeitbereich arbeiten (\textbf{\ref{subsec:zeit}}) und diese die im Frequenzbereich arbeiten (\textbf{\ref{subsec:freq}}). Diese Unterteilung wurde aus \cite{haller2008} übernommen.
+
+\subsection{Notation von Ausdrücken und Variablen}\label{subsec:note}
+
+Hier sollen kurz die verwendeten Ausdrücke und Variablen eingeführt werden, die für die spätere Definition der einzelnen Features benötig werden (\textbf{Tabelle \ref{tab:note}}), wie sie in  \cite{haller2008} und \cite{Theimer2008} definiert sind.
+
+\begin{table*}[ht]
+	\centering
+		\begin{tabular}{p{6cm} | c}
+			\textbf{Ausdruck} & \textbf{Formel}\\
+			\hline
+			\hline
+			Anzahl der Zeitfenster im Musikstück & $L_{total}~=~\left\lceil \frac{N_{total}}{N} \right\rceil$ \\
+			Anzahl der Frequenzwerte & $K$ \\
+			Anzahl der Samples im Musikstück & $N_{total}$ \\
+			Amplitude der Spektralkomponente & $A(k)~=~\left|X(k)\right|$ \\
+			Amplitude der Spektralkomponente im Zeitfenster l & $A^{(l)},~l\in[1,L_{total}]$\\
+			diskrete Spektralkomponente & $X(k),~k\in[0,~K]$ \\
+			diskretes Zeitsignal & $x(n),\ n\in[0,N_{total}~-~1]$\\
+			Länge eines Zeitfensters & $N$\\
+			Samplingfrequenz in Hz & $f_{s}$
+		\end{tabular}
+	\caption{Tabelle der verwendeten Ausdrücke und Variablen}
+	\label{tab:note}
+\end{table*}
 
 
 \subsection{Features des Zeitbreichs}\label{subsec:zeit}
 
-\subsubsection{LowEnergy}\label{subsubsec:low}
+\subsubsection{Root Mean Square (RMS)}\label{subsec:root}
+Root Mean Square oder auch das quadratische Mittel normiert die einzelnen Signalenergien innerhalb eines Zeitfensters (\textbf{Formel \ref{eqn:rms}}).\cite{haller2008}\cite{Theimer2008}
 
-\subsubsection{RootMeanSquare}\label{subsec:root}
+\begin{equation}
+	\label{eqn:rms}
+	x_{rms}~=~\sqrt{\frac{1}{N}\sum^{N-1}_{n=0}x^{2}(n)}
+\end{equation}
 
-\subsubsection{ZeroCrossingRate}\label{subsubsec:zero}
+\subsubsection{Low Energy}\label{subsubsec:low}
+
+Low Energy fasst meherere aufeinander folgende Zeitfenster $n$ zu einem sogenannten Analysezeitraum zusammen und gibt die Rate der Zeitfenster an, deren RMS unter dem Mittel aller RMS im Analysezeitraum liegen (\textbf{Formel \ref{eqn:le}}). Hierfür sei $N_{a}$ die Anzahl der berachteten Zeitfenster im Analysezeitraum.\cite{haller2008}\cite{Theimer2008}
+
+\begin{equation}
+	\label{eqn:le}
+	r_{low}~=~\frac{1}{N_{a}}\sum^{N_{a}-1}_{i=0}u(\mu_{rms}~-~x_{rms}(n))
+\end{equation}
+mit \[\mu_{rms}~=~\frac{1}{N_{a}}\sum^{N_{a}-1}_{i=0}x_{rms}(n)\] und \[u(x)~=~\left\{ \begin{array}{ll} 
+1 & \textrm{für } x~>~0 \\
+0 & \textrm{für } x~\leq~0\\
+\end{array}\right.\]
+ 
+
+\subsubsection{Zero Crossing Rate}\label{subsubsec:zero}
+
+Bei der Zero Crossing Rate werden die Auftreten von Vorzeichenwechseln innerhalb eines Zeitfensters berechnet. Diese Rate gibt ein Maß für den hochfrequenten Anteil des Signals an(\textbf{Formel \ref{eqn:zero}}).\cite{haller2008}\cite{Theimer2008}
+
+\begin{equation}
+	\label{eqn:zero}			   r_{zcr}~=~\frac{1}{2(N~-~1)}\sum^{N-2}_{n=0}\left|sgn~x(n~+~1)~-~sgn~x(n)\right|
+\end{equation}
+
 
 
 \subsection{Features des Frequenzbereichs}\label{subsec:freq}
 
-\subsubsection{FFT}\label{subsec:fft}
+\subsubsection{Fast Fouriertransformation (FFT)}\label{subsec:fft}
 
-\subsubsection{Chromavektor}\label{subsubsec:Chromavektor}
+\subsubsection{Chroma Vektor}\label{subsubsec:Chromavektor}
 
-\subsubsection{AmplitudeOfMaximumInChromagram}\label{subsec:amp}
+Der Chroma Vektor fasst alle Spektralkomponenten einer Tonhöhe zusammen und fasst alle Frequenzen zu einer Oktave zusammen. Hierbei werden alle spektralen Amplituden des gleichen Halb- oder Vierteltons aufsummiert (\textbf{Formel \ref{eqn:cv}}).
 
-\subsubsection{Magnitude}\label{subsec:mag}
+\begin{equation}
+	\label{eqn:cv}			   
+	A_{chroma}\left(\widetilde{k}\right)~=~\sum_{k:~p(k)=\widetilde{k}} A(k)
+\end{equation}
 
-\subsubsection{MFCC}\label{subsec:mfcc}
+Z.B. für Vierteltöne gilt
 
-\subsubsection{NormalizedAudioSpectrumEnvelope}\label{subsec:nase}
+\[p(k)~=~\left\lfloor 24~log_{2}\left(\frac{2k}{N}\frac{f_{s}}{f_{1}}\right) \right\rfloor~mod~24\textrm{ und }f_{1}~=~440~Hz \]
 
-\subsubsection{OctaveSpectralContrast}\label{subsec:osc}
+Für Halbtöne müsste 24 durch 12 ersetzt werden.\cite{haller2008}\cite{Theimer2008}
 
-\subsubsection{SpectralCentroid}\label{subsec:speccen}
+\subsubsection{Amplitude Of Maximum In Chromagram}\label{subsec:amp}
 
-\subsubsection{SpectralCrestFactor}\label{subsec:speccr}
+Die maximale Amplitude des Chromagrams gibt den maximalen Chroma Vektor an und stellt daher die Stärke eines Tons in verschiedenen Oktavstufen dar (\textbf{Formel \ref{eqn:aomic}}).\cite{haller2008}\cite{Theimer2008}
 
-\subsubsection{SpectralFlux}\label{subsec:specfl}
+\begin{equation}
+	\label{eqn:aomic}			   
+	A_{maxchroma}~=~\max_{\widetilde{k}}~A_{chroma}\left(\widetilde{k}\right)
+\end{equation}
+
+\subsubsection{Mel Frequency Cepstral Coefficients (MFCC)}\label{subsec:mfcc}
+
+\subsubsection{Normalized Audio Spectrum Envelope}\label{subsec:nase}
+
+\subsubsection{Octave Spectral Contrast}\label{subsec:osc}
+
+\subsubsection{Spectral Centroid}\label{subsec:speccen}
+
+Der Spectral Centroid gibt den Schwerpunkt des Amplitudenspektrums des Signals an (\textbf{Formel \ref{eqn:sc}}).\cite{haller2008}\cite{Theimer2008}
+
+\begin{equation}
+	\label{eqn:sc}			   
+	S_{centroid}~=~\frac{\sum\limits^{\frac{K}{2}-1}_{k=0}k~A(k)}{\sum\limits^{\frac{K}{2}-1}_{k=0}A(k)} 
+\end{equation}
+
+\subsubsection{Spectral Crest Factor}\label{subsec:speccr}
+
+
+
+\subsubsection{Spectral Flux}\label{subsec:specfl}
+
+Der Spectral Flux ist definiert als die quadrierte Differenz zwischen den normalisierten Betragsspektren von zwei aufeinander folgenden Zeitfenstern (\textbf{Formel \ref{eqn:sf}}).\cite{haller2008}\cite{Theimer2008}
+
+\begin{equation}
+	\label{eqn:sf}			   
+	S_{flux}~=~\frac{2}{K}\sum\limits^{\frac{K}{2}-1}_{k=0}\left( A^{(l)}(k)~-~A^{(l-1)}(k)\right)^2
+\end{equation}
+
 
 \subsubsection{SpectralRolloff}\label{subsec:specrol}
 
-\subsubsection{SubBandEnergyRatio}\label{subsec:sub}
+
+
+\subsubsection{Sub-Band Energy Ratio}\label{subsec:sub}
 
 
 
