@@ -20,8 +20,9 @@ Hier sollen kurz die verwendeten Ausdrücke und Variablen eingeführt werden, die 
 			Anzahl der Samples im Musikstück & $N_{total}$ \\
 			Amplitude der Spektralkomponente & $A(k)~=~\left|X(k)\right|$ \\
 			Amplitude der Spektralkomponente im Zeitfenster l & $A^{(l)},~l\in[1,L_{total}]$\\
-			diskrete Spektralkomponente & $X(k),~k\in[0,~K]$ \\
+			diskrete Spektralkomponente & $X(k)$ \\
 			diskretes Zeitsignal & $x(n),\ n\in[0,N_{total}~-~1]$\\
+			Frequenzwert & $k\in[0,~K]$ \\
 			Länge eines Zeitfensters & $N$\\
 			Samplingfrequenz in Hz & $f_{s}$
 		\end{tabular}
@@ -103,13 +104,25 @@ Die maximale Amplitude des Chromagrams gibt den maximalen Chroma Vektor an und s
 Der Spectral Centroid gibt den Schwerpunkt des Amplitudenspektrums des Signals an (\textbf{Formel \ref{eqn:sc}}).\cite{haller2008}\cite{Theimer2008}
 
 \begin{equation}
-	\label{eqn:sc}			   
-	S_{centroid}~=~\frac{\sum\limits^{\frac{K}{2}-1}_{k=0}k~A(k)}{\sum\limits^{\frac{K}{2}-1}_{k=0}A(k)} 
+	\label{eqn:sc}			   	S_{centroid}~=~\frac{\sum\limits^{\frac{K}{2}-1}_{k=0}k~A(k)}{\sum\limits^{\frac{K}{2}-1}_{k=0}A(k)} 
 \end{equation}
 
 \subsubsection{Spectral Crest Factor}\label{subsec:speccr}
 
+Der Spectral Crest Factor stellt ein Maß der spectralen Flachheit eines Frequenzbandes dar und ist im Wertebereich $\left[1,\infty\right]$ definiert. Hierbei bedeutet 1, dass alle spectral Ampilituden gleich sind und $\infty$ das garkeine Flachheit existiert (\textbf{Formel \ref{eqn:scf}}).\\
+Dieser Factor wird auf folgenden Frequenzbändern berechnet:
+\begin{itemize}
+	\item 250 - 500 Hz ($k_{1l}$ - $K_{1u}$)
+	\item 500 - 1000 Hz ($k_{2l}$ - $K_{2u}$)
+	\item 1000 - 2000 Hz ($k_{3l}$ - $K_{3u}$)
+	\item 2000 - 4000 Hz ($k_{4l}$ - $K_{4u}$)
+\end{itemize}
+\cite{Theimer2008}
 
+\begin{equation}
+	\label{eqn:scf}			   
+	S_{crest}~=~frac{\max\limits_{k\in\left[k_{il},k_{iu}\right]}A(k)}{\frac{1}{k_{iu}~-~k_{il}~+~1}\sum\limits^{k_{iu}}_{k=k_{il}}A(k)}
+\end{equation}
 
 \subsubsection{Spectral Flux}\label{subsec:specfl}
 
@@ -121,12 +134,23 @@ Der Spectral Flux ist definiert als die quadrierte Differenz zwischen den normal
 \end{equation}
 
 
-\subsubsection{SpectralRolloff}\label{subsec:specrol}
+\subsubsection{Spectral Rolloff}\label{subsec:specrol}
 
+Als Spectral Rolloff bezeichnet man der Frequenzwert ($k_{rolloff}$) unter dem sich eine bestimmte Prozentzahl ($p_{rolloff}$) der Spektralwerte konzentrieren (\textbf{Formel \ref{eqn:sr}}). \cite{haller2008}\cite{Tza2002}
 
+\begin{equation}
+	\label{eqn:sr}			   
+	\sum^{k_{rolloff}}_{k=0}A(k)~=~p_{rolloff}~\cdot~\sum^{\frac{K}{2}-1}_{k=0}A(k)
+\end{equation}
 
 \subsubsection{Sub-Band Energy Ratio}\label{subsec:sub}
 
+Die Sub-Band Energy Ratio gibt die Verteilung der Spektralenergy auf die Frequenzintervalle $\left[0,\frac{f_s}{16}\right)$,$\left[\frac{f_s}{16},\frac{f_s}{8}\right)$,$\left[\frac{f_s}{8},\frac{f_s}{4}\right)$ und $\left[\frac{f_s}{4},\frac{f_s}{2}\right)$ an und kann in Indexbereiche $\left[0,\frac{K}{16}\right)$,$\left[\frac{K}{16},\frac{K}{8}\right)$,$\left[\frac{K}{8},\frac{K}{4}\right)$ und $\left[\frac{K}{4},\frac{K}{2}\right)$ überführt werden (\textbf{Formel \ref{eqn:sber}}).\cite{Theimer2008}
+
+\begin{equation}
+	\label{eqn:sber}			   
+	S_1~=~\frac{\sum\limits^{\frac{K}{16}-1}_{k=0}A^2(k)}{\sum\limits^{\frac{K}{2}-1}_{k=0}A^2(k)},~S_2~=~\frac{\sum\limits^{\frac{K}{8}-1}_{k=\frac{K}{16}}A^2(k)}{\sum\limits^{\frac{K}{2}-1}_{k=0}A^2(k)},S_3~=~\frac{\sum\limits^{\frac{K}{0}-1}_{k=\frac{K}{8}}A^2(k)}{\sum\limits^{\frac{K}{2}-1}_{k=0}A^2(k)},S_1~=~\frac{\sum\limits^{\frac{K}{2}-1}_{k=\frac{K}{4}}A^2(k)}{\sum\limits^{\frac{K}{2}-1}_{k=0}A^2(k)}
+\end{equation}
 
 
 \section{Profiling}\label{sec:prof}
