@@ -36,7 +36,7 @@ Hier sollen kurz die verwendeten Ausdrücke und Variablen eingeführt werden, die 
 \subsection{Features des Zeitbreichs}\label{subsec:zeit}
 
 \subsubsection{Root Mean Square (RMS)}\label{subsubsec:rms}
-Root Mean Square oder auch das quadratische Mittel normiert die einzelnen Signalenergien innerhalb eines Zeitfensters (\textbf{Formel \ref{eqn:rms}}).\cite{haller2008}\cite{Theimer2008}
+Root Mean Square oder auch das quadratische Mittel normiert die einzelnen Signalenergien innerhalb eines Zeitfensters (\textbf{Formel \ref{eqn:rms}})\cite{haller2008}\cite{Theimer2008}.
 
 \begin{equation}
 	\label{eqn:rms}
@@ -45,7 +45,7 @@ Root Mean Square oder auch das quadratische Mittel normiert die einzelnen Signal
 
 \subsubsection{Low Energy}\label{subsubsec:le}
 
-Low Energy fasst meherere aufeinander folgende Zeitfenster $n$ zu einem sogenannten Analysezeitraum zusammen und gibt die Rate der Zeitfenster an, deren RMS unter dem Mittel aller RMS im Analysezeitraum liegen (\textbf{Formel \ref{eqn:le}}). Hierfür sei $N_{a}$ die Anzahl der berachteten Zeitfenster im Analysezeitraum.\cite{haller2008}\cite{Theimer2008}
+Low Energy fasst mehrere aufeinander folgende Zeitfenster $n$ zu einem sogenannten Analysezeitraum zusammen und gibt die Rate der Zeitfenster an, deren RMS unter dem Mittel aller RMS im Analysezeitraum liegen (\textbf{Formel \ref{eqn:le}}). Hierfür sei $N_{a}$ die Anzahl der berachteten Zeitfenster im Analysezeitraum\cite{haller2008}\cite{Theimer2008}.
 
 \begin{equation}
 	\label{eqn:le}
@@ -59,7 +59,7 @@ mit \[\mu_{rms}~=~\frac{1}{N_{a}}\sum^{N_{a}-1}_{i=0}x_{rms}(n)\] und \[u(x)~=~\
 
 \subsubsection{Zero Crossing Rate}\label{subsubsec:zcr}
 
-Bei der Zero Crossing Rate werden die Auftreten von Vorzeichenwechseln innerhalb eines Zeitfensters berechnet. Diese Rate gibt ein Maß für den hochfrequenten Anteil des Signals an (\textbf{Formel \ref{eqn:zero}}).\cite{haller2008}\cite{Theimer2008}
+Bei der Zero Crossing Rate werden die Auftreten von Vorzeichenwechseln innerhalb eines Zeitfensters berechnet. Diese Rate gibt ein Maß für den hochfrequenten Anteil des Signals an (\textbf{Formel \ref{eqn:zero}})\cite{haller2008}\cite{Theimer2008}.
 
 \begin{equation}
 	\label{eqn:zero}			   r_{zcr}~=~\frac{1}{2(N~-~1)}\sum^{N-2}_{n=0}\left|sgn~x(n~+~1)~-~sgn~x(n)\right|
@@ -72,9 +72,47 @@ Bei der Zero Crossing Rate werden die Auftreten von Vorzeichenwechseln innerhalb
 \subsubsection{Fast Fourier Transformation (FFT)}\label{subsubsec:fft}
 
 Unter dem Begriff \textit{Fast Fourier Transformation} werden werden Algorithmen zusammengefasst, die eine schnelle und effiziente Berechnung von \textit{diskreten Fourier-Transformationen (DFT)} bieten. Diese effizienten Algorithmen kann man im wesentlichen in zwei Gruppen unterteilen, diejenigen die mit Zeitzerlegung (\textbf{\ref{ph:dit}}) und diejenigen die mit Frequenzzerlegung (\textbf{\ref{ph:dif}}) arbeiten.\\
-Für beide Gruppen von Algorithmen wird immer eine Operation benötigt, die entweder die Eingänge oder die Ausgänge in einer bestimmten Form sortiert. Diese Operation wird als \textit{Bitumkehrordnung} oder engl. \textit{bit-reversed order} bezeichnet (\textbf{\ref{ph:bit}}).\cite{Opp1999}
+Für beide Gruppen von Algorithmen wird immer eine Operation benötigt, die entweder die Eingänge oder die Ausgänge in einer bestimmten Form sortiert. Diese Operation wird als \textit{Bitumkehrordnung} oder engl. \textit{bit-reversed order} bezeichnet (\textbf{\ref{ph:bit}})\cite{Opp1999}.
 
 \paragraph{FFT mit Zeitzerlegung (DIT)}\label{ph:dit}$\;$ \\
+
+Bei einer FFT mit Zeitzerlegung wird durch Ausnutzen der Symmetrie- und Periodizitätseigenschaften der komplexen Exponenzialfolge $W^{kn}_N= e^{j\left(\frac{2\pi}{N}\right)kn}$ das Signal $x(n)$ in immer kleiner werdende Teilfolgen zerlegt. Im ersten Schritt einer solche Zerlegung werden gerade und ungerade Indizes getrennt, so dass zwei Teilfolgen entstehen (\textbf{Formel \ref{eqn:dit1}}).
+
+\begin{equation}
+	\label{eqn:dit1}			   
+	X[k]~=~ \sum_{n gerade} x[n]W^{nk}_N~+~ \sum_{n ungerade} x[n]W^{nk}_N
+\end{equation}
+
+Substituiert man nun $n = 2r$ für die gerade und $n=2r+1$ für die ungerade Teilfolge, so entsteht \textbf{Formel \ref{eqn:dit2}}.
+
+\begin{equation}
+	\label{eqn:dit2}
+	\begin{split}			   
+	X[k]~=~ \sum^{(N/2)-1}_{r = 0} x[2r]W^{2rk}_N~+~ \sum^{(N/2)-1}_{r = 0} x[2r+1]W^{(2r+1)k}_N \\
+	~=~\sum^{(N/2)-1}_{r = 0} x[2r](W^2_N)^{rk}~+~ \sum^{(N/2)-1}_{r = 0} x[2r+1](W^2_N)^{rk} 
+	\end{split}
+\end{equation}
+
+Da $W^2_N=W_{N/2}$ gilt kann man \textbf{Formel \ref{eqn:dit2}} vereinfachen zu \textbf{Formel \ref{eqn:dit3}}.
+
+\begin{align}
+	\label{eqn:dit3}			   
+	X[k]~=~ \sum^{(N/2)-1}_{r = 0} x[2r]W^{rk}_{N/2}~+~ W^k_N\sum^{(N/2)-1}_{r = 0} x[2r+1]W^{rk}_{N/2} \\
+	~=~G[k]~+~W^k_NH[k]
+\end{align}
+
+Eine ähnliche Vereinfachung kann nun für beide Teilfolgen durchgeführt werden, bis am ende nur noch 2-Punkt DFTs durchgeführt werden müssen.\\
+Diese 2-Punkt DFTs führen zu einem Signalflussgraph, wie er in \textbf{Abbildung \ref{fig:BF-DIT}} dargestellt ist.
+
+\begin{figure}[ht]
+	\centering
+		\includegraphics{../Pictures/BF-DIT.pdf}
+	\caption{Signalflussgraph eines vereinfachten Butterfly einer DIT\cite{Opp1999}}
+	\label{fig:BF-DIT}
+\end{figure}
+
+Aufgrund der Form dieses Signalflussgraphen wird die dargestellte Operation als \textit{Butterfly} bezeichnet. Der vollständige Signalflussgraph einer 8-Punkte DFT mit Zeitzerlegung ist in \textbf{Abbildung \ref{fig:dit}} zu sehen\cite{Opp1999}.
+
 
 \begin{figure}[ht]
 	\centering
@@ -84,6 +122,73 @@ Für beide Gruppen von Algorithmen wird immer eine Operation benötigt, die entwed
 \end{figure}
 
 \paragraph{FFT mit Frequenzzerlegung (DIF)}\label{ph:dif}$\;$ \\
+
+Alternativ zur Zeitzerlegung einer FFT kann auch eine Zerlegung der Ausgangsfolge $X[k]$ durchgeführt werden, welche als Frequenzzerlegung bezeichnet wird. Hierbei werden wie in \textbf{(\ref{ph:dit})} im ersten Schritt aus der Folge $X[k]$ (\textbf{Formel \ref{eqn:dif1}}) Teilfolgen mit geraden und ungeraden Indizes gebildet (\textbf{Formel \ref{eqn:dif2}}).
+
+\begin{equation}
+	\label{eqn:dif1}
+	X[k]~=~\sum^{N-1}_{n=0}x[n]W^{nk}_N, ~k=0,1,...,N-1	
+\end{equation}
+
+\begin{equation}
+	\label{eqn:dif2}
+	\begin{split}
+	X[2r]~=~\sum^{N-1}_{n=0}x[n]W^{n(2r)}_N, ~r=0,1,...,\frac{N}{2}-1	\\
+	X[2r+1]~=~\sum^{N-1}_{n=0}x[n]W^{n(2r+1)}_N, ~r=0,1,...,\frac{N}{2}-1	
+	\end{split}
+\end{equation}
+
+Diese beiden Folgen können auch in der in \textbf{Formel \ref{eqn:dif3}} dargestellten Form geschrieben werden.
+
+\begin{subequations}
+	\label{eqn:dif3}
+	\begin{align}
+		X[2r]~=~\sum^{(N/2)-1}_{n=0}x[n]W^{2nr}_N~+~\sum^{N-1}_{n=N/2}x[n]W^{2nr}_N\label{eqn:dif3a}\\
+		X[2r+1]~=~\sum^{(N/2)-1}_{n=0}x[n]W^{n(2r+1)}_N~+~\sum^{N-1}_{n=N/2}x[n]W^{n(2r+1)}_N\label{eqn:dif3b}
+ 	\end{align}
+\end{subequations}
+
+Führt man an den zweiten Summen der \textbf{Formel \ref{eqn:dif3}} eine Variablensubstitution durch so er gibt sich für (\textbf{\ref{eqn:dif3a}}):
+
+\begin{equation}
+	\label{eqn:dif4}
+	X[2r]~=~\sum^{(N/2)-1}_{n=0}x[n]W^{2nr}_N~+~\sum^{(N/2)-1}_{n=0}x[n+(N/2)]W^{2r(n+(N/2)}_N
+\end{equation}
+
+Und für die zweite Sumem aus (\textbf{\ref{eqn:dif3b}}):
+
+\begin{equation}
+	\label{eqn:dif5}
+	\begin{split}
+		\sum^{N-1}_{n=N/2}x[n]W^{n(2r+1)}_N ~=~ \sum^{(N/2)-1}_{n=0}x[n+(N/2)]W^{[n+(n/2)](2r+1)}_N \\
+		=~W^{(N/2)(2r+1)}_N \sum^{(n/2)-1}_{n=0}x[n+(N/2)]W^{n(2r+1)}_N \\
+		=~-\sum^{(N/2)-1}_{n=0}x[n+(N/2)]W^{n(2r+1)}_N 
+	\end{split}
+\end{equation}
+
+Die letzte Umformung aus \textbf{Formel \ref{eqn:dif5}} verwendet die Tatsache, dass $W^{(N/2)2r}_N=1$ und $W^{(N/2)}_N=0$ gilt.\\
+Fasst man nun jeweils die Summationen der beiden Teilfolgen zusammen und nutzt wie in (\textbf{\ref{ph:dit}})$W^2_N=W_{N/2}$, kann man die Teilfolgen auch wie in \textbf{Formel \ref{eqn:dif6}} darstellen.
+
+\begin{equation}
+	\label{eqn:dif6}
+	\begin{split}
+		X[2r]~=~\sum^{(N/2)-1}_{n=0}(x[n]+x[n+(N/2)])W^{rn}_{N/2}, ~r=0,1,...,\frac{N}{2}-1 \\
+		X[2r+1]~=~\sum^{(N/2)-1}_{n=0}(x[n]+x[n+(N/2)])W^{rn}_{N/2}W^n_N, ~r=0,1,...,\frac{N}{2}-1
+	\end{split}
+\end{equation}
+
+In \textbf{Abbildung \ref{fig:BF-DIF}} ist der aus \textbf{Formel \ref{eqn:dif6}} abgeleitete Signalflussgraph der \textit{Butterfly}-Operation zu sehen und \textbf{Abbildung \ref{fig:dif}} zeigt den vollständigen Signalflussgraph einer 8-Punkte DFT nach Frequenzzerlegung\cite{Opp1999}.
+
+
+
+
+
+\begin{figure}[ht]
+	\centering
+		\includegraphics{../Pictures/BF-DIF.pdf}
+	\caption{Signalflussgraph eines vereinfachten Butterfly einer DIF\cite{Opp1999}}
+	\label{fig:BF-DIF}
+\end{figure}
 
 \begin{figure}[ht]
 	\centering
@@ -129,11 +234,11 @@ Z.B. für Vierteltöne gilt
 
 \[p(k)~=~\left\lfloor 24~log_{2}\left(\frac{2k}{N}\frac{f_{s}}{f_{1}}\right) \right\rfloor~mod~24\textrm{ und }f_{1}~=~440~Hz \]
 
-Für Halbtöne müsste 24 durch 12 ersetzt werden.\cite{haller2008}\cite{Theimer2008}
+Für Halbtöne müsste 24 durch 12 ersetzt werden\cite{haller2008}\cite{Theimer2008}.
 
 \subsubsection{Amplitude Of Maximum In Chromagram}\label{subsubsec:aomic}
 
-Die maximale Amplitude des Chromagrams gibt den maximalen Chroma Vektor an und stellt daher die Stärke eines Tons in verschiedenen Oktavstufen dar (\textbf{Formel \ref{eqn:aomic}}).\cite{haller2008}\cite{Theimer2008}
+Die maximale Amplitude des Chromagrams gibt den maximalen Chroma Vektor an und stellt daher die Stärke eines Tons in verschiedenen Oktavstufen dar (\textbf{Formel \ref{eqn:aomic}})\cite{haller2008}\cite{Theimer2008}.
 
 \begin{equation}
 	\label{eqn:aomic}			   
@@ -182,7 +287,7 @@ Hierbei ist $\alpha$ ein Nachbarschaftsfactor, der in der Literatur mit 0,2 ange
 	\label{eqn:oscsc}			   	
 	SC(b)~=~Peak(b)~-~Valley(b)
 \end{equation}
-Und der resultierende Featurevektor $x_{OSC}$ abschließend aus den Valleys und spektralen Kontrasten eines Auioframes (\textbf{Formel \ref{eqn:osc}}).\cite{Lee2009}
+Und der resultierende Featurevektor $x_{OSC}$ abschließend aus den Valleys und spektralen Kontrasten eines Auioframes (\textbf{Formel \ref{eqn:osc}})\cite{Lee2009}.
 
 \begin{equation}
 	\label{eqn:osc}			   	
@@ -191,7 +296,7 @@ Und der resultierende Featurevektor $x_{OSC}$ abschließend aus den Valleys und s
 
 \subsubsection{Power Spectrum}\label{subsubsec:ps}
 
-Das Power Spectrum berechnet sich indem man den Logarithmus des Amplitudenspektrums berechnet (\textbf{Formel \ref{eqn:ps}}).\cite{haller2008}
+Das Power Spectrum berechnet sich indem man den Logarithmus des Amplitudenspektrums berechnet (\textbf{Formel \ref{eqn:ps}})\cite{haller2008}.
 
 \begin{equation}
 	\label{eqn:ps}			   	
@@ -202,7 +307,7 @@ Das Power Spectrum berechnet sich indem man den Logarithmus des Amplitudenspektr
 
 \subsubsection{Spectral Centroid}\label{subsubsec:sc}
 
-Der Spectral Centroid gibt den Schwerpunkt des Amplitudenspektrums des Signals an (\textbf{Formel \ref{eqn:sc}}).\cite{haller2008}\cite{Theimer2008}
+Der Spectral Centroid gibt den Schwerpunkt des Amplitudenspektrums des Signals an (\textbf{Formel \ref{eqn:sc}})\cite{haller2008}\cite{Theimer2008}.
 
 \begin{equation}
 	\label{eqn:sc}			   	S_{centroid}~=~\frac{\sum\limits^{\frac{K}{2}-1}_{k=0}k~A(k)}{\sum\limits^{\frac{K}{2}-1}_{k=0}A(k)} 
@@ -211,14 +316,14 @@ Der Spectral Centroid gibt den Schwerpunkt des Amplitudenspektrums des Signals a
 \subsubsection{Spectral Crest Factor}\label{subsubsec:scf}
 
 Der Spectral Crest Factor stellt ein Maß der spectralen Flachheit eines Frequenzbandes dar und ist im Wertebereich $\left[1,\infty\right]$ definiert. Hierbei bedeutet 1, dass alle spectral Ampilituden gleich sind und $\infty$ das garkeine Flachheit existiert (\textbf{Formel \ref{eqn:scf}}).\\
-Dieser Factor wird auf folgenden Frequenzbändern berechnet:
+Dieser Factor wird auf folgenden Frequenzbändern berechnet\cite{Theimer2008}:
 \begin{itemize}
 	\item 250 - 500 Hz ($k_{1l}$ - $K_{1u}$)
 	\item 500 - 1000 Hz ($k_{2l}$ - $K_{2u}$)
 	\item 1000 - 2000 Hz ($k_{3l}$ - $K_{3u}$)
 	\item 2000 - 4000 Hz ($k_{4l}$ - $K_{4u}$)
 \end{itemize}
-\cite{Theimer2008}
+
 
 \begin{equation}
 	\label{eqn:scf}			   
@@ -227,7 +332,7 @@ Dieser Factor wird auf folgenden Frequenzbändern berechnet:
 
 \subsubsection{Spectral Flux}\label{subsubsec:sf}
 
-Der Spectral Flux ist definiert als die quadrierte Differenz zwischen den normalisierten Betragsspektren von zwei aufeinander folgenden Zeitfenstern (\textbf{Formel \ref{eqn:sf}}).\cite{haller2008}\cite{Theimer2008}
+Der Spectral Flux ist definiert als die quadrierte Differenz zwischen den normalisierten Betragsspektren von zwei aufeinander folgenden Zeitfenstern (\textbf{Formel \ref{eqn:sf}})\cite{haller2008}\cite{Theimer2008}.
 
 \begin{equation}
 	\label{eqn:sf}			   
@@ -237,7 +342,7 @@ Der Spectral Flux ist definiert als die quadrierte Differenz zwischen den normal
 
 \subsubsection{Spectral Rolloff}\label{subsubsec:sr}
 
-Als Spectral Rolloff bezeichnet man der Frequenzwert ($k_{rolloff}$) unter dem sich eine bestimmte Prozentzahl ($p_{rolloff}$) der Spektralwerte konzentrieren (\textbf{Formel \ref{eqn:sr}}). \cite{haller2008}\cite{Tza2002}
+Als Spectral Rolloff bezeichnet man der Frequenzwert ($k_{rolloff}$) unter dem sich eine bestimmte Prozentzahl ($p_{rolloff}$) der Spektralwerte konzentrieren (\textbf{Formel \ref{eqn:sr}})\cite{haller2008}\cite{Tza2002}. 
 
 \begin{equation}
 	\label{eqn:sr}			   
@@ -246,7 +351,7 @@ Als Spectral Rolloff bezeichnet man der Frequenzwert ($k_{rolloff}$) unter dem s
 
 \subsubsection{Sub-Band Energy Ratio}\label{subsubsec:sber}
 
-Die Sub-Band Energy Ratio gibt die Verteilung der Spektralenergy auf die Frequenzintervalle $\left[0,\frac{f_s}{16}\right)$,$\left[\frac{f_s}{16},\frac{f_s}{8}\right)$,$\left[\frac{f_s}{8},\frac{f_s}{4}\right)$ und $\left[\frac{f_s}{4},\frac{f_s}{2}\right)$ an und kann in Indexbereiche $\left[0,\frac{K}{16}\right)$,$\left[\frac{K}{16},\frac{K}{8}\right)$,$\left[\frac{K}{8},\frac{K}{4}\right)$ und $\left[\frac{K}{4},\frac{K}{2}\right)$ überführt werden (\textbf{Formel \ref{eqn:sber}}).\cite{Theimer2008}
+Die Sub-Band Energy Ratio gibt die Verteilung der Spektralenergy auf die Frequenzintervalle $\left[0,\frac{f_s}{16}\right)$,$\left[\frac{f_s}{16},\frac{f_s}{8}\right)$,$\left[\frac{f_s}{8},\frac{f_s}{4}\right)$ und $\left[\frac{f_s}{4},\frac{f_s}{2}\right)$ an und kann in Indexbereiche $\left[0,\frac{K}{16}\right)$,$\left[\frac{K}{16},\frac{K}{8}\right)$,$\left[\frac{K}{8},\frac{K}{4}\right)$ und $\left[\frac{K}{4},\frac{K}{2}\right)$ überführt werden (\textbf{Formel \ref{eqn:sber}})\cite{Theimer2008}.
 
 \begin{equation}
 	\label{eqn:sber}			   
