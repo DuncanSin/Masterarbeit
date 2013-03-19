@@ -1,7 +1,7 @@
 <commandList>
 	<command name="setClassificationConfig" type="SVM" mode="train" enabled="1">
 		<files>
-			<file name="/home/root/performance/refsets/fset1ref.arff"/>
+			<file name="/home/root/performance/refsets/fset4ref.arff"/>
 		</files>
 		<labelInfo name="/home/root/performance/tracks.csv"/>
 	</command>
@@ -14,6 +14,6 @@
 </commandList>
 
 Opened /home/root/performance/tracks.csv
-Opened /home/root/performance/refsets/fset1ref.arff
-Time to perform SVM (train): 1.85 seconds (1 times with 1000 training vectors)
-Time to perform SVM (classify): 255.14 seconds (100000 times with 1000 training vectors)
+Opened /home/root/performance/refsets/fset4ref.arff
+Time to perform SVM (train): 7.49 seconds (1 times with 1000 training vectors)
+Time to perform SVM (classify): 9.24 seconds (1000 times with 1000 training vectors)
