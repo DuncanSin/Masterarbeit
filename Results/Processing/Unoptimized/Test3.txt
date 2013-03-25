@@ -17,7 +17,7 @@
 	</command>
 	<command name="setExtractionConfig" outputLocation="" enabled="1" startPos="0" endPos="1" N="512" Nhop="512">
 		<files>
-			<file name="/home/root/blues.00000.au"/>
+			<file name="../../blues.00000.au"/>
 		</files>
 	</command>
 	<command name="setProcessingConfig" outputLocation="" keepInternal="0" enabled="1"/>
@@ -25,13 +25,13 @@
 	<command name="getProcessingPerformance" complete="1"/>
 </commandList>
 
-Opened /home/root/blues.00000.au
-start extraction File /home/root/blues.00000.au
-<info name="start extraction File /home/root/blues.00000.au"/>
+Opened ../../blues.00000.au
+start extraction File ../../blues.00000.au
+<info name="start extraction File ../../blues.00000.au"/>
 extraction started
 extraction finished
 generate feature vector
 <signal name="ready"/>
 Time to process features: 
-=> 23.17 ms (1293 windows)
-=> 17.9196 ms (1000 windows)
+=> 23.19 ms (1293 windows)
+=> 17.935 ms (1000 windows)
