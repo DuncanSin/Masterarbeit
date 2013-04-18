@@ -179,10 +179,6 @@ Fasst man nun jeweils die Summationen der beiden Teilfolgen zusammen und nutzt w
 
 In \textbf{Abbildung \ref{fig:BF-DIF}} ist der aus \textbf{Formel \ref{eqn:dif6}} abgeleitete Signalflussgraph der \textit{Butterfly}-Operation zu sehen und \textbf{Abbildung \ref{fig:dif}} zeigt den vollständigen Signalflussgraph einer 8-Punkte DFT nach Frequenzzerlegung\cite{Opp1999}.
 
-
-
-
-
 \begin{figure}[ht]
 	\centering
 		\includegraphics{../Pictures/BF-DIF.pdf}
@@ -247,9 +243,86 @@ Die maximale Amplitude des Chromagrams gibt den maximalen Chroma Vektor an und s
 
 \subsubsection{Mel Frequency Cepstral Coefficients (MFCC)}\label{subsubsec:mfcc}
 
+Das Cepstrum ist definiert als die Fouriertransformation (oder die DCT) des logerithmierten Amplitudenspektrums.\\
+Normalerweise wird ein Cepstrum auf der Basis des Frequenzspektrums berechnet, für die Berechnung der MFCC wird allerdings das Mel-Band zugrunde gelegt. Das Mel-Band basiert auf der Mel-Skala, die als psychoakustische Maßeinheit definiert ist. Wird zum Beispiel eine Fequenz als doppelt so hoch wahrgenommen wie eine festgelegte Referenzfrequenz, so wird auf der Mel-Skala diesem auch der doppelte Wert dieser Referenzfrequenz zugewiesen. Die hierfür verwendete Referenzfrequenz liegt bei 1000 Hz.\\
+Soll nun eine Frequenz $f$ in den zugehörigen Mel-Wert $m$ umrechnen werden, wird hierfür die \textbf{Formel \ref{eqn:mel}} verwendet.
+
+\begin{equation}
+	\label{eqn:mel}			   
+	m~=~2595 \log_{10} \left(1+\frac{f}{700}\right)
+\end{equation}
+
+Für die Berechnung der MFCC wird in 4 Schritten durchgeführt.\\
+Als Erstes wird wie bei allen Features des Frequenzbereiches die Spektralkomponenten durch eine Fouriertransformation berechnet. Der zweite Schritt besteht in einer Bandpassfilterung dieser Spektralkomponenten nach \textbf{Formel \ref{eqn:melm}}.
+
+\begin{equation}
+	\label{eqn:melm}			   
+	M(k')~=~\sum\limits^{\frac{K}{2}-1}_{k=0}A(k)\cdots w_{k'}(k)
+\end{equation}
+
+Hierbei beschreibt $w_{k'}(k)$ Dreiecksfenster, deren Breite für wachsendes $k$ zunehmen. Im Normalfall wird für diese Transformation in das Mel-Band 12 oder 24 Dreiecksfenster verwendet, wobei die Anzahl der Dreiecksfenster gleichzeitig die Auflösung der Transformation beschreibt.\\
+Im nächsten Schritt wird der Logerithmus von $M(k')$ gebildet. Letztendlich wird zur Berechnung der MFCC eine Diskrete Cosinuns Transformation (DCT) durchgeführt.\\
+Wird die Bandpassfilterung mit 12 Dreiecksfenstern durchgeführt, liefert dieser Algorithmus einen Ergebnisvektor mit 13 Komponenten \cite{Lee2009}\cite{haller2008}\cite{Theimer2008}. 
+
 \subsubsection{Normalized Audio Spectrum Envelope}\label{subsubsec:nase}
 
+Der Normalized Audio Spectrum Envelope (NASE) gibt Auskunft über das Energiespekturm jedes Fensters. Hierbei wird pro Fenster ein Vektor generiert, bei dem jedes Vektorelement die normalisierte, quadrierte Magnitude eines definierten Frequenz-Unterbandes entspricht.\\
+Die Frequenz-Unterbänder spannen sich logarithmisch zwischen 62.4 Hz ("`loEdge"') und 16 kHz ("`hiEdge"') über 8 Oktaven. Die Anzahl $B$ von Unterbändern wird hierbei mit
 
+\begin{equation}
+	\label{eqn:naseb}			   
+	B~=~\frac{8}{r}
+\end{equation}
+berechnet, wobei $r$ für die Spektralauflösung steht und 
+
+\begin{equation}
+	\label{eqn:naser}			   
+	r~=~2^j Oktaven,~-4\leq j \leq 3
+\end{equation}
+gilt (vgl. \textbf{Abbildung \ref{fig:nase}}).
+
+\begin{figure}[htbp]
+	\centering
+		\includegraphics[width=1.00\textwidth]{../Pictures/NASE-coeff.pdf}
+	\caption{NASE Unterbänder für eine spektrale Auflösung von $\frac{1}{2}$ \cite{Lee2009}}
+	\label{fig:nase}
+\end{figure}
+
+Die Berechnung der einzelnen NASE-Werte erfolg hierbei in drei Schritten.\\
+Als erstes wird für jedes Unterband $b$ der Audio Spectral Envelope (ASE) nach der in \textbf{Formel \ref{eqn:ase}} gegebenen Formel berechnet.
+
+\begin{equation}
+	\label{eqn:ase}			   
+	ASE(b)~=~\sum^{hiKb}_{k=loKb}P(k),~0\leq b \leq B+1
+\end{equation}
+
+Danach werden diese ASE-Werte nach \textbf{Formel \ref{eqn:asedb}} in Dezibelwerte umgerechnet.
+
+\begin{equation}
+	\label{eqn:asedb}			   
+	ASE_{dB}(b)~=~10\log_{10}(1+ASE(b)),~0 \leq b \leq B+1
+\end{equation}
+
+Anschließend wird aus diesen Werten der NASE-Wert für die einzelnen Unterbänder $b$ berechnet (\textbf{Formel \ref{eqn:nase}}).
+
+\begin{equation}
+	\label{eqn:nase}			   
+	NASE(b)~=~\frac{ASE_{dB}(b)}{R},~0\leq b \leq B+1
+\end{equation}
+
+Hierbei steht $R$ für den normierten RMS-Wert, der nach \textbf{Formel \ref{eqn:naserms}} berechnet wird.
+
+\begin{equation}
+	\label{eqn:naserms}			   
+	R~=~\sqrt{\sum^{B+1}_{b=0}\left(ASE_{dB}(b)\right)^2}
+\end{equation}
+
+Aus den einzelnen NASE-Werten der einzelnen Unterbänder wird abschließend der Ergebnisvektor $X_{NASE}$ gebildet (\textbf{Formel \ref{eqn:nasex}})\cite{Lee2009}.
+
+\begin{equation}
+	\label{eqn:nasex}			   
+	x_{NASE}~=~\left[R,NASE(0),NASE(1),...,NASE(B+1)\right]^T
+\end{equation}
 
 \subsubsection{Octave Spectral Contrast}\label{subsubsec:osc}
 
