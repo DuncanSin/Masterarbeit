@@ -217,6 +217,15 @@ Dieses Prinzip soll in \textbf{Tabelle \ref{tab:bit}} für 8-Bit lange Indizes ve
 	\label{tab:bit}
 \end{table}
 
+\subsubsection{Amplitude of Spectrum}\label{subsubsec:aos}
+Bei der Amplitude of Spectrum wird werden die normalisierten Spektrakomponenten eines Fenster berechnet. \\
+Hierfür wird zu erst der Betrag der diskreten Transformierten berechnet, der dannach durch die Größe des betrachteten Fensters geteilt wird (\textbf{Formel \ref{eqn:aos}}).
+
+\begin{equation}
+	\label{eqn:aos}			   
+	A(k)~=~\frac{\sqrt{\Re\left[X(k)\right]^2+\Im\left[X(k)\right]^2}}{N}
+\end{equation}
+
 \subsubsection{Chroma Vektor}\label{subsubsec:cv}
 
 Der Chroma Vektor fasst alle Spektralkomponenten einer Tonhöhe zusammen und fasst alle Frequenzen zu einer Oktave zusammen. Hierbei werden alle spektralen Amplituden des gleichen Halb- oder Vierteltons aufsummiert (\textbf{Formel \ref{eqn:cv}}).
@@ -240,8 +249,6 @@ Die maximale Amplitude des Chromagrams gibt den maximalen Chroma Vektor an und s
 	\label{eqn:aomic}			   
 	A_{maxchroma}~=~\max_{\widetilde{k}}~A_{chroma}\left(\widetilde{k}\right)
 \end{equation}
-
-\subsubsection{Amplitude of Spectrum}\label{subsubsec:aos}
 
 \subsubsection{Mel Frequency Cepstral Coefficients (MFCC)}\label{subsubsec:mfcc}
 
