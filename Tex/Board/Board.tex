@@ -7,15 +7,18 @@ Dieses Board kann mit Hilfe eines DM816x (DaVinci\texttrademark) ARM-Prozessors 
 
 
 \section{Aufbau des EVM8168} \label{sec:evm816}
-Wie in \cite{spec} beschrieben bietet das EVM8168-Entwicklungsboard eine Standalone-Plattform um Programme für DaVinci\texttrademark, Integra\texttrademark~oder Sitara\texttrademark~Prozessoren der Firma Texas Instruments zu entwickeln und zu debuggen. Hierfür sind neben dem DaVinci\texttrademark~noch weitere On-Board Perepherie auf dem Board aufgebracht, die im folgenden teilweise näher erklärt werden sollen.
+Wie in \cite{spec} beschrieben bietet das EVM816x-Entwicklungsboard eine Standalone-Plattform um Programme für DaVinci\texttrademark, Integra\texttrademark~oder Sitara\texttrademark~Prozessoren der Firma Texas Instruments zu entwickeln und zu debuggen. Hierfür sind neben dem DaVinci\texttrademark~noch weitere On-Board Perepherie auf dem Board aufgebracht, die im folgenden teilweise näher erklärt werden sollen.
 Das EVM8168-Board hat unteranderem folgende Komponenten integiert:
 
 \begin{itemize}
-	\item DM8168- (DaVinci\texttrademark-)ARMprozessor (\textbf{Kapitel~\ref{sec:davinci}}) mit NEON-Einheit (\textbf{Kapitel~\ref{subsec:neon}}) und DSP (\textbf{Kapitel~\ref{subsec:dsp}})
+	\item DM816x- (DaVinci\texttrademark-)ARMprozessor (\textbf{Kapitel~\ref{sec:davinci}}) mit NEON-Einheit (\textbf{Kapitel~\ref{subsec:neon}}) und DSP (\textbf{Kapitel~\ref{subsec:dsp}})
+	\item 1 GB DDR3-RAM
+	\item AC31061-Audiochip
 	\item Gigabit Ethernet
 	\item HDMI
 	\item VGA
 	\item USB
+
 \end{itemize}
 
 \textbf{Abbildung~\ref{fig:top_ti816x_evm}} zeigt eine Draufsicht auf das Entwicklungsboard und die unterhalb dessen angebrachte Daughtercard mit weiteren Anschlussmöglichkeiten.
@@ -30,5 +33,32 @@ Das EVM8168-Board hat unteranderem folgende Komponenten integiert:
 
 
 \section{Der DaVinci\texttrademark}\label{sec:davinci}
+Bei dem auf dem EVM816x verwendeten ARM-Prozessor DM816x handelt es sich um einen eigentlich für die Videoprozessirung optimierten Prozessor der DaVinci\texttrademark-Familie von Texas Instruments.\\
+Der DM816x ist ein Dualcore-Prozessor, der aus einer heterogenen Architektur basiert. \\
+Zum einen enthält dieser einen ARM\textregistered Cortex\texttrademark-A8 Risc Prozessor mit bis zu 1,35 GHz Taktung, welcher auf der ARMv7 Architektur basiert, was bedeutet, dass es sich um einen superscalaren Prozessorkern handelt und er der NEON\texttrademark Multimedia Architektur entspricht. Dieser besitzt 32K-Byte Instruction- und Datacaches, sowie einen 256K-Byte großen L2 Cache. Desweiteren sind noch 64K-RAM und 48K-Byte Boot ROM vorhanden.\\
+Als zweiter Prozessorkern enhält der DM816x einen C674x VLIW DSP mit bis zu 1,125 GHz Taktung. Das besondere An diesem DSP ist, dass der vollständig softwarekompatipel mit DSPs der C67x+\texttrademark und C64x+\texttrademark Reihen von Texas Instruments ist (näheres in \textbf{\ref{subsec:dsp}})\cite{evm8168}.
+
 \subsection{Die NEON-Einheit}\label{subsec:neon}
 \subsection{Der C674x-DSP-Prozessor}\label{subsec:dsp}
+
+Der C674x ist ein Floting-Point VLIW DSP mit 64 General-Purpose Registern mit je 32-Bit. Er besitzt sechs ALU Funktionseinheiten mit 32 und 40 Bit. Er unterstützt 32-Bit Floating Point Integer mit IEEE Single Precision (SP 32-Bit) und IEEE Double Precision (DP 64-Bit). Auf diesen schafft er bis zu vier SP Adds pro Takt und vier DP Adds alle zwei Takte, desweiteren kann er bis zu zwei Floting-Point approximierte reziproke oder quadratische Wurzeln pro Takt in SP oder DP berechnen.\\
+Außerdem besitzt er zwei Multiplizierer, entweder gemischtpräzise Floting-Point oder Fixed-Point Integer berechenn können. Im Floating-Point-Modus schaffen diese folgende Berechnungen in den angegebenen Takten:
+
+\begin{itemize}
+	\item $2~SP \times SP~\rightarrow~ SP~pro~Takt$
+	\item $2~SP \times SP~\rightarrow~ DP~pro~zwei~Takte$
+	\item $2~SP \times DP~\rightarrow~ DP~pro~drei~Takte$
+	\item $2~DP \times DP~\rightarrow~ DP~pro~vier~Takte$
+\end{itemize}
+
+Im Fixed-Point-Modus sind zwei 32x32, vier 16x16 oder acht 8x8 Multiplizierungen pro Takt möglich.\\
+Die Speicherarchitektur des C674x besteht aus zwei Ebenen, auf der Ersten sind 32K-Byte L1P und L1D RAM und Cache, auf der Zweiten 256K-Byte L2 RAM und Caches.\\
+In der hier vorliegenden Architektur fungiert der DSP als Slave-Prozessor \cite{evm8168}.\\
+Das Blockdiagramm des C674x kann \textbf{Abildung \ref{fig:bddsp}} entnommen werden.
+
+\begin{figure}[htbp]
+	\centering
+		\includegraphics[width=1.00\textwidth]{../Pictures/DSPBlock.pdf}
+	\caption{Blockdiagramm des C764x\cite{evm8168}}
+	\label{fig:bddsp}
+\end{figure}
