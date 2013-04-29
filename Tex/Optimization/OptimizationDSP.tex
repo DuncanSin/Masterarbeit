@@ -5,12 +5,12 @@
 In diesem Kapitel soll die Planung und Optimierung des DSP-Codes beschreiben werden.\\
 Wie bereits in \textbf{Kapitel \ref{sec:ansatz}} gezeigt wurde, nimmt die Extraktion der zu untersuchenden Features einen Großteil der Laufzeit des Programmes ein.
 Unter diesem Gesichtspunkt und der in \textbf{Kapitel \ref{sec:davinci}} gezeigten zugrundeliegenden heterogenen Architektur des zu betrachtenden Systems, liegt es nahe, die Extraktion auf dem DSP auszuführen.\\
-In den nun folgenden Abschnitten sollen daher, wie schon im vorhergehenden Kapitel erst die Bottlenecks identifiziert (\textbf{\ref{sec:ansatzdsp}}) und dannach die durchgeführten Optimierungen beschrieben werden (\textbf{\ref{sec:mathlib}} - \textbf{\ref{sec:compiler}}).
+In den nun folgenden Abschnitten sollen daher, wie schon im vorhergehenden Kapitel erst die Bottlenecks identifiziert (\textbf{\ref{sec:ansatzdsp}}) und danach die durchgeführten Optimierungen beschrieben werden (\textbf{\ref{sec:mathlib}} - \textbf{\ref{sec:compiler}}).
 
 \section{Bottlenecks des DSP-Codes}\label{sec:ansatzdsp}
 
 Für die Laufzeitmessungen des DSP-Codes wurden wie schon im vorherigen Kapitel die FeaturesSets 1-4 (\textbf{\ref{subsec:fset1}} - \textbf{\ref{subsec:fset4}}) verwendet.
-Die benötigen Zeiten wurden auch hier wieder mit der Gesammtzeit in verhältnis gesetzt, wodurch die aus \textbf{Abbildung \ref{fig:dsp}} zu entnehmenden Anteile der einzelnen Features an der Gesammtlaufzeit errechnet wurden.
+Die benötigen Zeiten wurden auch hier wieder mit der Gesamtzeit in Verhältnis gesetzt, wodurch die aus \textbf{Abbildung \ref{fig:dsp}} zu entnehmenden Anteile der einzelnen Features an der Gesamtlaufzeit errechnet wurden.
 
 \begin{figure}
 	\centering
@@ -19,7 +19,7 @@ Die benötigen Zeiten wurden auch hier wieder mit der Gesammtzeit in verhältnis g
 	\label{fig:dsp}
 \end{figure}
 
-Es ist deutlich zu erkennen, dass in den FeatureSets 1 - 2d und 4 \textit{Amplitude of Spectrum} (\textbf{\ref{subsubsec:aos}}) und im FeatureSet 3 \textit{Root Mean Square} (\textbf{\ref{subsubsec:rms}}) die meiste Laufzeit in Anspruch nehmen, teilweise mit Anteilen weit über 50\%. Da beide Features eigentlich nur aus Summationen, Divisionen und der Bildung von Quadratwurzeln bestehen, die Bestandteil der Standartbibliotheken sind, scheint bei der Ausführung von mathematischen Funktionen ein Bottleneck zu entstehen. Desweiteren ist zu sehen, dass auch bei der Umsetzung des Codes auf dem DSP ein weiterer Bottleneck bei der Ausführung der FFT zu bestehen scheint, da auch diese mit ca. 30\% der Ausführungszeit zu Buche schlägt.
+Es ist deutlich zu erkennen, dass in den FeatureSets 1 - 2d und 4 \textit{Amplitude of Spectrum} (\textbf{\ref{subsubsec:aos}}) und im FeatureSet 3 \textit{Root Mean Square} (\textbf{\ref{subsubsec:rms}}) die meiste Laufzeit in Anspruch nehmen, teilweise mit Anteilen weit über 50\%. Da beide Features eigentlich nur aus Summationen, Divisionen und der Bildung von Quadratwurzeln bestehen, die Bestandteil der Standartbibliotheken sind, scheint bei der Ausführung von mathematischen Funktionen ein Bottleneck zu entstehen. Des weiteren ist zu sehen, dass auch bei der Umsetzung des Codes auf dem DSP ein weiterer Bottleneck bei der Ausführung der FFT zu bestehen scheint, da auch diese mit ca. 30\% der Ausführungszeit zu Buche schlägt.
 
 \section{Optimierung der Rechenfunktionen mit MATHLIB}\label{sec:mathlib}
 

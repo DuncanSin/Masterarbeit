@@ -56,13 +56,13 @@ Die Laufzeitanteile der drei Programmteile \textit{Extraction}, \textit{Processi
 	\label{fig:ResultsMCL}
 \end{figure}
 
-Wie man leicht erkennen kann hat die Extraktion bei allen vier Featuresets mit teilweise weit über 80\% den größten Anteil an der Laufzeit des Programms, daher wird im Nachfolgenden die Extraktion noch etwas detailierter betrachtet werden. \\
-\textbf{Abbildung \ref{fig:ResultsExtraction}} zeigt die Anteile der einzelnen Features an der Gesammtlaufzeit der Extraktion. Hier soll daran erinnert werden, dass \textit{FSet1}, \textit{FSet2} und \textit{FSet4} aus Features bestehen, die aus dem Frequenzbereich stammen, wodurch vor der Extraktion erst eine Fourier-Transformation vom Zeitbereich in diesen stattfinden muss, weshalb als weiteres "`Feature"' die FFT in der Abbildung auftaucht. Desweiteren arbeitet das Feature \textit{Ampitude of Maximum In Chromagram}aus \textit{FSet4} auf dem in \textbf{Kapitel \ref{subsubsec:cv}} vorgestellten \textit{Chroma Vector}, was dazuführt, dass auch dieser in der Abbildung auftaucht.
+Wie man leicht erkennen kann hat die Extraktion bei allen vier Featuresets mit teilweise weit über 80\% den größten Anteil an der Laufzeit des Programms, daher wird im Nachfolgenden die Extraktion noch etwas detaillierter betrachtet werden. \\
+\textbf{Abbildung \ref{fig:ResultsExtraction}} zeigt die Anteile der einzelnen Features an der Gesamtlaufzeit der Extraktion. Hier soll daran erinnert werden, dass \textit{FSet1}, \textit{FSet2} und \textit{FSet4} aus Features bestehen, die aus dem Frequenzbereich stammen, wodurch vor der Extraktion erst eine Fourier-Transformation vom Zeitbereich in diesen stattfinden muss, weshalb als weiteres "`Feature"' die FFT in der Abbildung auftaucht. Des weiteren arbeitet das Feature \textit{Ampitude of Maximum In Chromagram} aus \textit{FSet4} auf dem in \textbf{Kapitel \ref{subsubsec:cv}} vorgestellten \textit{Chroma Vector}, was dazuführt, dass auch dieser in der Abbildung auftaucht.
 
 \begin{figure}[ht]
 	\centering
 		\includegraphics[width=1.00\textwidth]{../Pictures/ResultsExtraktion.pdf}
-	\caption{Detailierte Laufzeitenanteile der Extraktion ohne manuelle Optimierung}
+	\caption{Detaillierte Laufzeitenanteile der Extraktion ohne manuelle Optimierung}
 	\label{fig:ResultsExtraction}
 \end{figure}
 
@@ -72,16 +72,16 @@ Da sich gezeigt hat, dass die \textit{FFT} den größten Anteil an der Laufzeit ha
 
 \section{Optimierung der FFT}\label{sec:optFFT}
 Wie im vorherigen Abschnitt gezeigt wurde, nimmt die Berechnung der \textit{FFT} die größten Anteil an der Laufzeit ein. Außerdem wurde gezeigt, dass diese ein gutes Optimierungspotenzial hinsichtlich der NEON-Einheit besitzt. Da eine NEON-Optimierung des FFT-Codes viel Zeit in Anspruch nehmen könnte und bereits FFT-Bibliotheken verfügbar sind, die hinsichtlich der NEON-Einheit optimiert wurden, soll im folgenden eine dieser Bibliotheken beschrieben werden.\\
-Zu den Bibliotheken die NEON-optimierten FFT-Code bereitstellen, gehören unteranderem \textit{"`Fastest Fourier Transformation in the West"'}, \textit{"`Fastest Fourier Transformation in the South"'} , \textit{"`Cricket FFT"'} und \textit{"`Libav"'} (\textbf{\ref{subsec:libav}}). Da jede einzelne von sich selbst behauptet den schnellsten FFT-Code zu beinhalten, aber meistens keine Benchmarks vorhanden sind, wurde für diese Arbeit \textit{"`Libav"'} gewählt, da dieses die weitverbreitetste Bibliothek ist und auch in nahmenhaften Programmen, wie zum Beispiel dem \textit{VideoLan Player} eingesetzt wird \cite{vlc}.
+Zu den Bibliotheken die NEON-optimierten FFT-Code bereitstellen, gehören unter anderem \textit{"`Fastest Fourier Transformation in the West"'}, \textit{"`Fastest Fourier Transformation in the South"'} , \textit{"`Cricket FFT"'} und \textit{"`Libav"'} (\textbf{\ref{subsec:libav}}). Da jede einzelne von sich selbst behauptet den schnellsten FFT-Code zu beinhalten, aber meistens keine Benchmarks vorhanden sind, wurde für diese Arbeit \textit{"`Libav"'} gewählt, da dieses die weitverbreiteste Bibliothek ist und auch in namenhaften Programmen, wie zum Beispiel dem \textit{VideoLan Player} eingesetzt wird \cite{vlc}.
 
 \subsection{Libav}\label{subsec:libav}
 
 Libav beinhaltet nicht nur den in für diese Arbeit wichtigen FFT-Code, sondern bietet darüber hinaus weitere Algorithmen der Signalverarbeitung.\\
-Da darüber hinaus in Libav mehrere FFTs zur Verfügung gestellt werden, die für ganz unterschiedliche Systeme optimiert wurden, soll in diesem Kaptiel nur auf den für ARM-Prozessoren optimierten NEON-Code eingegangen werden. 
+Da darüber hinaus in Libav mehrere FFTs zur Verfügung gestellt werden, die für ganz unterschiedliche Systeme optimiert wurden, soll in diesem Kapitel nur auf den für ARM-Prozessoren optimierten NEON-Code eingegangen werden. 
 
 \subsubsection{Aufbau der FFT}\label{subsubsec:libavfft}
 
-Als erstes soll hier erwähnt werden, das Libav zwei Ansätze einer NEON-optimierten FFT zur Verfügung stellt. Neben der ind eiser Arbeit verwendeten floatingpoint Version ist auch noch eine fixpoint Version verfügbar.\\
+Als erstes soll hier erwähnt werden, das Libav zwei Ansätze einer NEON-optimierten FFT zur Verfügung stellt. Neben der in dieser Arbeit verwendeten floatingpoint Version ist auch noch eine fixpoint Version verfügbar.\\
  
 
 \subsubsection{Einbindung in den Code}\label{subsubsec:libavin}
