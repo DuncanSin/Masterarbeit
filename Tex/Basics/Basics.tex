@@ -132,25 +132,24 @@ Da $W^2_N=W_{N/2}$ gilt kann man \textbf{Formel \ref{eqn:dit2}} vereinfachen zu 
 \end{align}
 
 Eine ähnliche Vereinfachung kann nun für beide Teilfolgen durchgeführt werden, bis am ende nur noch 2-Punkt DFTs durchgeführt werden müssen.\\
-Diese 2-Punkt DFTs führen zu einem Signalflussgraph, wie er in \textbf{Abbildung \ref{fig:BF-DIT}} dargestellt ist.
-
+Diese 2-Punkt DFTs führen zu einem Signalflussgraph, wie er in \textbf{Abbildung \ref{fig:BF-DIT}} dargestellt ist.\\
+%
 \begin{figure}[ht]
 	\centering
 		\includegraphics{../Pictures/BF-DIT.pdf}
 	\caption{Signalflussgraph eines vereinfachten Butterfly einer DIT\cite{Opp1999}}
 	\label{fig:BF-DIT}
 \end{figure}
-
-Aufgrund der Form dieses Signalflussgraphen wird die dargestellte Operation als \textit{Butterfly} bezeichnet. Der vollständige Signalflussgraph einer 8-Punkte DFT mit Zeitzerlegung ist in \textbf{Abbildung \ref{fig:dit}} zu sehen\cite{Opp1999}.
-
-
+%
+Aufgrund der Form dieses Signalflussgraphen wird die dargestellte Operation als \textit{Butterfly} bezeichnet. Der vollständige Signalflussgraph einer 8-Punkte DFT mit Zeitzerlegung ist in \textbf{Abbildung \ref{fig:dit}} zu sehen\cite{Opp1999}.\\
+%
 \begin{figure}[ht]
 	\centering
 		\includegraphics{../Pictures/DIT.pdf}
 	\caption{Signalflussgraph einer 8-Punkte DFT mit Zeitzerlegung\cite{Opp1999}}
 	\label{fig:dit}
 \end{figure}
-
+%
 \paragraph{FFT mit Frequenzzerlegung (DIF)}\label{ph:dif}$\;$ \\
 
 Alternativ zur Zeitzerlegung einer FFT kann auch eine Zerlegung der Ausgangsfolge $X[k]$ durchgeführt werden, welche als Frequenzzerlegung bezeichnet wird. Hierbei werden wie in \textbf{(\ref{ph:dit})} im ersten Schritt aus der Folge $X[k]$ (\textbf{Formel \ref{eqn:dif1}}) Teilfolgen mit geraden und ungeraden Indizes gebildet (\textbf{Formel \ref{eqn:dif2}}).
@@ -207,28 +206,28 @@ Fasst man nun jeweils die Summationen der beiden Teilfolgen zusammen und nutzt w
 	\end{split}
 \end{equation}
 
-In \textbf{Abbildung \ref{fig:BF-DIF}} ist der aus \textbf{Formel \ref{eqn:dif6}} abgeleitete Signalflussgraph der \textit{Butterfly}-Operation zu sehen und \textbf{Abbildung \ref{fig:dif}} zeigt den vollständigen Signalflussgraph einer 8-Punkte DFT nach Frequenzzerlegung\cite{Opp1999}.
-
+In \textbf{Abbildung \ref{fig:BF-DIF}} ist der aus \textbf{Formel \ref{eqn:dif6}} abgeleitete Signalflussgraph der \textit{Butterfly}-Operation zu sehen und \textbf{Abbildung \ref{fig:dif}} zeigt den vollständigen Signalflussgraph einer 8-Punkte DFT nach Frequenzzerlegung\cite{Opp1999}.\\
+%
 \begin{figure}[ht]
 	\centering
 		\includegraphics{../Pictures/BF-DIF.pdf}
 	\caption{Signalflussgraph eines vereinfachten Butterfly einer DIF\cite{Opp1999}}
 	\label{fig:BF-DIF}
 \end{figure}
-
+%
 \begin{figure}[ht]
 	\centering
 		\includegraphics{../Pictures/DIF.pdf}
 	\caption{Signalflussgraph einer 8-Punkte DFT mit Frequenzzerlegung\cite{Opp1999}}
 	\label{fig:dif}
 \end{figure}
-
+%
 \paragraph{Bitumkehrungordnung (bit-reversed order)}\label{ph:bit}$\;$ \\
 
 Wie man in \textbf{Abbildung \ref{fig:dit}} und \textbf{Abbildung \ref{fig:dif}} gut erkennen kann, liegen entweder die Eingänge oder die Ausgänge in einer nicht numerisch sortierten Form vor. Diese Sortierung ergibt sich aus den in (\textbf{\ref{ph:dit}}) und (\textbf{\ref{ph:dif}}) gezeigten Algorithmen, diese folgt aber immer dem selben Schema.\\ 
 Es werden die Indizes des Ein- oder Ausgangs anhand ihrer Bits vom \textit{Least Significant Bit (LSB)} zum \textit{Most Significant Bit (MSB)} sortiert, so dass pro Ebene in der oberen Hälfte die Indizes stehen, die beim momentan betrachteten Bit eine 0 aufweisen.\\
-Dieses Prinzip soll in \textbf{Tabelle \ref{tab:bit}} für 8-Bit lange Indizes veranschaulicht werden.
-
+Dieses Prinzip soll in \textbf{Tabelle \ref{tab:bit}} für 8-Bit lange Indizes veranschaulicht werden.\\
+%
 \begin{table}[ht]
 	\centering
 		\begin{tabular}{c | c | c | c}
@@ -246,7 +245,7 @@ Dieses Prinzip soll in \textbf{Tabelle \ref{tab:bit}} für 8-Bit lange Indizes ve
 	\caption{Bitumkehrordnung für 8-Bit Indizes\cite{haller2008}}
 	\label{tab:bit}
 \end{table}
-
+%
 \subsubsection{Amplitude of Spectrum}\label{subsubsec:aos}
 Bei der Amplitude of Spectrum wird werden die normalisierten Spektralkomponenten eines Fenster berechnet. \\
 Hierfür wird zu erst der Betrag der diskreten Transformierten berechnet, der danach durch die Größe des betrachteten Fensters geteilt wird (\textbf{Formel \ref{eqn:aos}}).
@@ -365,8 +364,7 @@ Aus den einzelnen NASE-Werten der einzelnen Unterbänder wird abschließend der Er
 
 \subsubsection{Octave Spectral Contrast}\label{subsubsec:osc}
 
-Beim Octave Spectral Contrast wird das Frequenzspektrum als erstes via Bandpass-Filtern in Unterbänder aufgeteilt (siehe \textbf{Tabelle \ref{tab:osc}}), danach werden für jedes Unterband \textit{spektrale Peaks} (\textbf{Formel \ref{eqn:peak}}) und\textit{spektrale Valleys}(\textbf{Formel \ref{eqn:valley}}) berechnet, wobei Peaks den harmonischen Komponenten und Valleys nicht-harmonischen Komponenten oder Rauschen des Unterbandes $b$ entsprechen. Hierbei werden die Power Spektren $P_{b,n}$ vorher so sortiert, dass $P_{b,1}\geq P_{b,2}\geq ... \geq P_{b,n}$ gilt. 
-
+Beim Octave Spectral Contrast wird das Frequenzspektrum als erstes via Bandpass-Filtern in Unterbänder aufgeteilt (siehe \textbf{Tabelle \ref{tab:osc}}), danach werden für jedes Unterband \textit{spektrale Peaks} (\textbf{Formel \ref{eqn:peak}}) und\textit{spektrale Valleys}(\textbf{Formel \ref{eqn:valley}}) berechnet, wobei Peaks den harmonischen Komponenten und Valleys nicht-harmonischen Komponenten oder Rauschen des Unterbandes $b$ entsprechen. Hierbei werden die Power Spektren $P_{b,n}$ vorher so sortiert, dass $P_{b,1}\geq P_{b,2}\geq ... \geq P_{b,n}$ gilt.\\
 \begin{table}[ht]
 	\centering
 		\begin{tabular}{c | c}
@@ -387,7 +385,7 @@ Beim Octave Spectral Contrast wird das Frequenzspektrum als erstes via Bandpass-
 	\caption{Frequenzbereiche der Bandpass-Filter bei 44.1 kHz Samplingfrequenz\cite{Lee2009}}
 	\label{tab:osc}
 \end{table}
-
+%
 \begin{equation}
 	\label{eqn:peak}			   	
 	Peak(b)~=~\log\left(\frac{1}{\alpha N_b}\sum\limits^{\alpha N_b}_{i=1}P_{b,i}\right)

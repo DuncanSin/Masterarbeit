@@ -53,12 +53,29 @@ Außerdem besitzt er zwei Multiplizierer, entweder gemischt präzise Floating-Poin
 
 Im Fixed-Point-Modus sind zwei 32x32, vier 16x16 oder acht 8x8 Multiplizierungen pro Takt möglich.\\
 Die Speicherarchitektur des C674x besteht aus zwei Ebenen, auf der Ersten sind 32K-Byte L1P und L1D RAM und Cache, auf der Zweiten 256K-Byte L2 RAM und Caches.\\
-In der hier vorliegenden Architektur fungiert der DSP als Slave-Prozessor \cite{evm8168}.\\
-Das Blockdiagramm des C674x kann \textbf{Abbildung \ref{fig:bddsp}} entnommen werden.
-
+In der hier vorliegenden Architektur fungiert der DSP als Slave-Prozessor\cite{evm8168}.\linebreak
+%
 \begin{figure}[htbp]
 	\centering
-		\includegraphics[width=1.00\textwidth]{../Pictures/DSPBlock.pdf}
+		\includegraphics[width=0.65\textwidth]{../Pictures/DSPBlock.pdf}
 	\caption{Blockdiagramm des C764x\cite{evm8168}}
 	\label{fig:bddsp}
 \end{figure}
+%
+Wie man dem Blockdiagramm in \textbf{Abbildung \ref{fig:bddsp}} entnehmen kann, besitzt der C674x zwei Register, die parallel Operationen ausführen können. Jedes dieser Register besteht hierbei aus vier Funktionseinheiten, die mit .M, .L, .D und .S bezeichnet sind. Diese Funktionseinheiten haben die Eigenschaft, dass jede von ihnen eine Operation pro Takt ausführen kann, diese also auch parallel ausgeführt werden können. Den einzelnen Einheiten sind hierbei bestimmte Operationen zugeordnet. Die einzelnen Funktionseinheiten beinhalten folgende Operationen:
+
+\begin{itemize}
+	\item .D behandelt Lade- und Speicheroperationen
+	\item .S behandelt Shift-, Sprung- und Vergleichsoperationen
+	\item .M behandelt Multiplikationsoperationen
+	\item .L behandelt logische und arithmetische Operationen 
+\end{itemize}
+
+Somit kommen wir auf 8 Funktionseinheiten, die parallel pro Takt eine Operation durch führen können. Je nachdem zu welchem Register sie zugeordnet sind werden sie entweder mit einer 1 oder mit einer 2 bezeichnet, nimmt man also zum Beispiel die D Funktionseinheit des Registers A, wird diese mit .D1 bezeichnet. In \textbf{Abbildung \ref{fig:reg}} ist dieses nochmals verdeutlicht.
+%
+\begin{figure}[h]
+	\centering
+		\includegraphics[scale=0.80]{../Pictures/Register.pdf}
+	\caption{Registerarchitektur des C764x\cite{sprabf2}}
+	\label{fig:reg}
+\end{figure} 

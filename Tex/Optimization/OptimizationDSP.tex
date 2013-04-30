@@ -10,15 +10,15 @@ In den nun folgenden Abschnitten sollen daher, wie schon im vorhergehenden Kapit
 \section{Bottlenecks des DSP-Codes}\label{sec:ansatzdsp}
 
 Für die Laufzeitmessungen des DSP-Codes wurden wie schon im vorherigen Kapitel die FeaturesSets 1-4 (\textbf{\ref{subsec:fset1}} - \textbf{\ref{subsec:fset4}}) verwendet.
-Die benötigen Zeiten wurden auch hier wieder mit der Gesamtzeit in Verhältnis gesetzt, wodurch die aus \textbf{Abbildung \ref{fig:dsp}} zu entnehmenden Anteile der einzelnen Features an der Gesamtlaufzeit errechnet wurden.
-
+Die benötigen Zeiten wurden auch hier wieder mit der Gesamtzeit in Verhältnis gesetzt, wodurch die aus \textbf{Abbildung \ref{fig:dsp}} zu entnehmenden Anteile der einzelnen Features an der Gesamtlaufzeit errechnet wurden.\\
+%
 \begin{figure}
 	\centering
 		\includegraphics[width=1.00\textwidth]{../Pictures/ResultsExtraktionDSP.pdf}
 	\caption{Laufzeitanteile der Features auf dem DSP}
 	\label{fig:dsp}
 \end{figure}
-
+%
 Es ist deutlich zu erkennen, dass in den FeatureSets 1 - 2d und 4 \textit{Amplitude of Spectrum} (\textbf{\ref{subsubsec:aos}}) und im FeatureSet 3 \textit{Root Mean Square} (\textbf{\ref{subsubsec:rms}}) die meiste Laufzeit in Anspruch nehmen, teilweise mit Anteilen weit über 50\%. Da beide Features eigentlich nur aus Summationen, Divisionen und der Bildung von Quadratwurzeln bestehen, die Bestandteil der Standartbibliotheken sind, scheint bei der Ausführung von mathematischen Funktionen ein Bottleneck zu entstehen. Des weiteren ist zu sehen, dass auch bei der Umsetzung des Codes auf dem DSP ein weiterer Bottleneck bei der Ausführung der FFT zu bestehen scheint, da auch diese mit ca. 30\% der Ausführungszeit zu Buche schlägt.
 
 \section{Optimierung der Rechenfunktionen mit MATHLIB}\label{sec:mathlib}
@@ -26,22 +26,42 @@ MATHLIB ist eine von Texas Instruments mit dem EZSDK mitgelieferte Bibliothek vo
 Die einzelnen Ausführungszeiten eines Aufrufes eines dieser Funktionen fällt nicht unbedingt als Bottleneck auf, da diese aber in den meisten Algorithmen für jedes Fenster und dann häufig auch innerhalb von Schleifen ausgeführt werden, summiert sich ihre Ausführungszeit stark auf.\\
 Die von der Bibliothek MATHLIB angebotenen Funktionen boten sich hier besonders deswegen an, dass sie nicht nur die Möglichkeit bieten einzelne Aufrufe durch MATHLIB-Aufrufe zu ersetzen, sondern diese auch die Option bietet, ganze Vektoren einer zum Beispiel Wurzelfunktion zuzuführen und somit die Parallelität des C674x zu unterstützen.\\
 Zu erwähnen ist dabei allerdings, dass die von MATHLIB zur Verfügung gestellten \"Vektoroperationen\" nur auf Vektoren des Typs Double funktionieren, die zu berechnenden Werte jedoch im Floatformat vorliegen. Daraus ergibt sich, dass zur Vorbereitung für solche Funktionen die Floatvektoren erst in Doublevektoren umgewandelt werden mussen, was erstens weitere Schleifen vor und nach den Algorithmen zur Folge hat und zweitens durch die Allokation von Doublearrays auch einen erhöten Speicherbedarf zur Folge hat. Da in dieser Arbeit aber einzig auf die Ausführungszeit hin optimiert werden sollte, ist der zweite Einwand zu vernachlässigen.\\
-Beispielhaft kann die Codeänderung am Beispiel von \textit{Root Mean Square} (\textbf{\ref{subsubsec:rms}}) in \textbf{Listing \ref{code:rms}} und \textbf{Listing \ref{code:rmso}} entnommen werden.
+Beispielhaft kann die Codeänderung am Beispiel von \textit{Amplitude of Spectrum} (\textbf{\ref{subsubsec:aos}}) in \textbf{Listing \ref{code:aos}} und \textbf{Listing \ref{code:aoso}} entnommen werden.
 
-\begin{lstlisting}[caption=Ursprünglicher Root Mean Square Code, label=code:rms]
+\begin{lstlisting}[caption=Ursprünglicher Amplitude of Spectrum Code, label=code:aos]
 
-realv mean=0;
-
-for (unsigned int n=0; n < size; n++)
-	mean+=(*signal)[n]/size*(*signal)[n];
-
-result[idx]=sqrt(mean);
+for (k = 0; k < G; ++k) {
+	A[k] = sqrt(X[k] * X[k] + Y[k] * Y[k]) / G;
+}
 
 \end{lstlisting}
 
-\begin{lstlisting}[caption=Optimierter Root Mean Square Code, label=code:rmso]
+\begin{lstlisting}[caption=Optimierter Amplitude of Spectrum Code, label=code:aoso]
+realv tmp1;
+realv tmp2;
 
-Platzhalter
+atemp = (double*) malloc(G * sizeof(double));
+pG = (double*) malloc(G * sizeof(double));
+divtemp = (double*) malloc(G * sizeof(double));
+int f;
+for (f = 0; f < G; ++f) {
+	pG[f] = (double) G;
+}
+
+for (k = 0; k < G; ++k) {
+	tmp1 = X[k] * X[k];
+	tmp2 = Y[k] * Y[k];
+	atemp[k] = (double) (tmp1 + tmp2); //(X[k] * X[k] + Y[k] * Y[k]);
+		}
+
+sqrtdp_v(atemp, atemp, G);
+
+divdp_v(atemp, pG, divtemp, G);
+
+for (k = 0; k < G; ++k) {
+	A[k] = (float) divtemp[k];
+
+}
 
 \end{lstlisting}
 
