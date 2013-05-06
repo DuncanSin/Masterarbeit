@@ -3,8 +3,8 @@
 \rm
 
 \section{Musikklassifikation}\label{sec:mcl}
-In diesem Kapitel soll eine kurze Einführung in die Musikklassifikation passieren, die dieser Arbeit zu Grunde liegt.\\
-Musikklassifikation findet im wesentlichen in drei Schritten statt:
+In diesem Kapitel soll eine kurze Einführung in die Musikklassifikation geschehen, die dieser Arbeit zu Grunde liegt.\\
+Musikklassifikation findet im Wesentlichen in drei Schritten statt:
 
 \begin{enumerate}
 
@@ -17,7 +17,7 @@ Musikklassifikation findet im wesentlichen in drei Schritten statt:
 \subsection{Extraktion}\label{subsec:ext}
 In der Extraktionsphase werden die für die spätere Klassifikation nötigen Features aus den eingelesenen Musiktitel extrahiert.\\
 Hierbei werden normalerweise vorher festgelegte FeatureSets verwendet, die unter anderem aus den in \textbf{Kapitel \ref{sec:alg}} vorgestellten Algorithmen bestehen können, darüber hinaus existieren aber noch eine Vielzahl von weiteren Algorithmen, die in dieser Arbeit aber nicht weiter betrachtet werden sollen.\\
-Die Extraktion der gewählten Features geschieht hierbei Fensterweise, d.h. dass jeweils auf ein betrachtetes Fenster, je nach der zugrunde liegenden Architektur, alle Algorithmen, die für die Extraktion der einzelnen Features nötig sind, sequenziell oder parallel durchgeführt werden. Als Ergebnis erzeugt jeder Featurealgorithmus einen Featurevektor, welcher von 1 bis n Vektorranten enthalten kann.
+Die Extraktion der gewählten Features geschieht hierbei Fensterweise, d.h. dass jeweils auf ein betrachtetes Fenster, je nach der zugrunde liegenden Architektur, alle Algorithmen, die für die Extraktion der einzelnen Features nötig sind, sequenziell oder parallel durchgeführt werden. Als Ergebnis erzeugt jeder Featurealgorithmus einen Featurevektor, welcher von 1 bis n Vektorranten enthalten kann. \cite{cortexa8}
 
 \subsection{Prozessierung}\label{subsec:proc}
 Die in der Extraktionsphase erstellten Featurevektoren werden in der Prozessierungsphase anhand von dafür benötigten Algorithmen für die spätere Klassifikation vorbereitet.\\
@@ -479,4 +479,41 @@ Der Begriff Profiling beschreibt Methoden, mit denen das Verhalten von Applikati
 \subsection{Cache Hits}\label{subsec:cache}
 
 \subsection{IPC und CPI}\label{subsec:ipccpi}
+
+\section{Featuresets}\label{sec:fset}
+
+Für die Laufzeitanalysen des \textit{Music Classificators} wurden vier verschiedene Featuresets (im späteren mit \textit{FSetN} bezeichnet) verwendet, die in den folgenden Unterkapiteln näher spezifiziert werden sollen. Diese Featuresets wurden nicht selbst erstellt, sondern so aus der Literatur übernommen. Die einzelnen Referenzen sind passen zu den Featuresets angegeben.
+
+\subsection{Featureset 1 (FSet1)}\label{subsec:fset1}
+
+\begin{itemize}
+	\item Spectral Centroid (\textbf{\ref{subsubsec:sc}})
+	\item Spectral Rolloff (\textbf{\ref{subsubsec:sr}})
+	\item Spectral Flux (\textbf{\ref{subsubsec:sf}})
+	\item MFCC (\textbf{\ref{subsubsec:mfcc}})
+\end{itemize}
+
+\subsection{Featureset 2 (FSet2)}\label{subsec:fset2}
+
+\begin{itemize}
+	\item Normalized Audio Spectrum Envelope (\textbf{\ref{subsubsec:nase}})
+	\item Octave Spectral Contrast (\textbf{\ref{subsubsec:osc}})
+	\item MFCC (\textbf{\ref{subsubsec:mfcc}})
+\end{itemize}
+
+\subsection{Featureset 3 (FSet3)}\label{subsec:fset3}
+
+\begin{itemize}
+	\item Low Energy (\textbf{\ref{subsubsec:le}})
+	\item Root Mean Square (\textbf{\ref{subsubsec:rms}})
+	\item Zero Crossing Rate (\textbf{\ref{subsubsec:zcr}})
+\end{itemize}
+
+\subsection{Featureset 4 (FSet4)}\label{subsec:fset4}
+
+\begin{itemize}
+	\item Ampitude of Maximum In Chromagram (\textbf{\ref{subsubsec:aomic}})
+	\item Specral Crest Factor (\textbf{\ref{subsubsec:scf}})
+	\item Sub-Band Energy Ratio (\textbf{\ref{subsubsec:sber}})
+\end{itemize}
 
