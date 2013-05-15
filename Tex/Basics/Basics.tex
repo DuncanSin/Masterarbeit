@@ -35,7 +35,7 @@ Auch auf die Klassifikationsphase soll in dieser Arbeit nicht weiter eingegangen
 \end{enumerate}
 
 \section{Algorithmen}\label{sec:alg}
-In diesem Kapitel sollen die Extraktionsalgorithmen vorgestellt werden, aus denen die im \textbf{Kapitel \ref{ch:optarm}} beschriebenen FeatureSets zusammengesetzt sind, die für die Laufzeitanalyse des Codes verwendet werden. Hierfür werden diese in zwei Bereiche unterteilt, einmal die Features, welche im Zeitbereich arbeiten (\textbf{\ref{subsec:zeit}}) und diese die im Frequenzbereich arbeiten (\textbf{\ref{subsec:freq}}). Diese Unterteilung wurde aus \cite{haller2008} übernommen.
+In diesem Kapitel sollen die Extraktionsalgorithmen vorgestellt werden, aus denen die im \textbf{Kapitel \ref{ch:optarm}} beschriebenen FeatureSets zusammengesetzt sind, die für die Laufzeitanalyse des Codes verwendet werden. Hierfür werden diese in zwei Bereiche unterteilt, einmal die Features, welche im Zeitbereich arbeiten (\textbf{\ref{subsec:zeit}}) und diese die im Frequenzbereich arbeiten (\textbf{\ref{subsec:freq}})\cite{haller2008}.
 
 \subsection{Notation von Ausdrücken und Variablen}\label{subsec:note}
 
@@ -469,16 +469,6 @@ Die Sub-Band Energy Ratio gibt die Verteilung der Spektralenergie auf die Freque
 	\label{eqn:sber}			   
 	S_1~=~\frac{\sum\limits^{\frac{K}{16}-1}_{k=0}A^2(k)}{\sum\limits^{\frac{K}{2}-1}_{k=0}A^2(k)},~S_2~=~\frac{\sum\limits^{\frac{K}{8}-1}_{k=\frac{K}{16}}A^2(k)}{\sum\limits^{\frac{K}{2}-1}_{k=0}A^2(k)},S_3~=~\frac{\sum\limits^{\frac{K}{0}-1}_{k=\frac{K}{8}}A^2(k)}{\sum\limits^{\frac{K}{2}-1}_{k=0}A^2(k)},S_1~=~\frac{\sum\limits^{\frac{K}{2}-1}_{k=\frac{K}{4}}A^2(k)}{\sum\limits^{\frac{K}{2}-1}_{k=0}A^2(k)}
 \end{equation}
-
-
-\section{Profiling}\label{sec:prof}
-Der Begriff Profiling beschreibt Methoden, mit denen das Verhalten von Applikationen auf Systemebene analysiert werden können, hierzu zählen Analysen der Laufzeit, der Schreib- und Lesezugriffe und auch die Verhältnisse von Instruktionen und Takten zueinander. Im Folgenden werden nun Beispielhaft die Profilingmethoden der Laufzeitmessung, der richtigen Vorhersagen des Vorladens in den Cache (sog. Cache Hits), sowie die Betrachtungen des Verhältnisses von Takt und Instruktionen (Instructions per Cycle (IPC) und Cycle per Instruction (CPI)).
-
-\subsection{Laufzeitanalyse}\label{subsec:time}
-
-\subsection{Cache Hits}\label{subsec:cache}
-
-\subsection{IPC und CPI}\label{subsec:ipccpi}
 
 \section{Featuresets}\label{sec:fset}
 

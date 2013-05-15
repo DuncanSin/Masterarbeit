@@ -35,7 +35,7 @@ Da sich gezeigt hat, dass die \textit{FFT} den größten Anteil an der Laufzeit ha
 
 \section{Optimierung der FFT}\label{sec:optFFT}
 Wie im vorherigen Abschnitt gezeigt wurde, nimmt die Berechnung der \textit{FFT} die größten Anteil an der Laufzeit ein. Außerdem wurde gezeigt, dass diese ein gutes Optimierungspotenzial hinsichtlich der NEON-Einheit besitzt. Da eine NEON-Optimierung des FFT-Codes viel Zeit in Anspruch nehmen könnte und bereits FFT-Bibliotheken verfügbar sind, die hinsichtlich der NEON-Einheit optimiert wurden, soll im folgenden eine dieser Bibliotheken beschrieben werden.\\
-Zu den Bibliotheken die NEON-optimierten FFT-Code bereitstellen, gehören unter anderem \textit{"`Fastest Fourier Transformation in the West"'}, \textit{"`Fastest Fourier Transformation in the South"'} , \textit{"`Cricket FFT"'} und \textit{"`Libav"'} (\textbf{\ref{subsec:libav}}). Da jede einzelne von sich selbst behauptet den schnellsten FFT-Code zu beinhalten, aber meistens keine Benchmarks vorhanden sind, wurde für diese Arbeit \textit{"`Libav"'} gewählt, da dieses die weitverbreiteste Bibliothek ist und auch in namenhaften Programmen, wie zum Beispiel dem \textit{VideoLan Player} eingesetzt wird \cite{vlc}.
+Zu den Bibliotheken die NEON-optimierten FFT-Code bereitstellen, gehören unter anderem \textit{"`Fastest Fourier Transformation in the West"'}, \textit{"`Fastest Fourier Transformation in the South"'} , \textit{"`Cricket FFT"'} und \textit{"`Libav"'} (\textbf{\ref{subsec:libav}}).In dieser Arbeit \textit{"`Libav"'} gewählt, da dieses die weitverbreiteste Bibliothek ist und auch in namenhaften Programmen, wie zum Beispiel dem \textit{VideoLan Player} eingesetzt wird \cite{vlc}.
 
 \subsection{Libav}\label{subsec:libav}
 
