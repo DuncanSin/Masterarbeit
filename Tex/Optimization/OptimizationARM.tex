@@ -1,12 +1,10 @@
-\chapter{Optimierung des ARM-Codes}
-\label{ch:optarm}
-\rm
 
+\section{Optimierung des ARM}
 In diesem Kapitel sollen die Anfangsbedingungen, die Ansatzpunkte, die Konzepte der durchgeführten Optimierungen am ARM-Code des \textit{Music Classificators} vorgestellt werden.\\
 Hierzu sollen in \textbf{Kapitel \ref{sec:fset}} zuerst die Featuresets vorgestellt werden, welche für die Messungen der Laufzeit des Programms verwendet wurden, aus denen in \textbf{Kapitel \ref{sec:ansatz}} die wesentlichen
 Bottlenecks und Optimierungspotenziale auf dem DaVinci\texttrademark extrahiert werden sollen. \textbf{Kapitel \ref{sec:optFFT}} befasst sich daraufhin den Konzepten und der Durchführung von Optimierungen der FFT.
 
-\section{Ansatzpunkte und Bottlenecks}\label{sec:ansatz}
+\subsection{Ansatzpunkte und Bottlenecks}\label{sec:ansatz}
 
 Auf Basis der in \textbf{Kapitel \ref{sec:fset}} vorgestellten Featuresets sollen nun die vor Beginn der Optimierung durchgeführten Laufzeitmessungen vorgestellt und erörtert werden. Es wurden zwei unterschiedliche Messreihen durchgeführt, die sich in den gewählten Optimierungen unterscheiden, die vom Compiler zur Compilezeit automatisch durchgeführt werden können. Für die erste Messreihe wurde lediglich der Compilerflag \textit{-O3} verwendet, welches für die höchste automatische Compileroptimierung steht, diese Messreihe soll für weitere Betrachtungen als \textit{Unoptimized} bezeichnet werden. \\
 Die zweite Messreihe schließt die in \textbf{Kapitel \ref{subsec:neon}} vorgestellte NEON-Einheit ein. Auch für diese Messreihe wurden keine NEON-spezifischen Optimierungen des Codes vorgenommen, sondern nur die vom Compiler angebotene Option aktiviert, den Code während des Compilings selber für den NEON zu optimieren, im Weiteren wird diese Messreihe als \textit{NEON Autocompiler} bezeichnet. \\
@@ -33,21 +31,21 @@ Wie man der \textbf{Abbildung \ref{fig:ResultsExtraction}} entnehmen kann, hat g
 Da sich gezeigt hat, dass die \textit{FFT} den größten Anteil an der Laufzeit hat und das diese durch die NEON-Einheit vom Compiler schon gut optimiert werden konnte, soll im nächsten Kapitel betrachtet werden, ob dieses durch gezielte Optimierungen bezüglich der NEON-Einheit im Code noch weiter verbessert werden kann.
 
 
-\section{Optimierung der FFT}\label{sec:optFFT}
+\subsection{Optimierung der FFT}\label{sec:optFFT}
 Wie im vorherigen Abschnitt gezeigt wurde, nimmt die Berechnung der \textit{FFT} die größten Anteil an der Laufzeit ein. Außerdem wurde gezeigt, dass diese ein gutes Optimierungspotenzial hinsichtlich der NEON-Einheit besitzt. Da eine NEON-Optimierung des FFT-Codes viel Zeit in Anspruch nehmen könnte und bereits FFT-Bibliotheken verfügbar sind, die hinsichtlich der NEON-Einheit optimiert wurden, soll im folgenden eine dieser Bibliotheken beschrieben werden.\\
 Zu den Bibliotheken die NEON-optimierten FFT-Code bereitstellen, gehören unter anderem \textit{"`Fastest Fourier Transformation in the West"'}, \textit{"`Fastest Fourier Transformation in the South"'} , \textit{"`Cricket FFT"'} und \textit{"`Libav"'} (\textbf{\ref{subsec:libav}}).In dieser Arbeit \textit{"`Libav"'} gewählt, da dieses die weitverbreiteste Bibliothek ist und auch in namenhaften Programmen, wie zum Beispiel dem \textit{VideoLan Player} eingesetzt wird \cite{vlc}.
 
-\subsection{Libav}\label{subsec:libav}
+\subsubsection{Libav}\label{subsec:libav}
 
 Libav beinhaltet nicht nur den in für diese Arbeit wichtigen FFT-Code, sondern bietet darüber hinaus weitere Algorithmen der Signalverarbeitung.\\
 Da darüber hinaus in Libav mehrere FFTs zur Verfügung gestellt werden, die für ganz unterschiedliche Systeme optimiert wurden, soll in diesem Kapitel nur auf den für ARM-Prozessoren optimierten NEON-Code eingegangen werden. 
 
-\subsubsection{Aufbau der FFT}\label{subsubsec:libavfft}
+\paragraph{Aufbau der FFT}\label{subsubsec:libavfft}$\;$ \\
 
 Als erstes soll hier erwähnt werden, das Libav zwei Ansätze einer NEON-optimierten FFT zur Verfügung stellt. Neben der in dieser Arbeit verwendeten floatingpoint Version ist auch noch eine fixpoint Version verfügbar.\\
  
 
-\subsubsection{Einbindung in den Code}\label{subsubsec:libavin}
+\paragraph{Einbindung in den Code}\label{subsubsec:libavin}$\;$ \\
 
 
 

@@ -1,29 +1,35 @@
-\chapter{Methodik der Arbeit}
-\label{ch:method}
+\chapter{Optimierung}
+\label{ch:opt}
 \rm
 
+\section{Optimierungskonzept}
 In diesem Kapitel soll die Methodik beschrieben werden, mit der die Untersuchungen in den folgenden Kapiteln durchgeführt wurden.\\
 Sowohl die Untersuchungen auf dem ARM Cortex\texttrademark-A8, als auch die auf dem DSP wurden in drei Schritten durchgeführt:
 
 \begin{enumerate}
-	\item Laufzeitanalyse des Programms durch Profiling (\textbf{\ref{sec:prof}})
-	\item Identifikation der Bottlenecks aus den Ergebnissen der Laufzeitanalyse
+	\item Laufzeitanalyse des Programms zur Identifikation von Bottlenecks (\textbf{\ref{sec:prof}})
 	\item Optimierung der gefundenen Bottlenecks (\textbf{\ref{sec:opt}})
+	\item Bewertung der durchgeführten Optimierung
 \end{enumerate}
 
+Hierbei handelt es sich um einen iterativen Prozess, da in den meisten Fällen entweder eine Optimierung nicht zur vollständigen Beseitigung eines Bottlenecks führt oder nach der Optimierung weitere Bottlenecks auftauchen.\\
 Im Folgenden sollen die Begriffe der einzelnen Schritte näher erklärt werden.
 
-\section{Profiling}\label{sec:prof}
-Der Begriff Profiling beschreibt Methoden, mit denen das Verhalten von Applikationen auf Systemebene analysiert werden können, hierzu zählen Analysen der Laufzeit, der Schreib- und Lesezugriffe und auch die Verhältnisse von Instruktionen und Takten zueinander. Im Folgenden werden nun Beispielhaft die Profilingmethoden der Laufzeitmessung, der richtigen Vorhersagen des Vorladens in den Cache (sog. Cache Hits), sowie die Betrachtungen des Verhältnisses von Takt und Instruktionen (Instructions per Cycle (IPC) und Cycle per Instruction (CPI)).
+\subsection{Profiling}\label{sec:prof}
+Der Begriff Profiling beschreibt Methoden, mit denen das Verhalten von Applikationen auf Systemebene analysiert werden können, hierzu zählen Analysen der Laufzeit, der Schreib- und Lesezugriffe und auch die Verhältnisse von Instruktionen und Takten zueinander. Im Folgenden werden nun Beispielhaft die Profilingmethoden der Laufzeitmessung, der richtigen Vorhersagen des Vorladens in den Cache (sog. Cache Hits), sowie die Betrachtungen des Verhältnisses von Takt und Instruktionen (Instructions per Cycle (IPC) und Cycle per Instruction (CPI).
 
-\subsection{Laufzeitanalyse}\label{subsec:time}
+\subsubsection{Laufzeitanalyse}\label{subsec:time}
 
 Bei der Laufzeitanalyse wird die reale Ausführungszeit eines Programmes oder Teilen eines Programmes auf einem gegebenen System betrachtet. Dieses geschieht entweder durch eine externe Uhr, z.B. eine Armbanduhr oder durch eine in dem System integrierte Uhr durch das Auslesend er entsprechenden Register. Sollte eine interne Uhr verwendet werden, muss beachtet werden, dass in den entsprechenden Registern der momentane Takt gespeichert ist, also für eine Zeitangabe noch durch die Taktrate des Systems geteilt werden muss. Sollte die zumessende Laufzeit sehr gering sein, empfiehlt sich die Nutzung einer internen Uhr.\\
 Es ist leicht ersichtlich, dass der gemessene Wert zwischen 0 und $\infty$ liegt und dass das Ergebnis umso besser ist, desto näher es an der 0 liegt.
 
-\subsection{Cache Hits}\label{subsec:cache}
+\subsubsection{Cache Hits und Cache Misses}\label{subsec:cache}
 
-\subsection{IPC und CPI}\label{subsec:ipccpi}
+Beim Laden von Daten, sei es ein gespeichertes Datum aus dem Hauptspeicher oder eine Instruktion aus dem Instruktionsspeicher versucht der Prozessor zuerst das jeweilige Datum aus dem dafür  zuständigen Cache zu laden. Wird dieses Datum dort nciht gefunden, muss es vor der Verarbeitung erst aus dem zugehörigen Speicher in den Cache geladen werden. Dieses Nachladen von Daten in die Caches benötigt Zeit.\\
+Als Cache Hit wird in diesem Zusammenhang das Ereignis bezeichnet, dass ein zu ladendes Datum im zugehörigen Cache gefunden wurde und kein Nachladen nötig war. Ein Cache Miss bezeichnet genau das Gegenteil, also ein Ladeversuch, bei dem das Datum nicht im Cache gefunden wurde und aus dem Speicher nachgeladen werden musste.\\
+Die Anzahl von Cache Hits oder Cache Misses erlaubt eine Aussage über die Güte der verwendeten Speicherverwaltung. Überwiegt die Anzahl der Cache Hits, so kann man daraus schließen, dass eine gute Speichernutzung vorliegt und in den wenigsten Fällen ein Nachladen von benötigen Daten benötigt wurde. Am Besten ist der Fall, dass keine Cache Misses auftreten. Dieses Bedeutet, dass die benötigten Daten im Hauptspeicher sehr nah aneinander liegen und mit einem Ladevorgang viele nacheinander benötige Daten in die Caches geladen werden.
+
+\subsubsection{IPC und CPI}\label{subsec:ipccpi}
 
 Bei \textit{Instructions per Cycle} (IPC) und \textit{Cycles per Instruction} (CPI) werden die ausgeführten Instruktionen mit den benötigen Takten ins Verhältnis gesetzt um damit eine Aussage über die Effizienz des Codes zu geben.\\
 Für die Berechnung des IPC wird die Anzahl der für die Ausführung benötigen Instruktionen durch die Anzahl der benötigen Takte geteilt. Da eine Instruktion mindestens einen Takt und maximal n Takte benötigt ergibt sich aus diesem Verhältnis ein Wert zwischen 0 und 1. Umso näher der resultierende Wert ein 1 liegt, desto effizienter ist der Code, ein Wert von 1 würde bedeuten, dass in jedem Takt eine Instruktion ausgeführt wird.\\
@@ -35,7 +41,7 @@ Die Berechnung des CPI ist etwas komplexer. Hierbei werden die Anzahl von Instru
 
 Hierbei spielt neben der benötigen Takte pro Instruktionstyp auch noch die vorliegende Pipelinetiefe eine Rolle. Nimmt man an man hätte eine 5 Stufen Pipeline und einen Instruktionstyp der 5 Takte benötigt, wäre es so trotzdem möglich pro Takt eine Instruktion dieses Typs auszuführen und somit einen CPI-Wert von 1 zu erreichen. Daraus ergibt sich, dass der CPI-Wert zwischen 0 und $\infty$ liegt, wobei ein Code effizienter ist, umso näher der CPI-Wert an 0 liegt.
 
-\section{Optimierung}\label{sec:opt}
+\subsection{Optimierung}\label{sec:opt}
 
 Unter Optimierung versteht man die Verbesserung einer Sache hinsichtlich auf ein zu erreichendes Ziel.\\
 In der Softwareentwicklung sind solche Ziele in Normalfall Laufzeit oder Speicherbedarf. Nimmt man noch die Hardwareentwicklung hinzu, ergeben sich als weitere Ziele noch der Platzbedarf, den ein zu entwickelndes System, in den meißten Fällen ein Chip, nach der Fertigung benötig, sowie der Leistungsverbrauch, den das dieses System aufweist .\\
