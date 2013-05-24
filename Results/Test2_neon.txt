@@ -1,0 +1,22 @@
+Testcase 2: MFCC, NormalizedAudioSpectrumEnvelope, OctaveSpectralContrast
+Opened ../../blues.00000.au
+total extraction time: 1.444
+Time to extract HammingWindow: 0.06 seconds (2585 windows)
+Time to extract HammingWindow: 0.0232108 seconds (1000 windows)
+Time to extract HammingWindow: 0.0415512 %
+Time to extract FFT: 0.841 seconds (2585 windows)
+Time to extract FFT: 0.325338 seconds (1000 windows)
+Time to extract FFT: 0.58241 %
+Time to extract AmplitudeOfSpectrum: 0.108 seconds (2585 windows)
+Time to extract AmplitudeOfSpectrum: 0.0417795 seconds (1000 windows)
+Time to extract AmplitudeOfSpectrum: 0.0747922 %
+Time to extract MFCC: 0.097 seconds (2585 windows)
+Time to extract MFCC: 0.0375242 seconds (1000 windows)
+Time to extract MFCC: 0.0671745 %
+Time to extract NormalizedAudioSpectrumEnvelope: 0.031 seconds (2585 windows)
+Time to extract NormalizedAudioSpectrumEnvelope: 0.0119923 seconds (1000 windows)
+Time to extract NormalizedAudioSpectrumEnvelope: 0.0214681 %
+Time to extract OctaveSpectralContrast: 0.307 seconds (2585 windows)
+Time to extract OctaveSpectralContrast: 0.118762 seconds (1000 windows)
+Time to extract OctaveSpectralContrast: 0.212604 %
+Extraction took 14630000 clicks and had a runtime of 14.630000 secounds.
