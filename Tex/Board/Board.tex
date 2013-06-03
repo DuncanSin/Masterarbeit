@@ -34,13 +34,34 @@ Das EVM8168-Board hat unter anderem folgende Komponenten integriert:
 
 \section{Der DaVinci\texttrademark}\label{sec:davinci}
 Bei dem auf dem EVM816x verwendeten ARM-Prozessor DM816x handelt es sich um einen eigentlich für die Videoprozessierung optimierten Prozessor der DaVinci\texttrademark-Familie von Texas Instruments.\\
-Der DM816x ist ein Dualcore-Prozessor, der aus einer heterogenen Architektur basiert. \\
-Zum einen enthält dieser einen ARM Cortex\texttrademark-A8 Risc Prozessor mit bis zu 1,35 GHz Taktung, welcher auf der ARMv7 Architektur basiert, was bedeutet, dass es sich um einen superscalaren Prozessorkern handelt und er der NEON\texttrademark Multimedia Architektur entspricht. Dieser besitzt 32K-Byte Instruction- und Datacaches, sowie einen 256K-Byte großen L2 Cache. Des weiteren sind noch 64K-RAM und 48K-Byte Boot ROM vorhanden (näheres in \textbf{\ref{subsec:a8}}).\\
-Als zweiter Prozessorkern enthält der DM816x einen C674x VLIW DSP mit bis zu 1,125 GHz Taktung. Das besondere An diesem DSP ist, dass der vollständig softwarekompatibel mit DSPs der C67x+\texttrademark und C64x+\texttrademark Reihen von Texas Instruments ist (näheres in \textbf{\ref{subsec:dsp}})\cite{evm8168}.
+Der DM816x ist ein heterogener Prozessor, der mehreren Subsystemen und Koprozessoren besteht.
+Genauer gibt des folgende Subsysteme:
+
+\begin{itemize}
+\item ARM Subsystem mit einem Cortex-A8 der Firma ARM (\textbf{\ref{subsec:a8}})
+\item DSP Subsystem mit einem C674x VLIW DSP der Firma Texas Instruments (\textbf{\ref{subsec:dsp}})
+\item SGX530 3D Grafik Engine
+\item 512kb On-Chip RAM
+\item High-Definition Video Image Coprozessoren (HDVICP2)
+\item Media Controller
+\item HD Video Processing Subsysstem (HDVPSS)
+\item System Control
+\item Peripherie
+\end{itemize} 
+
+All diese Subsysteme und Coprozessoren sind durch eine gemeinsame System Interconnection miteinander verbunden. \textbf{Abbildung \ref{fig:dm8168}} zeigt das funtionale Blockdiagram des DM816x \cite{evm8168}.\\
+%
+\begin{figure}[htbp]
+	\centering
+		\includegraphics[width=1\textwidth]{../Pictures/dm8168.pdf}
+	\caption{Funtionales Blockdiagramm des DM816x\cite{evm8168}}
+	\label{fig:dm8168}
+\end{figure}
+%
 
 \subsection{ARM Cortex-A8}\label{subsec:a8}
 
-Der erste Prozessor aus dem heterogenen Dualcore-Prozessor DM8168 ist ein Cortex-A8 der Firma ARM. Er besteht im wesentlichen aus 7 Komponenten (vgl. \textbf{Abbildung \ref{fig:a8}}):
+Der erste Prozessor aus der heterogenen Prozessorarchitektur des DM8168 der vorgestellt werden soll, ist ein Cortex-A8 der Firma ARM. Hierbei handelt des sich um einen General-Purpose Prozessor im RISC Design. Er besteht im wesentlichen aus 7 Komponenten (vgl. \textbf{Abbildung \ref{fig:a8}}):
 
 \begin{itemize}
 	\item Instruction Fetch
@@ -48,7 +69,7 @@ Der erste Prozessor aus dem heterogenen Dualcore-Prozessor DM8168 ist ein Cortex
 	\item Instruction Execute
 	\item Load/Store
 	\item L2 Cache
-	\item NEON (\textbf{\ref{subsec:neon}}
+	\item NEON-Coprozessor (\textbf{\ref{subsubsec:neon}})
 	\item ETM
 \end{itemize}
 %
@@ -59,8 +80,24 @@ Der erste Prozessor aus dem heterogenen Dualcore-Prozessor DM8168 ist ein Cortex
 	\label{fig:a8}
 \end{figure} 
 %
+Wie auf in der Abbildung eventuell etwas schwer zu sehen ist, stellt der Cortex-A8 einen heterogenen Dualcore-Prozessor dar. Dieser besteht aus einem ARMv7 Prozessorkern (\textbf{\ref{subsubsec:armv7}}) und einem NEON-Coprozessor (\textbf{\ref{subsubsec:neon}}).\\
+Diese beiden Prozessoren teilen sich Instruction Fetch, Instruction Decode, Instruction Execute, Load/Store und L2 Cache \cite{cortexa8}.
 
-\subsubsection{Der NEON-Coprozessor}\label{subsec:neon}
+\subsubsection{ARMv7-A Prozessorkern}\label{subsubsec:armv7}
+Der ARMv7-A Prozessorkern ist für die Ausführung von Integeroperationen zuständig. Diese werden in einer dreistufigen Pipeline ausgeführt, die aus Fetch, Decode und Execute besteht.\\
+In der Fetch-Phase werden benötigte Befehle aus dem L1-Instruction-Cache geladen, der sich in der Instruction Fetch-Einheit befinden (vgl. \textbf{Abbildung \ref{fig:a8}}).\\
+Diese Instruktionen werden in einen Buffer geladen, der im nächsten Schritt von der Instruction Decode-Einheit ausgelesen und decodiert wird, außerdem wird in der Decode-Phase die Ausführungsreihenfolge der geladenen Befehle festgelegt. Diese Reihenfolge hängt unter anderem von den Registern und Takten ab, die für die Ausführung benötigt werden (eine Übersicht der Intruktionen wird in \textbf{\ref{ph:a8inst}} gegeben).\\
+In der Execute-Phase werden anschließend die Befehle an die entsprechenden Funktionseinheiten weitergeleitet.\\
+Wie schon erwähnt ist dieser Prozessorkern auf Integeroperationen ausgelegt, wird aber bei der Kompilierung eines Programms für den Cortex-A8 dem Compiler nicht die Benutzung einer Floating Point-Einheit vorgeschrieben (vgl. \textbf{Kapitel \ref{subsubsec:neon}}) werden auch entsprechende Befehle auf den Integeroperationen des ARMv7-A Prozessorkerns approximiert, was zu langen Ausführungszeiten führen kann.  
+\paragraph{Instruktionssatz}\label{ph:a8inst}$\;$ \\
+\subsubsection{Der NEON-Coprozessor}\label{subsubsec:neon}
+\paragraph{VFPv3-Einheit}$\;$ \\
+\paragraph{NEON-SIMD-Einheit}$\;$ \\
+\paragraph{Ansteuerungsmöklichkeiten}$\;$ \\
+\subparagraph{Compiler}$\;$ \\
+\subparagraph{C-Code}$\;$ \\
+\subparagraph{Intrinsics}$\;$ \\
+\subparagraph{Assembler}$\;$ \\
 \subsection{Der C674x-DSP-Prozessor}\label{subsec:dsp}
 
 Der C674x ist ein Floating-Point VLIW DSP mit 64 General-Purpose Registern mit je 32-Bit. Er besitzt sechs ALU Funktionseinheiten mit 32 und 40 Bit. Er unterstützt 32-Bit Floating Point Integer mit IEEE Single Precision (SP 32-Bit) und IEEE Double Precision (DP 64-Bit). Auf diesen schafft er bis zu vier SP Adds pro Takt und vier DP Adds alle zwei Takte, des weiteren kann er bis zu zwei Floating-Point approximierte reziproke oder quadratische Wurzeln pro Takt in SP oder DP berechnen.\\
@@ -101,3 +138,13 @@ Somit kommen wir auf 8 Funktionseinheiten, die parallel pro Takt eine Operation 
 	\caption{Registerarchitektur des C764x\cite{sprabf2}}
 	\label{fig:reg}
 \end{figure} 
+
+\subsubsection{Hardware}
+\paragraph{Registerarchitektur}$\;$ \\
+\paragraph{Instruktionssatz}$\;$ \\
+\paragraph{Pipelining auf dem C674x}$\;$ \\
+\subsubsection{Compileroptimierungsstufen}
+\subsubsection{Beispielverarbeitung des C674x}
+\paragraph{Beispiel der Compileroptimierung}$\;$ \\
+\paragraph{Beispiel des Software-Pipelinings (SPLOOP)}$\;$ \\
+\subsubsection{Optimierte Bibliotheken für den C674x}
