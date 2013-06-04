@@ -122,20 +122,22 @@ SUB & 1 &\\
 \begin{tabular}{|c|c|}
 \hline
 Befehl & Beschreibung\\
+float __aeabi_fadd(float a, float b) & single-precision Addition\\
+float __aeabi_fdiv(float n, float d) & single-precision Division, n/d\\
+float __aeabi_fmul(float a, float b) & single-precision Multiplication\\
+float __aeabi_frsub(float x, float y) & single-precision umgekehrte Subtaktion, y -x\\
+float __aeabi_fsub(float x, float y) & single-precision Subtraktion, x -y\\
+int __aeabi_fcmpeq(float a, float b) & 1, wenn a = b\\
+int __aeabi_fcmplt(float a, float b) & 1, wenn a < b\\
+int __aeabi_fcmple(float a, float b) & 1, wenn a <= b\\
+int __aeabi_fcmpge(float a, float b) & 1, wenn a >= b\\
+int __aeabi_fcmpgt(float a, float b) & 1, wenn a > b\\
+
 \hline\hline
-float \_\_aeabi\_fadd(float a, float b) & single-precision Addition\\
-float \_\_aeabi\_fdiv(float n, float d) & single-precision Division, n/d\\
-float \_\_aeabi\_fmul(float a, float b) & single-precision Multiplikation\\
-float \_\_aeabi\_frsub(float x, float y) & single-precision umgekehrte Subtaktion, y - x\\
-float \_\_aeabi\_fsub(float x, float y) & single-precision Subtraktion, x - y\\
-int \_\_aeabi\_fcmpeq(float a, float b) & 1, wenn a = b\\
-int \_\_aeabi\_fcmplt(float a, float b) & 1, wenn a < b\\
-int \_\_aeabi\_fcmple(float a, float b) & 1, wenn a <= b\\
-int \_\_aeabi\_fcmpge(float a, float b) & 1, wenn a >= b\\
-int \_\_aeabi\_fcmpgt(float a, float b) & 1, wenn a > b\\
+
 \hline
 \end{tabular}
-\caption{Auszug der Floating Point-Operationen des ARMv7\cite{aeabi}}
+\caption{Auszug der Floating Point-Operationen des ARMv7}
 \label{tab:aeabi}
 \end{table}
 
