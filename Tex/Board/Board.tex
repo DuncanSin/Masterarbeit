@@ -11,7 +11,7 @@ Wie in \cite{spec} beschrieben bietet das EVM816x-Entwicklungsboard eine Standal
 Das EVM8168-Board hat unter anderem folgende Komponenten integriert:
 
 \begin{itemize}
-	\item DM816x- (DaVinci\texttrademark-)ARMprozessor (\textbf{Kapitel~\ref{sec:davinci}}) mit NEON-Einheit (\textbf{Kapitel~\ref{subsec:neon}}) und DSP (\textbf{Kapitel~\ref{subsec:dsp}})
+	\item DM816x- (DaVinci\texttrademark-)ARM Prozessor (\textbf{Kapitel~\ref{sec:davinci}}) mit NEON-Coprozessor (\textbf{Kapitel~\ref{subsubsec:neon}}) und DSP (\textbf{Kapitel~\ref{subsec:dsp}})
 	\item 1 GB DDR3-RAM
 	\item AC31061-Audiochip
 	\item Gigabit Ethernet
@@ -34,7 +34,7 @@ Das EVM8168-Board hat unter anderem folgende Komponenten integriert:
 
 \section{Der DaVinci\texttrademark}\label{sec:davinci}
 Bei dem auf dem EVM816x verwendeten ARM-Prozessor DM816x handelt es sich um einen eigentlich für die Videoprozessierung optimierten Prozessor der DaVinci\texttrademark-Familie von Texas Instruments.\\
-Der DM816x ist ein heterogener Prozessor, der mehreren Subsystemen und Koprozessoren besteht.
+Der DM816x ist ein heterogener Prozessor, der mehreren Subsystemen und Coprozessoren besteht.
 Genauer gibt des folgende Subsysteme:
 
 \begin{itemize}
@@ -44,17 +44,17 @@ Genauer gibt des folgende Subsysteme:
 \item 512kb On-Chip RAM
 \item High-Definition Video Image Coprozessoren (HDVICP2)
 \item Media Controller
-\item HD Video Processing Subsysstem (HDVPSS)
+\item HD Video Processing Subsystem (HDVPSS)
 \item System Control
 \item Peripherie
 \end{itemize} 
 
-All diese Subsysteme und Coprozessoren sind durch eine gemeinsame System Interconnection miteinander verbunden. \textbf{Abbildung \ref{fig:dm8168}} zeigt das funtionale Blockdiagram des DM816x \cite{evm8168}.\\
+All diese Subsysteme und Coprozessoren sind durch eine gemeinsame System Interconnection miteinander verbunden. \textbf{Abbildung \ref{fig:dm8168}} zeigt das funktionale Blockdiagramm des DM816x \cite{evm8168}.\\
 %
 \begin{figure}[htbp]
 	\centering
 		\includegraphics[width=1\textwidth]{../Pictures/dm8168.pdf}
-	\caption{Funtionales Blockdiagramm des DM816x\cite{evm8168}}
+	\caption{Funktionales Blockdiagramm des DM816x\cite{evm8168}}
 	\label{fig:dm8168}
 \end{figure}
 %
@@ -82,19 +82,19 @@ Der erste Prozessor aus der heterogenen Prozessorarchitektur des DM8168 der vorg
 %
 Wie in der Abbildung eventuell etwas schwer zu sehen ist, stellt der Cortex-A8 einen heterogenen Dualcore-Prozessor dar. Dieser besteht aus einem ARMv7 Prozessorkern (\textbf{\ref{subsubsec:armv7}}) und einem NEON-Coprozessor (\textbf{\ref{subsubsec:neon}}).\\
 Diese beiden Prozessoren teilen sich Instruction Fetch, Instruction Decode, Instruction Execute, Load/Store und L2 Cache.\\
-Desweiteren ist der NEON-Coprozessor in der Lage SIMD-Befehle auszuführen, was den Cortex-A8 zu einem superskalaren Prozessor macht \cite{cortexa8}. 
+Des weiteren ist der NEON-Coprozessor in der Lage SIMD-Befehle auszuführen, was den Cortex-A8 zu einem Superskalaren Prozessor macht \cite{cortexa8}. 
 
 \subsubsection{ARMv7-A Prozessorkern}\label{subsubsec:armv7}
 Der ARMv7-A Prozessorkern ist für die Ausführung von Integeroperationen zuständig. Diese werden in einer dreistufigen Pipeline ausgeführt, die aus Fetch, Decode und Execute besteht.\\
 In der Fetch-Phase werden benötigte Befehle aus dem L1-Instruction-Cache geladen, der sich in der Instruction Fetch-Einheit befinden (vgl. \textbf{Abbildung \ref{fig:a8}}).\\
-Diese Instruktionen werden in einen Buffer geladen, der im nächsten Schritt von der Instruction Decode-Einheit ausgelesen und decodiert wird, außerdem wird in der Decode-Phase die Ausführungsreihenfolge der geladenen Befehle festgelegt. Diese Reihenfolge hängt unter anderem von den Registern und Takten ab, die für die Ausführung benötigt werden (eine Übersicht der Intruktionen wird in \textbf{Kapitel \ref{ph:a8inst}} gegeben).\\
+Diese Instruktionen werden in einen Buffer geladen, der im nächsten Schritt von der Instruction Decode-Einheit ausgelesen und decodiert wird, außerdem wird in der Decode-Phase die Ausführungsreihenfolge der geladenen Befehle festgelegt. Diese Reihenfolge hängt unter anderem von den Registern und Takten ab, die für die Ausführung benötigt werden (eine Übersicht der Instruktionen wird in \textbf{Kapitel \ref{ph:a8inst}} gegeben).\\
 In der Execute-Phase werden anschließend die Befehle an die entsprechenden Funktionseinheiten weitergeleitet.\\
 Wie schon erwähnt ist dieser Prozessorkern auf Integeroperationen ausgelegt, wird aber bei der Kompilierung eines Programms für den Cortex-A8 dem Compiler nicht die Benutzung einer Floating Point-Einheit vorgeschrieben (vgl. \textbf{Kapitel \ref{subsubsec:neon}}) werden auch entsprechende Befehle auf den Integeroperationen des ARMv7-A Prozessorkerns approximiert, was zu langen Ausführungszeiten führen kann \cite{cortexa8}.  
 
-\paragraph{Instruktionssatz}\label{ph:a8inst}$\;$ \\
-Der Instruktionssatz des ARMv7 Prozessorkerns besteht wie bereits erwähnt, rein aus Integeroperationen. Sollte dem Compiler aber nicht mitgeteilt werden, wie er Floating Point-Operationen zu behandeln sind, werden diese ebenfalls auf dem ARMv7 ausgeführt. Hierfür sind spezielle Approximationsalgorithmen im Befehlssatz  hinterlegt, die im Assemblercode durch das Präfix \textit{\_\_aeabi\_} gekennzeichnet sind. Dises bedeutet, dass Floating Point-Operationen nicht auf Hardware-, sondern auf Softwareebene berechnet werden.\\
+\paragraph{Instruktionssatz}\label{ph:a8inst}$\;$ \\\\
+Der Instruktionssatz des ARMv7 Prozessorkerns besteht wie bereits erwähnt, rein aus Integeroperationen. Sollte dem Compiler aber nicht mitgeteilt werden, wie er Floating Point-Operationen zu behandeln sind, werden diese ebenfalls auf dem ARMv7 ausgeführt. Hierfür sind spezielle Approximationsalgorithmen im Befehlssatz  hinterlegt, die im Assemblercode durch das Präfix \textit{\_\_aeabi\_} gekennzeichnet sind. Dieses bedeutet, dass Floating Point-Operationen nicht auf Hardware-, sondern auf Softwareebene berechnet werden.\\
 Die \textbf{Tabellen \ref{tab:inst}} und \textbf{\ref{tab:aeabi}} geben einen Überblick über die Integeroperationen und die in Software hinterlegten Floating Point-Operationen des ARMv7 Prozessorkerns. Die Angaben der Takte sind ohne Pipelinestalls oder Delayslots.\\
-Um die Software-Befehle auszuführen müssen vorher die Operanten in Register geladen und das Ergebnis ebenfalls wieder aus einem Register ausgelesen werden.
+Um die Software-Befehle auszuführen müssen vorher die Operanden in Register geladen und das Ergebnis ebenfalls wieder aus einem Register ausgelesen werden.
 
 \begin{table}[h]
 \centering
@@ -142,7 +142,7 @@ int \_\_aeabi\_fcmpgt(float a, float b) & 1, wenn a > b\\
 \end{table}
 
 \subsubsection{Der NEON-Coprozessor}\label{subsubsec:neon}
-Dieser Coprozessor beherbergt die beiden Floating Point-Einheiten des Cortex-A8. Zum Einen ist das die VFPv3-Einheit (\textbf{\ref{ph:vfp}}) und zum Anderen die NEON-SIMD-Einheit (\textbf{\ref{ph:neon}}). Desweiten sind noch:
+Dieser Coprozessor beherbergt die beiden Floating Point-Einheiten des Cortex-A8. Zum Einen ist das die VFPv3-Einheit (\textbf{\ref{ph:vfp}}) und zum Anderen die NEON-SIMD-Einheit (\textbf{\ref{ph:neon}}). Des weiten sind noch:
 \begin{itemize}
 \item Eine NEON-Registerbank mit 32x64-bit General-purpose Registern,
 \item eine NEON Integer Execute Pipeline (ALU,Shift,MAC),
@@ -161,17 +161,17 @@ Die 32x64-bit Register liegen in einer Registerbank, die unabhängig von der Regi
 Die Kommunikation zwischen ARM und NEON-Einheit geschieht wie folgt:
 
 \begin{enumerate}
-\item NEON-SIMD- und VFPv3-Befehle durchlaufen die gesammte ARM-Pipeline und werden am Ende der Execute-Phase in eine NEON Instruction Queue geladen, welche 16 Einträge halten kann. Außerdem müssen mit dem MCR-Befehl die zugehörigen Daten in die NEON Data Queue geladen werden, welche 12 Einträge halten kann. Danach gelten die NEON- und VFPv3-Befehle als abgearbeitet und er kann wieder ARM-Befehle ausführen.
+\item NEON-SIMD- und VFPv3-Befehle durchlaufen die gesamte ARM-Pipeline und werden am Ende der Execute-Phase in eine NEON Instruction Queue geladen, welche 16 Einträge halten kann. Außerdem müssen mit dem MCR-Befehl die zugehörigen Daten in die NEON Data Queue geladen werden, welche 12 Einträge halten kann. Danach gelten die NEON- und VFPv3-Befehle als abgearbeitet und er kann wieder ARM-Befehle ausführen.
 \item Der NEON-Coprozessor ließt aus dieser Queue und muss die Befehle nochmals Dekodieren und ihre Abarbeitungsreihenfolge festlegen
 \item Die NEON-SIMD- und VFPv3-Befehle werden auf dem NEON-Coprozessor verarbeitet
 \item Mit dem MRC-Befehl ließt der ARM die Ergebnisse des NEON-Coprozessors aus, dieses dauert mindestens 20 Takte
 \end{enumerate}
 Obwohl sich diese beiden Einheiten einige Befehle und die Registerbank teilen, haben sie doch entscheidende Unterschiede, die in den beiden folgenden Kapiteln erläutert werden sollen.
 
-\paragraph{VFPv3-Einheit}\label{ph:vfp}$\;$ \\
-Die VFPv32-Einheit stellt einen Coprozessor zur Berechnung von Floating Point-Zahlen zur Verfügung und unterstützt den \textit{ANSI/IEEE Standart 754-1985} in vollem Umfang. Sie basiert auf der \textit{VFPv3-Architektur}.\\
-Diese Einheit wird angesprochen indem bei der Kompilierung das \textit{-mfpu=vfp}-Flag verwendet wird, was dem Kompiler mitteilt, dass Floating Point-Operationen auf dieder Einheit ausgeführt werden sollen.\\
-Hierfür stellt die VFPv3-Einheit Operationen zur Addition, Subtraktion, Multiplikation, Division, Multiply-and-Accumulate und zur Wurzelberechnung zur Verfügung, die sowohl mit Single-Precision als auch Double-Precision berechnet werden können. Desweiteren werden Operationen zur Konvertierung zwischen Floating- und Fix-Point und Floating-Point und Konstanten bereitgestellt.\\
+\paragraph{VFPv3-Einheit}\label{ph:vfp}$\;$ \\\\
+Die VFPv3-Einheit stellt einen Coprozessor zur Berechnung von Floating Point-Zahlen zur Verfügung und unterstützt den \textit{ANSI/IEEE Standard 754-1985} in vollem Umfang. Sie basiert auf der \textit{VFPv3-Architektur}.\\
+Diese Einheit wird angesprochen indem bei der Kompilierung das \textit{-mfpu=vfp}-Flag verwendet wird, was dem Compiler mitteilt, dass Floating Point-Operationen auf dieser Einheit ausgeführt werden sollen.\\
+Hierfür stellt die VFPv3-Einheit Operationen zur Addition, Subtraktion, Multiplikation, Division, Multiply-and-Accumulate und zur Wurzelberechnung zur Verfügung, die sowohl mit Single-Precision als auch Double-Precision berechnet werden können. Des weiteren werden Operationen zur Konvertierung zwischen Floating- und Fix-Point und Floating-Point und Konstanten bereitgestellt.\\
 Die VFPv3-Einheit besitzt keine Pipeline-Struktur und ist nur in der Lage Anweisungen sequenziell abzuarbeiten.Zwischen zwei Befehlen muss 2 Takte gewartet werden, was den Pipeline-Slots M2 und M3 in der \textbf{Abbildung \ref{fig:neonpipe}} entspricht.\\
 Sie hat auf die in \textbf{Abbildung \ref{fig:neonbank}} abgebildete Registerbank Zugriff wie folgt:
 
@@ -204,10 +204,10 @@ FCPY & 4 & 4\\
 \label{tab:vfp}
 \end{table}
 
-\paragraph{NEON-SIMD-Einheit}\label{ph:neon}$\;$ \\
+\paragraph{NEON-SIMD-Einheit}\label{ph:neon}$\;$ \\\\
 Die NEON-SIMD-Einheit ist genauso wie die VFPv3-Einheit für die Berechnung von Floating Point-Zahlen konzipiert, bietet aber auch die Möglichkeit Integeroperationen durchzuführen.\\
-Diese Einheit basiert im Gegensatz zur vorher beschriebenen VFPv3-Einheit allerdings ncith auf der VFPv3-Architektur, sonder auf der \textit{Advanced SIMD media processing-Architektur}.\\
-Auch die NEON-SIMD-Einheit verwendet die in \textbf{Abbildung \ref{fig:neonbank}} abgebildete Registerank und kann Operationen auf dieser mit folgenden Ein- und Ausgaberegistern ausführen:
+Diese Einheit basiert im Gegensatz zur vorher beschriebenen VFPv3-Einheit allerdings nicht auf der VFPv3-Architektur, sonder auf der \textit{Advanced SIMD Media Processing-Architektur}.\\
+Auch die NEON-SIMD-Einheit verwendet die in \textbf{Abbildung \ref{fig:neonbank}} abgebildete Registerbank und kann Operationen auf dieser mit folgenden Ein- und Ausgaberegistern ausführen:
 
 \begin{itemize}
 \item Mit 16 128-bit Quadwortregistern, Q0-Q15,
@@ -215,7 +215,7 @@ Auch die NEON-SIMD-Einheit verwendet die in \textbf{Abbildung \ref{fig:neonbank}
 \item und mit Kombinationen aus den 128- und 64-bit Registern.
 \end{itemize}
 Die Einheit kann bis zu zwei Advanced SIMD Operationen pro Takt von der Integer Execution Einheit des ARMs empfangen und zusätzlich noch 32-bit MCR oder MRC Daten mit dieser tauschen.\\
-Desweiten werden NEON-SIMD-Befehle in einer 10-stufigen Pipeline abgearbeitet, die in \textbf{Abbildung \ref{fig:neonpipe}} dargestellt ist.
+Des weiten werden NEON-SIMD-Befehle in einer 10-stufigen Pipeline abgearbeitet, die in \textbf{Abbildung \ref{fig:neonpipe}} dargestellt ist.
 %
 \begin{figure}[h]
 	\centering
@@ -227,7 +227,7 @@ Desweiten werden NEON-SIMD-Befehle in einer 10-stufigen Pipeline abgearbeitet, d
 Außerdem ist es der NEON-SIMD-Einheit möglich Teile der VFPv3-Befehle in ihrer Pipeline auszuführen um die Abarbeitungszeit zu beschleunigen.\\
 In \textbf{Tabelle \ref{tab:neon}} soll ein Auszug des NEON-SIMD-Befehlssatzes mit Takten angegeben werden. Q<n>Lo bezieht sich hierbei auf die das untere D-Register (D<2n) Q<n>Hi auf das Obere (D<2n+1>). Sigle-Precision-Befehle sind im späteren Assemblercode durch den Zusatz \textit{.f32} hinter dem Befehlsnamen gekennzeichnet\cite{cortexa8}.
 
-\begin{table}[h]
+\begin{table}[hpt]
 \centering
 \begin{tabular}{|c|c|c|}
 \hline
@@ -263,7 +263,7 @@ VSTR & Dd, <addr> & 1-2\\
 \label{tab:neon}
 \end{table}
 
-\paragraph{Ansteuerungsmöklichkeiten}$\;$ \\
+\paragraph{Ansteuerungsmöglichkeiten}$\;$ \\\\
 In diesem Abschnitt sollen die Ansteuerungsmöglichkeiten des NEON-Coprozessor beschrieben werden. Hiervon sind vier Varianten zu erwähnen:
 \begin{itemize}
 \item Ansteuerung durch den Compiler
@@ -273,7 +273,7 @@ In diesem Abschnitt sollen die Ansteuerungsmöglichkeiten des NEON-Coprozessor be
 \end{itemize}
 Zu jeder dieser Varianten soll auch noch ein Beispiel gegeben werden. Wichtig ist, dass bei allen vier Varianten das Compilerflag \textit{-mfpu=neon} gesetzt sein muss.
  
-\subparagraph{Compiler}$\;$ \\
+\subparagraph{Compiler}$\;$ \\\\
 Die erste Variante ist die am leichtesten Umzusetzende. Hierbei wird nur das vorher erwähnte Compilerflag gesetzt und der Compiler fügt während der Kompilierung an ihm sinnvoll erscheinenden Stellen NEON-Assembler-Code ein.\\
 Als Beispiel soll hier den \textbf{Listings \ref{code:spfc} - \ref{code:spfneon}} die Extraktion des \textit{Spectral Flux} einmal in C++, in ARM-Assembler und in ARM+NEON-Assembler angegeben werden.
 
@@ -324,7 +324,7 @@ Als Beispiel soll hier den \textbf{Listings \ref{code:spfc} - \ref{code:spfneon}
 
 Wie man leicht sieht wurden die Division und das Multiply-and-Accumulate als parallelisierbar vom Compiler erkannt und durch NEON-Assembler ersetzt.
 
-\subparagraph{C-Code}$\;$ \\
+\subparagraph{C-Code}$\;$ \\\\
 Die zweite Variante erfordert ein Eingreifen in die Code-Struktur. Hierbei geht es darum, kritische Stellen im Code zu identifizieren und zu isolieren, die es dem Compiler nicht erlauben eine auf den NEON abbildbare Codestelle zu erkennen. Dieses soll in den \textbf{Listings \ref{code:aosc} - \ref{code:aosneon}} am Beispiel der \textit{Amplitude of Spectrum} verdeutlicht werden.\\
 
 \begin{lstlisting}[caption=Original Code der Amplitude of Spectrum in C++, label=code:aosc]
@@ -377,7 +377,7 @@ Die zweite Variante erfordert ein Eingreifen in die Code-Struktur. Hierbei geht 
 
 Hierbei wurde die Ausführung der Wurzelberechnung als für den Compiler problematisch identifiziert und diese isoliert, da die Division keine Probleme verursachte, wurde sie auf mathematischem Wege vor dem Auftrennen in die Wurzel gezogen. Außerdem wurde zur erleichterten Erkennung für den Compiler mit einem Zwischenergebnis vor der Division gearbeitet.
 
-\subparagraph{Intrinsics}$\;$ \\
+\subparagraph{Intrinsics}$\;$ \\\\
 Eine weitere Variante bietet das Ersetzten von Berechnungen durch Intrinsics, die die entsprechende Berechnung auf Assembler-Ebene darstellen. Eine Liste der vorhandenen Intrinsics ist in \cite{intrinsics} zu finden.\\
 Eine solche Ersetzung von Berechnungen durch Intrinsics soll am Beispiel des \textit{Hamming Windows} in den \textbf{Listings \ref{code:hamc} - \ref{code:hamneon}} verdeutlicht werden.
 
@@ -421,9 +421,9 @@ Eine solche Ersetzung von Berechnungen durch Intrinsics soll am Beispiel des \te
 	bhi	.L17
 \end{lstlisting}
 
-Wie man leicht erkennen kann sind die Loads, die Multiplikation und das Store im Assembler-Code wiederzufinden, es werden jetzt also immer vier Multiplikationen in Single-Precision gleichzeigtig berechnet, anstatt wie vorher eine nach der anderen.
+Wie man leicht erkennen kann sind die Loads, die Multiplikation und das Store im Assembler-Code wiederzufinden, es werden jetzt also immer vier Multiplikationen in Single-Precision gleichzeitig berechnet, anstatt wie vorher eine nach der anderen.
 
-\subparagraph{Assembler}$\;$ \\
+\subparagraph{Assembler}$\;$ \\\\
 Als letzte Variante soll die direkte Umsetzung einer Berechnung in NEON-Assembler vorgestellt werden. Hierbei werden einzelne Methoden oder ganze Programmteile nicht in einer Hochsprache wie C/C++ geschrieben sondern in NEON-Assembler.\\
 Als Beispiel soll hier eine Methode aus der FFT der Libav-Bibliothek angeführt werden. Die Libav-Bibliothek wird im Optimierungskapitel vorgestellt.\\
 Die \textbf{Linstings \ref{code:fft4c}} und \textbf{\ref{code:fft4neon}} zeigen einmal die Methode \textit{FFT4} in C-Code und in NEON-Assembler.
@@ -469,55 +469,116 @@ function fft4_neon
 endfunc
 \end{lstlisting}
 
-Hierbei werden immer zwei Berechnungen parallel durchgeführt. Jedes BF() in \textbf{Listing \ref{code:fft4c}} besteht aus einer Addition und einer Subtraktion, es werden also insgesammt acht Additionen und 8 Subtraktionen durchgeführt. Im NEON-Assembler-Code aus \textbf{Listing \ref{code:fft4neon}} befinden sich vier VADDs und vier VSUBS, die jeweils für 2 parallele Berechnungen stehen. Also kommen wir auch hier wieder auf acht Additionen und acht Subtraktionen.
+Hierbei werden immer zwei Berechnungen parallel durchgeführt. Jedes BF() in \textbf{Listing \ref{code:fft4c}} besteht aus einer Addition und einer Subtraktion, es werden also insgesamt acht Additionen und 8 Subtraktionen durchgeführt. Im NEON-Assembler-Code aus \textbf{Listing \ref{code:fft4neon}} befinden sich vier VADDs und vier VSUBs, die jeweils für 2 parallele Berechnungen stehen. Also kommen wir auch hier wieder auf acht Additionen und acht Subtraktionen.
 
 \subsection{Der C674x-DSP-Prozessor}\label{subsec:dsp}
-
-Der C674x ist ein Floating-Point VLIW DSP mit 64 General-Purpose Registern mit je 32-Bit. Er besitzt sechs ALU Funktionseinheiten mit 32 und 40 Bit. Er unterstützt 32-Bit Floating Point Integer mit IEEE Single Precision (SP 32-Bit) und IEEE Double Precision (DP 64-Bit). Auf diesen schafft er bis zu vier SP Adds pro Takt und vier DP Adds alle zwei Takte, des weiteren kann er bis zu zwei Floating-Point approximierte reziproke oder quadratische Wurzeln pro Takt in SP oder DP berechnen.\\
-Außerdem besitzt er zwei Multiplizierer, entweder gemischt präzise Floating-Point oder Fixed-Point Integer berechnen können. Im Floating-Point-Modus schaffen diese folgende Berechnungen in den angegebenen Takten:
-
-\begin{itemize}
-	\item $2~SP \times SP~\rightarrow~ SP~pro~Takt$
-	\item $2~SP \times SP~\rightarrow~ DP~pro~zwei~Takte$
-	\item $2~SP \times DP~\rightarrow~ DP~pro~drei~Takte$
-	\item $2~DP \times DP~\rightarrow~ DP~pro~vier~Takte$
-\end{itemize}
-
-Im Fixed-Point-Modus sind zwei 32x32, vier 16x16 oder acht 8x8 Multiplizierungen pro Takt möglich.\\
-Die Speicherarchitektur des C674x besteht aus zwei Ebenen, auf der Ersten sind 32K-Byte L1P und L1D RAM und Cache, auf der Zweiten 256K-Byte L2 RAM und Caches.\\
-In der hier vorliegenden Architektur fungiert der DSP als Slave-Prozessor\cite{evm8168}.\linebreak
-%
-\begin{figure}[htbp]
-	\centering
-		\includegraphics[width=0.65\textwidth]{../Pictures/DSPBlock.pdf}
-	\caption{Blockdiagramm des C764x\cite{evm8168}}
-	\label{fig:bddsp}
-\end{figure}
-%
-Wie man dem Blockdiagramm in \textbf{Abbildung \ref{fig:bddsp}} entnehmen kann, besitzt der C674x zwei Register, die parallel Operationen ausführen können. Jedes dieser Register besteht hierbei aus vier Funktionseinheiten, die mit .M, .L, .D und .S bezeichnet sind. Diese Funktionseinheiten haben die Eigenschaft, dass jede von ihnen eine Operation pro Takt ausführen kann, diese also auch parallel ausgeführt werden können. Den einzelnen Einheiten sind hierbei bestimmte Operationen zugeordnet. Die einzelnen Funktionseinheiten beinhalten folgende Operationen:
-
-\begin{itemize}
-	\item .D behandelt Lade- und Speicheroperationen
-	\item .S behandelt Shift-, Sprung- und Vergleichsoperationen
-	\item .M behandelt Multiplikationsoperationen
-	\item .L behandelt logische und arithmetische Operationen 
-\end{itemize}
-
-Somit kommen wir auf 8 Funktionseinheiten, die parallel pro Takt eine Operation durch führen können. Je nachdem zu welchem Register sie zugeordnet sind werden sie entweder mit einer 1 oder mit einer 2 bezeichnet, nimmt man also zum Beispiel die D Funktionseinheit des Registers A, wird diese mit .D1 bezeichnet. In \textbf{Abbildung \ref{fig:reg}} ist dieses nochmals verdeutlicht.
+Der C674x-DSP der Firma Texas Instruments gehört zur C6000-Familie und ist ein Floating Point VLIW DSP. \textbf{Abbildung \ref{fig:DSPblock}} zeigt das Blockdiagramm des DSPs.
 %
 \begin{figure}[h]
 	\centering
-		\includegraphics[scale=0.80]{../Pictures/Register.pdf}
-	\caption{Registerarchitektur des C764x\cite{sprabf2}}
-	\label{fig:reg}
+		\includegraphics[width=1\textwidth]{../Pictures/DSPblock.pdf}
+	\caption{C674x Blockdiagramm\cite{evm8168}}
+	\label{fig:DSPblock}
 \end{figure} 
 %
 \subsubsection{Hardware}
-\paragraph{Registerarchitektur}$\;$ \\
-\paragraph{Instruktionssatz}$\;$ \\
-\paragraph{Pipelining auf dem C674x}$\;$ \\
+Aus \textbf{Abbildung \ref{fig:DSPblock}} lassen sich folgende Hardwarekomponenten entnehmen:
+\begin{itemize}
+\item C674x+ CPU
+\item 32kb L1 Programm (L1P) RAM und Cache (bis zu 32kb) mit Error Detection Code (EDC)
+\item 32kb L1 Daten (L1D) RAM und Cache (bis zu 32kb)
+\item 256kb zusammenhängender L2 RAM und Cache mit Error Correction Code (ECC)
+\item External Memory Controller (EMC)
+\item Interleaving Domain Multiple Access (IDMA)
+\end{itemize}
+
+Die Registerarchitektur innerhalb der C674x+ CPU, ihr Instruktionssatz und die Pipelinestruktur soll im Nachfolgenden näher erläutert werden.
+
+\paragraph{Registerarchitektur}$\;$ \\\\
+Wie ebenfalls in \textbf{Abbildung \ref{fig:DSPblock}} zu sehen ist, besitzt die C674x+ CPU zwei parallele Datenpfade, die mit Register File A und B bezeichnet sind. Beide Datenpfade sind mit je mit einer 64kb-Leitung an den L1D-Cache angeschlossen, können also parallel 64kb lesen oder schreiben.\\
+Innerhalb dieser Datenpfade befinden sich acht Ausführungseinheiten zur Bearbeitung von Befehlen, je vier pro Datenpfad. Der Instruktionssatz des C674x ist in vier Gruppen von Befehlen auf geteilt und jeder Ausführungseinheit ist eine dieser Gruppen zugeordnet. Die Aufteilung der acht Ausführungseinheiten zwischen den Datenpfaden ist so gestaltet, dass jeder Datenpfad pro Gruppe von Befehlen eine Ausführungseinheit besitzt. Die Zuordnung der Befehle zu einer der vier Gruppen geschah dabei wie folgt:
+%
+\begin{figure}[h]
+	\centering
+		\includegraphics[scale=0.7]{../Pictures/Register.pdf}
+	\caption{Stuktur der parallelen Datenpfade des C674x\cite{sprabf2}}
+	\label{fig:Register}
+\end{figure} 
+%
+\begin{itemize}
+\item In der Gruppe .M befinden sich alle Multiplikationen,
+\item in .L und .S sind alle arithmetischen Operationen zusammen gefasst
+\item und .D ist primär für das Laden und Speichern von Daten verantwortlich. 
+\end{itemize}
+
+Daraus folgt, dass im Idealfall acht Befehle parallel pro Takt ausgeführt werden können.\\
+\textbf{Abbildung \ref{fig:Register}} zeigt den Aufbau der beiden Datenpfade Register File A und B\cite{sprufe8b}.
+
+\paragraph{Instruktionssatz}$\;$ \\\\
+Nachdem im vorherigen Kapitel die Aufteilung des Instruktionssatzes auf vier Gruppen besprochen wurde, soll jetzt der Instruktionssatz näher vorgestellt werden.\\
+Als erstes soll erwähnt werden, dass es keine klare Abgrenzung zwischen den vier Gruppen gibt, so dass manche Befehle in mehreren Gruppen zu finden sind, zum Beispiel ist die Integeroperation ADD Bestandteil der Gruppen .L,.S und .D, dieses gilt auch noch für andere Befehle.\\
+Des weiteren befinden sich in der Gruppe .M alle Multiplikationen, aber auch noch Befehle wie BITR (Bit Reverse) oder ROTL (Rotate Left), die auf Bitfolgen ausgeführt werden.\\
+Als letztes soll noch erwähnt werden, dass der Befehlssatz weder Divisionen noch Wurzeloperationen besitzt, diese werden bei Bedarf durch das Newton-Raphson-Verfahren in Software approximiert, außerdem sind auch eine MAC-Einheiten in der Hardware vorhanden.\\
+\textbf{Tabelle \ref{tab:c674x}} gibt einen Überlick über die vorhandenen Befehle, in welcher Gruppe sie liegen, wieviele Takte sie benötigen und ihrer  Functional Unit Latency (FUL) und Delayslots, welche fürs Pipelining wichtig sind\cite{sprufe8b}.
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{|c|c|c|c|c|}
+\hline
+Befehl & Gruppe & Takte & Delayslots & FUL\\
+\hline\hline
+ADD & .D,.L\&.S & 1 & 0 & 0\\
+ADDSP & .L\&.S & 4 & 3 & 1\\
+ADDDP & .L\&.S & 7 & 6 & 2\\
+LDW & .D & 5 & 4 & 0\\
+MPY & .M & 2 & 1 & 0\\
+MPYSP & .M & 4 & 3 & 1\\
+MPYSPDP & .M & 7 & 6 & 3\\
+MPYSP2DP & .M & 5 & 4 & 2\\
+MPYDP & .M & 10 & 9 & 4\\
+RSQRSP & .S & 1 & 0 & 1\\
+RSQRDP & .S & 2 & 1 & 1\\
+SUB & .D,.L\&.S & 1 & 0 & 0\\
+SUBSP & .L\&.S & 4 & 3 & 1\\
+SUBDP & .L\&.S & 7 & 6 & 2\\
+\hline
+\end{tabular}
+\caption{Auszug aus dem Instruktionssatzssatz des C674x\cite{sprufe8b}}
+\label{tab:c674x}
+\end{table}
+
+\paragraph{Pipelining auf dem C674x}$\;$ \\\\
+Nach dem die Registerstruktur und der Instruktionssatz des C674x vorgestellt wurde, soll nun die Pipelinestruktur erläutert werden.\\ 
+Generell besitzt die Pipeline drei Stufen:
+
+\begin{enumerate}
+\item Fetch
+\item Decode
+\item Execute
+\end{enumerate}
+
+Allerdings sind die drei Stufen nicht gleich lang. Die Fetch-Stufe besitzt vier Phasen, die Decode-Stufe zwei Phasen und die Execute-Stufe fünf Phasen (vgl. \textbf{Abbildung \ref{fig:dsppipe}}).
+%
+\begin{figure}[htb]
+	\centering
+		\includegraphics{../Pictures/dsppipe.pdf}
+	\caption{Pipelinestufen und -phasen des C674x\cite{sprufe8b}}
+	\label{fig:dsppipe}
+\end{figure} 
+% 
+\subparagraph{Die Fetch-Stufe}$\;$ \\\\
+In der Fetch-Stufe werden Befehle aus dem Instruktionscache geladen. Dieses geschieht wie bereits erwähnt, ist dieses in vier Phasen unterteilt:
+
+\begin{itemize}
+\item PG: Program address generate
+\item PS: Program address send
+\item PW: Program access ready wait
+\item PR: Pregram fetch packet receive
+\end{itemize}
+\subparagraph{Die Decode-Stufe}$\;$ \\\\
+\subparagraph{Die Execute-Stufe}$\;$ \\\\
 \subsubsection{Compileroptimierungsstufen}
 \subsubsection{Beispielverarbeitung des C674x}
-\paragraph{Beispiel der Compileroptimierung}$\;$ \\
-\paragraph{Beispiel des Software-Pipelinings (SPLOOP)}$\;$ \\
+\paragraph{Beispiel der Compileroptimierung}$\;$ \\\\
+\paragraph{Beispiel des Software-Pipelinings (SPLOOP)}$\;$ \\\\
 \subsubsection{Optimierte Bibliotheken für den C674x}

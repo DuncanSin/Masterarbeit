@@ -1,24 +1,22 @@
-2
-4
 Testcase 4: AmplitudeOfMaximumInChromagram, SubBandEnergyRatio, SpectralCrestFactor
 Opened ../../blues.00000.au
-total extraction time: 0.82
-Time to extract FFT: 0.736 seconds (1293 windows)
-Time to extract FFT: 0.569219 seconds (1000 windows)
-Time to extract FFT: 0.897561 %
-Time to extract AmplitudeOfSpectrum: 0.052 seconds (1293 windows)
-Time to extract AmplitudeOfSpectrum: 0.0402166 seconds (1000 windows)
-Time to extract AmplitudeOfSpectrum: 0.0634146 %
-Time to extract SpectralCrestFactor: 0.002 seconds (1293 windows)
-Time to extract SpectralCrestFactor: 0.00154679 seconds (1000 windows)
-Time to extract SpectralCrestFactor: 0.00243902 %
-Time to extract SubBandEnergyRatio: 0.002 seconds (1293 windows)
-Time to extract SubBandEnergyRatio: 0.00154679 seconds (1000 windows)
-Time to extract SubBandEnergyRatio: 0.00243902 %
-Time to extract Chroma: 0.025 seconds (1293 windows)
-Time to extract Chroma: 0.0193349 seconds (1000 windows)
-Time to extract Chroma: 0.0304878 %
-Time to extract AmplitudeOfMaximumInChromagram: 0.003 seconds (1293 windows)
-Time to extract AmplitudeOfMaximumInChromagram: 0.00232019 seconds (1000 windows)
-Time to extract AmplitudeOfMaximumInChromagram: 0.00365854 %
-Extraction took 8360000 clicks and had a runtime of 8.360000 secounds.
+total extraction time: 0.48114
+Time to extract FFT: 0.40739 seconds (1293 windows)
+Time to extract FFT: 0.315073 seconds (1000 windows)
+Time to extract FFT: 0.846718 %
+Time to extract AmplitudeOfSpectrum: 0.0495 seconds (1293 windows)
+Time to extract AmplitudeOfSpectrum: 0.0382831 seconds (1000 windows)
+Time to extract AmplitudeOfSpectrum: 0.102881 %
+Time to extract SpectralCrestFactor: 0.00123 seconds (1293 windows)
+Time to extract SpectralCrestFactor: 0.000951276 seconds (1000 windows)
+Time to extract SpectralCrestFactor: 0.00255643 %
+Time to extract SubBandEnergyRatio: 0.00177 seconds (1293 windows)
+Time to extract SubBandEnergyRatio: 0.00136891 seconds (1000 windows)
+Time to extract SubBandEnergyRatio: 0.00367876 %
+Time to extract Chroma: 0.01913 seconds (1293 windows)
+Time to extract Chroma: 0.0147951 seconds (1000 windows)
+Time to extract Chroma: 0.0397597 %
+Time to extract AmplitudeOfMaximumInChromagram: 0.00212 seconds (1293 windows)
+Time to extract AmplitudeOfMaximumInChromagram: 0.0016396 seconds (1000 windows)
+Time to extract AmplitudeOfMaximumInChromagram: 0.0044062 %
+Extraction took 481310000 clicks and had a runtime of 481.310028 secounds.

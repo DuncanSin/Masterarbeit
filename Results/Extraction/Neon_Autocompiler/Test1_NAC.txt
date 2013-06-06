@@ -1,24 +1,22 @@
-2
-1
 Testcase 1: MFCC, SpectralCentroid, SpectralFlux, SpectralRolloff
 Opened ../../blues.00000.au
-total extraction time: 0.873
-Time to extract FFT: 0.751 seconds (1293 windows)
-Time to extract FFT: 0.58082 seconds (1000 windows)
-Time to extract FFT: 0.860252 %
-Time to extract AmplitudeOfSpectrum: 0.042 seconds (1293 windows)
-Time to extract AmplitudeOfSpectrum: 0.0324826 seconds (1000 windows)
-Time to extract AmplitudeOfSpectrum: 0.04811 %
-Time to extract SpectralCentroid: 0.023 seconds (1293 windows)
-Time to extract SpectralCentroid: 0.0177881 seconds (1000 windows)
-Time to extract SpectralCentroid: 0.0263459 %
-Time to extract SpectralRolloff: 0.004 seconds (1293 windows)
-Time to extract SpectralRolloff: 0.00309358 seconds (1000 windows)
-Time to extract SpectralRolloff: 0.0045819 %
-Time to extract SpectralFlux: 0.004 seconds (1293 windows)
-Time to extract SpectralFlux: 0.00309358 seconds (1000 windows)
-Time to extract SpectralFlux: 0.0045819 %
-Time to extract MFCC: 0.049 seconds (1293 windows)
-Time to extract MFCC: 0.0378964 seconds (1000 windows)
-Time to extract MFCC: 0.0561283 %
-Extraction took 8890000 clicks and had a runtime of 8.890000 secounds.
+total extraction time: 0.53161
+Time to extract FFT: 0.40791 seconds (1293 windows)
+Time to extract FFT: 0.315476 seconds (1000 windows)
+Time to extract FFT: 0.767311 %
+Time to extract AmplitudeOfSpectrum: 0.04976 seconds (1293 windows)
+Time to extract AmplitudeOfSpectrum: 0.0384841 seconds (1000 windows)
+Time to extract AmplitudeOfSpectrum: 0.0936025 %
+Time to extract SpectralCentroid: 0.01583 seconds (1293 windows)
+Time to extract SpectralCentroid: 0.0122428 seconds (1000 windows)
+Time to extract SpectralCentroid: 0.0297775 %
+Time to extract SpectralRolloff: 0.00575 seconds (1293 windows)
+Time to extract SpectralRolloff: 0.00444702 seconds (1000 windows)
+Time to extract SpectralRolloff: 0.0108162 %
+Time to extract SpectralFlux: 0.003 seconds (1293 windows)
+Time to extract SpectralFlux: 0.00232019 seconds (1000 windows)
+Time to extract SpectralFlux: 0.00564323 %
+Time to extract MFCC: 0.04936 seconds (1293 windows)
+Time to extract MFCC: 0.0381748 seconds (1000 windows)
+Time to extract MFCC: 0.09285 %
+Extraction took 531780000 clicks and had a runtime of 531.779968 secounds.
