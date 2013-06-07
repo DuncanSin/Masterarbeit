@@ -514,7 +514,7 @@ Innerhalb dieser Datenpfade befinden sich acht Ausführungseinheiten zur Bearbeit
 Daraus folgt, dass im Idealfall acht Befehle parallel pro Takt ausgeführt werden können.\\
 \textbf{Abbildung \ref{fig:Register}} zeigt den Aufbau der beiden Datenpfade Register File A und B\cite{sprufe8b}.
 
-\paragraph{Instruktionssatz}$\;$ \\\\
+\paragraph{Instruktionssatz}\label{ph:dspinst}$\;$ \\\\
 Nachdem im vorherigen Kapitel die Aufteilung des Instruktionssatzes auf vier Gruppen besprochen wurde, soll jetzt der Instruktionssatz näher vorgestellt werden.\\
 Als erstes soll erwähnt werden, dass es keine klare Abgrenzung zwischen den vier Gruppen gibt, so dass manche Befehle in mehreren Gruppen zu finden sind, zum Beispiel ist die Integeroperation ADD Bestandteil der Gruppen .L,.S und .D, dieses gilt auch noch für andere Befehle.\\
 Des weiteren befinden sich in der Gruppe .M alle Multiplikationen, aber auch noch Befehle wie BITR (Bit Reverse) oder ROTL (Rotate Left), die auf Bitfolgen ausgeführt werden.\\
@@ -567,16 +567,28 @@ Allerdings sind die drei Stufen nicht gleich lang. Die Fetch-Stufe besitzt vier 
 \end{figure} 
 % 
 \subparagraph{Die Fetch-Stufe}$\;$ \\\\
-In der Fetch-Stufe werden Befehle aus dem Instruktionscache geladen. Dieses geschieht wie bereits erwähnt, ist dieses in vier Phasen unterteilt:
+In der Fetch-Stufe werden Befehle aus dem Instruktionscache geladen. Dieses ist wie bereits erwähnt in vier Phasen unterteilt:
 
-\begin{itemize}
+\begin{enumerate}
 \item PG: Program address generate
 \item PS: Program address send
 \item PW: Program access ready wait
 \item PR: Pregram fetch packet receive
-\end{itemize}
+\end{enumerate}
+
+Zum Laden von Befehlen aus dem Instruktionscache wird ein sogenanntes Fetch Packet (FP) verwendet, welches aus acht Befehlen besteht. Hierbei müssen nicht zwangsweise acht Befehle geladen werden, die auch gleichzeitig ausgeführt werden können. Eine Zuweisung der Befehle zu den einzelnen Ausführungseinheiten geschieht erst in der Decode-Stufe. So könnte es auch passieren, dass zum Beispiel acht LOADs geladen würden.
 \subparagraph{Die Decode-Stufe}$\;$ \\\\
+Die Decode-Stufe besteht aus zwei Phasen:
+\begin{enumerate}
+\item DP: Instruction dispatch
+\item DC: Instruction decode
+\end{enumerate}
+
+In der DC-Phase werden die vorher geladenen Fetch Packets in sogenannte Execute Packets zerlegt. Hierbei stellt ein Execute Packet Befehle dar, die parallel auf den acht vorhandenen Ausführungseinheiten bearbeitet werden können, daraus folgt, dass ein Execute Packet immer mindestens aus einem und maximal aus acht Befehlen bestehen kann. Außerdem werden in dieser Phase den einzelnen Befehlen eines Execute Packets die Ausführungseinheiten zugeordnet, die sie später bearbeiten werden. Hierbei muss beachtet werden, dass bestimmte Ausführungseinheiten noch von vorherigen Execute Packets belegt sein können. An diesem Punkt spielt auch die in \textbf{Kapitel \ref{ph:dspinst}} erwähnte Funktion Unit Latency eine Rolle, die die Anzahl von Takten beschreibt, die eine Hardwareeinheit, zum Beispiel ein Single-Precison Multiplizierer, nach einer Ausführung benötigt, bis sie den nächsten Auftrag annehmen kann.\\
+Während der DP-Phase werden die Quell- und Zielregister und gegebenenfalls zugewiesene Pfade dekodiert., welche bei der späteren Ausführung benötigt werden. 
+
 \subparagraph{Die Execute-Stufe}$\;$ \\\\
+
 \subsubsection{Compileroptimierungsstufen}
 \subsubsection{Beispielverarbeitung des C674x}
 \paragraph{Beispiel der Compileroptimierung}$\;$ \\\\
