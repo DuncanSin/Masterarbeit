@@ -1,37 +1,12 @@
 
 \section{Optimierung des ARM}
-In diesem Kapitel sollen die Anfangsbedingungen, die Ansatzpunkte, die Konzepte der durchgeführten Optimierungen am ARM-Code des \textit{Music Classificators} vorgestellt werden.\\
-Hierzu sollen in \textbf{Kapitel \ref{sec:fset}} zuerst die Featuresets vorgestellt werden, welche für die Messungen der Laufzeit des Programms verwendet wurden, aus denen in \textbf{Kapitel \ref{sec:ansatz}} die wesentlichen
-Bottlenecks und Optimierungspotenziale auf dem DaVinci\texttrademark extrahiert werden sollen. \textbf{Kapitel \ref{sec:optFFT}} befasst sich daraufhin den Konzepten und der Durchführung von Optimierungen der FFT.
+
 \subsection{Laufzeitmessung des Gesammtprogramms}
 
 \subsection{Laufzeitmessung der Extraktion}
 
 \subsection{Ansatzpunkte und Bottlenecks}\label{sec:ansatz}
 
-Auf Basis der in \textbf{Kapitel \ref{sec:fset}} vorgestellten Featuresets sollen nun die vor Beginn der Optimierung durchgeführten Laufzeitmessungen vorgestellt und erörtert werden. Es wurden zwei unterschiedliche Messreihen durchgeführt, die sich in den gewählten Optimierungen unterscheiden, die vom Compiler zur Compilezeit automatisch durchgeführt werden können. Für die erste Messreihe wurde lediglich der Compilerflag \textit{-O3} verwendet, welches für die höchste automatische Compileroptimierung steht, diese Messreihe soll für weitere Betrachtungen als \textit{Unoptimized} bezeichnet werden. \\
-Die zweite Messreihe schließt die in \textbf{Kapitel \ref{subsec:neon}} vorgestellte NEON-Einheit ein. Auch für diese Messreihe wurden keine NEON-spezifischen Optimierungen des Codes vorgenommen, sondern nur die vom Compiler angebotene Option aktiviert, den Code während des Compilings selber für den NEON zu optimieren, im Weiteren wird diese Messreihe als \textit{NEON Autocompiler} bezeichnet. \\
-Die Laufzeitanteile der drei Programmteile \textit{Extraction}, \textit{Processing} und \textit{Classification} sind in \textbf{Abbildung \ref{fig:ResultsMCL}} dargestellt.\\
-%
-\begin{figure}[htbp]
-	\centering
-		\includegraphics[width=1.00\textwidth]{../Pictures/ResultsMCL.pdf}
-	\caption{Laufzeitanteile ohne manuelle Optimierung}
-	\label{fig:ResultsMCL}
-\end{figure}
-%
-Wie man leicht erkennen kann hat die Extraktion bei allen vier Featuresets mit teilweise weit über 80\% den größten Anteil an der Laufzeit des Programms, daher wird im Nachfolgenden die Extraktion noch etwas detaillierter betrachtet werden. \\
-\textbf{Abbildung \ref{fig:ResultsExtraction}} zeigt die Anteile der einzelnen Features an der Gesamtlaufzeit der Extraktion. Hier soll daran erinnert werden, dass \textit{FSet1}, \textit{FSet2} und \textit{FSet4} aus Features bestehen, die aus dem Frequenzbereich stammen, wodurch vor der Extraktion erst eine Fourier-Transformation vom Zeitbereich in diesen stattfinden muss, weshalb als weiteres "`Feature"' die FFT in der Abbildung auftaucht. Des weiteren arbeitet das Feature \textit{Ampitude of Maximum In Chromagram} aus \textit{FSet4} auf dem in \textbf{Kapitel \ref{subsubsec:cv}} vorgestellten \textit{Chroma Vector}, was dazuführt, dass auch dieser in der Abbildung auftaucht.\\
-%
-\begin{figure}[htbp]
-	\centering
-		\includegraphics[width=1.00\textwidth]{../Pictures/ResultsExtraktion.pdf}
-	\caption{Detaillierte Laufzeitenanteile der Extraktion ohne manuelle Optimierung}
-	\label{fig:ResultsExtraction}
-\end{figure}
-%
-Wie man der \textbf{Abbildung \ref{fig:ResultsExtraction}} entnehmen kann, hat gerade diese Transformation vom Zeit- in den Frequenzbereich den größten Laufzeitbedarf, ihr Anteil liegt immer über 50\%. Um Irritationen zu vermeiden, soll darauf hingewiesen werden, dass sich die Laufzeit der FFT in \textit{NEON Autocompiler} nicht, wie es in der Abbildung den Anschein hat, drastisch verschlechtert hat, sondern die Verbesserungen der tatsächlichen Feature-Extraktionen sich dahingehend verbessert haben, dass die \textit{FFT} dadurch einen prozentual größeren Anteil einnimmt. Um genauer zu sein, hat sich in den Experimenten gezeigt, dass sich die Laufzeit der \textit{FFT} in nahezu allen Fällen fast halbiert hat.\\
-Da sich gezeigt hat, dass die \textit{FFT} den größten Anteil an der Laufzeit hat und das diese durch die NEON-Einheit vom Compiler schon gut optimiert werden konnte, soll im nächsten Kapitel betrachtet werden, ob dieses durch gezielte Optimierungen bezüglich der NEON-Einheit im Code noch weiter verbessert werden kann.
 
 \subsubsection{FFT}
 
