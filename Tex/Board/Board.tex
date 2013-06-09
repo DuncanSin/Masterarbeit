@@ -591,10 +591,66 @@ Während der DP-Phase werden die Quell- und Zielregister und gegebenenfalls zugew
 In der Execute-Stufe werden die vorher geladenen und decodierten Befehle auf den Hardwareeinheiten ausgeführt. Diese Stufe wird formell in fünf Phasen unterteilt, E1-E5, in denen je nach Befehl Lade- und/oder Schreiboperationen ausgeführt werden. Hierbei kann es allerdings passieren, dass bei manchen Befehlen eine bestimmte Zeit vergeht, bis das Ergebnis am Ausgang anliegt, diese Zeit wird als Delayslots bezeichnet und welche ab der Phase E1 gezählt werden (vgl. \textbf{Tabelle \ref{tab:c674x}}). Die maximale Anzahl an Delayslots im Instruktionssatz des C674x beträgt 9, daher könnte man auch von einer zehnphasigen Execute-Stufe (E1-E10) sprechen.\\
 Das Anliegen des Ergebnisses einer Hardwareeinheit geschieht in zwei Takten, da als erstes die untere Hälfte des Ergebnisses anliegt und einen Takt später die Obere. Einlesen von Operanden geschieht ebenfalls in zwei Takten, da auch hier als erstes die untere Hälfte gelesen wird. Greift nun eine Hardwareeinheit auf das Ergebnis einer anderen zu, kann diese bereits einen Takt vor Beendigung der anderen Hardwareeinheit mit der Ausführung beginnen.
 
-\paragraph{Software Pipelined Loop (SPLOOP)}$\;$ \\
 
-Neben der Hardwarepipeline bietet der C674x eine weitere Pipeline-Struktur. Diese besteht zum einen Teil aus Hardware und zum anderen Teil aus Planungsarbeit, die während der Kompilierung vom Compiler aufgebracht wird.\\
-Software Pipelined Loop oder auch kurz SPLOOP bietet eine Möglichkeit Schleifen, welche im Programm vorkommen, in Form einer Pipeline abzuarbeiten. Hierfür sind Hardwarekomponenten innerhalb des C674x vorhanden:
+\subsubsection{Compileroptimierungsstufen}
+
+Jeder Compiler bietet interne Codeoptimierungen die entweder per Compilerflags oder bei jeder Kompilierung automatisch von diesem zur Compilezeit durchgeführt werden können.\\
+In diesem Kapitel sollen die Optimierungsstufen des DSP-Compilers aus dem bereits vorgestellten C6EZRun-Framework erläutert werden.\\
+Da dieser Compiler auf dem C6000-DSP-Compiler aufsetzt, können auch die Compileroptimierungen des C6000-Compilers verwendet werden.\\
+Dieser besitzt neben den gängigen Optimierungsstufe O0-O3, auch die Möglichkeit eine softwarebasierte Pipelinestruktur zu verwenden, die sich Software Pipelined Loop oder kurz SPLOOP nennt.
+
+\paragraph{Optimierungsstufe \-O0}$\;$ \\\\
+In der niedrigsten Optimierungsstufe, welche entweder durch das Compilerflag \textit{\-opt\_level=0} oder \textit{\-O0} aufgerufen wird, werden nur einfache Optimierungen des Codes durchgeführt:
+
+\begin{itemize}
+\item Kontrollfluss-Graph-Vereinfachung
+\item Allokierung von Variablen auf Register
+\item Schleifenrotation
+\item Eliminierung von unbenutztem Code
+\item Vereinfachung von Ausdrücken und Statements
+\item Unterstützung von Inline-Funktionen 
+\end{itemize}
+
+\paragraph{Optimierungsstufe \-O1}$\;$ \\
+
+Die nächst höhere Optimierungsstufe wird mit dem Compilerflag  \textit{\-opt\_level=1} oder \textit{\-O1} aufgerufen. Diese Stufe schließt alle Optimierungen der Stufe 0 ein und erweitert diese um:
+
+\begin{itemize}
+\item Durchführung von lokalen Kopier- und Konstantenpropagation
+\item Entfernung von unnützen Anweisungen
+\item Lokale Eliminierung von verbreiteten Ausdrücken
+\end{itemize}
+
+\paragraph{Optimierungsstufe \-O2}$\;$ \\
+
+Die Optimierungsstufe 2 wird mit dem Compilerflag \textit{\-opt\_level=2} oder \textit{\-O3} aufgerufen und erweitert die Optimierungsstufe 1 um:
+
+\begin{itemize}
+\item Software Pipelined Loop (\textbf{\ref{ph:sploop}})
+\item Schleifenoptimierung
+\item Eliminierung von globalen verbreiteten Ausdrücken
+\item Eliminierung von globalen unnützen Ausdrücken
+\item Konvertierung von Arrayreferenzen in Schleifen zu Pointerarithmetik
+\item Loop Unrolling
+\end{itemize}
+
+\paragraph{Optimierungsstufe \-O3}$\;$ \\
+
+Die letzte Optimierungsstufe wird mit \textit{\-opt\_level=2} oder \textit{\-O3} aufgerufen. Auch diese schließt alle Optimierungen der vorherigen Stufen ein, außerdem kommen folgende dazu:
+
+\begin{itemize}
+\item Entfernung von unverwendeten Funktionen
+\item Vereinfachung von Funktionen, deren Rückgabewert nie verwendet wird
+\item Inline Calls zu kleinen Funktionen
+\item Neusortierung von Funktionsdeklarationen
+\item Propagierung von Argumenten in den Funktionskörper, wenn alle Aufrufe den selben Wert an der selben Position besitzen
+\item Identifizierung von File-Level Charakteristiken von Variablen
+\end{itemize}
+
+\paragraph{Software Pipelined Loop (SPLOOP)}\label{ph:sploop}$\;$ \\
+
+SPLOOP besteht zum einen Teil aus Hardware und zum anderen Teil aus Planungsarbeit, die während der Kompilierung vom Compiler aufgebracht wird.\\
+Hierbei wird eine Möglichkeit geboten, Schleifen, welche im Programm vorkommen, in Form einer Pipeline abzuarbeiten. Hierfür sind Hardwarekomponenten innerhalb des C674x vorhanden:
 
 \begin{itemize}
 \item Loop Buffer
@@ -645,9 +701,6 @@ Diese drei Register sind für den Status der SPLOOP zuständig.\\
 TSR zeigt an, ob eine SPLOOP momentan ausgeführt wird oder nicht.\\
 Sollte eine eine Interruption kommen, wird der Inhalt des TSR in das ITSR kopiert.\\
 Sollte ein Fehler oder eine nicht maskiertbare Interruption auftreten, wird der Inhalt von TSR in NTSR kopiert.
-
-
-\subsubsection{Compileroptimierungsstufen}
 
 \subsubsection{Beispielverarbeitung des C674x}
 \paragraph{Beispiel der Compileroptimierung}$\;$ \\\\
