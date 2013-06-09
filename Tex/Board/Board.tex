@@ -588,8 +588,67 @@ In der DC-Phase werden die vorher geladenen Fetch Packets in sogenannte Execute 
 Während der DP-Phase werden die Quell- und Zielregister und gegebenenfalls zugewiesene Pfade dekodiert., welche bei der späteren Ausführung benötigt werden. 
 
 \subparagraph{Die Execute-Stufe}$\;$ \\\\
+In der Execute-Stufe werden die vorher geladenen und decodierten Befehle auf den Hardwareeinheiten ausgeführt. Diese Stufe wird formell in fünf Phasen unterteilt, E1-E5, in denen je nach Befehl Lade- und/oder Schreiboperationen ausgeführt werden. Hierbei kann es allerdings passieren, dass bei manchen Befehlen eine bestimmte Zeit vergeht, bis das Ergebnis am Ausgang anliegt, diese Zeit wird als Delayslots bezeichnet und welche ab der Phase E1 gezählt werden (vgl. \textbf{Tabelle \ref{tab:c674x}}). Die maximale Anzahl an Delayslots im Instruktionssatz des C674x beträgt 9, daher könnte man auch von einer zehnphasigen Execute-Stufe (E1-E10) sprechen.\\
+Das Anliegen des Ergebnisses einer Hardwareeinheit geschieht in zwei Takten, da als erstes die untere Hälfte des Ergebnisses anliegt und einen Takt später die Obere. Einlesen von Operanden geschieht ebenfalls in zwei Takten, da auch hier als erstes die untere Hälfte gelesen wird. Greift nun eine Hardwareeinheit auf das Ergebnis einer anderen zu, kann diese bereits einen Takt vor Beendigung der anderen Hardwareeinheit mit der Ausführung beginnen.
+
+\paragraph{Software Pipelined Loop (SPLOOP)}$\;$ \\
+
+Neben der Hardwarepipeline bietet der C674x eine weitere Pipeline-Struktur. Diese besteht zum einen Teil aus Hardware und zum anderen Teil aus Planungsarbeit, die während der Kompilierung vom Compiler aufgebracht wird.\\
+Software Pipelined Loop oder auch kurz SPLOOP bietet eine Möglichkeit Schleifen, welche im Programm vorkommen, in Form einer Pipeline abzuarbeiten. Hierfür sind Hardwarekomponenten innerhalb des C674x vorhanden:
+
+\begin{itemize}
+\item Loop Buffer
+\item Loop buffer count register (LBC)
+\item Inner loop count register (ILC)
+\item Reload inner loop count register (RILC)
+\item Task state register (TSR)
+\item Interrupt task state register (ITSR)
+\item NMI/Exception task state register (NTSR)
+\end{itemize}
+
+Hierbei wird während der Kompilierung ein Ausführungsplan aufgestellt, der es ermöglicht Befehle aus verschiedenen Interationsschritten parallel abzuarbeiten, anstatt wie im vorherigen Kapitel beschrieben, Befehle parallel auszuführen, die sequenziell aufeinander folgen.\\
+Hierführ wird ein Iterationsschritt in sogenannte Stages unterteilt. Alle Stages besitzen eine Gemeinsamkeit, sie haben alle die selbe Ausführungszeit (in Takten), welche als Iterationsinterval bezeichnet wird.\\
+Nach der Einschwungphase der SPLOOP werden alle Stages parallel ausgeführt und jede Stage ist einem anderen Iterationsschritt zugeordnet, \textbf{Abbildung \ref{fig:sploop}} soll dieses verdeutlichen. Die Phase vor dem eingeschwungenen Zustand der SPLOOP wird als Prolog bezeichnet, die nach dem eingeschwungenen Zustand als Epilog. Der eingeschwungene Zustand an sich wird als Kernel bezeichnet.\\
+%
+%\begin{figure}[htb]
+%	\centering
+%		\includegraphics{../Pictures/sloop.pdf}
+%	\caption{Software Pipelined Execution Flow\cite{sprufe8b}}
+%	\label{fig:dsppipe}
+%\end{figure} 
+% 
+Um SPLOOP während der Ausführung zu ermöglichen werden, SPLOOP-spezifische Befehle in den Assemblercode eingefügt, die der zugrundeliegenden Hardware ermöglichen, Stages etc. zu erkennen. Diese Befehle lassen sich grob in drei Gruppen unterteilen:
+
+\begin{itemize}
+\item SPLOOP(D/W): Diese Befehlsgruppe lösen den Loop Buffer Mechanismus aus
+\item SPKERNEL(R): Diese Befehle markieren das Ende einer SPLOOP
+\item SPMASK(R): Mit dieser Befehlsgruppe lassen sich einzelne Operationen auf Ausführungseinheiten innerhalb eines Execute Packets sperren
+\end{itemize}
+
+\subparagraph{Loop Buffer}$\;$ \\\\
+Im Loop Buffer werden die für die Schleife benötigten Instruktionen, Informationen über ihre Abarbeitungsreihenfolge und ob sie momentan aktiv oder inaktiv sind. Diese Instruktionen werden in Form von Execute Packets gespeichert und es können bis zu 14 solcher Pakete hinterlegt werden.\\
+Die Speicherung von Instruktionen im Loop Buffer bietet den Vorteil, dass sie nicht für jede Ausführung neu die Fetch-Stufe durchlaufen müssen, sondern einfach aus dem Loop Buffer geladen werden können.
+
+\subparagraph{Loop buffer count register (LBC)}$\;$ \\\\
+Das LBC fungiert als Inhaltsverzeichnis für den Lop Buffer und gibt an, welcher Stage ausgeführt werden muss. Das LBC wird in zwei Fällen auf null zurückgesetzt. Entweder wenn ein Befehl aus der SPLOOP(D/W)-Befehlsgruppe ausgeführt wird, oder wenn der Iterationsinterval-Wert erreicht ist, der beim letzten Befehl der eben genannten Gruppe mit übergeben wurde. Sollte der zwete Fall eintreten, wird das ILC um 1 dekrementiert.\\
+Es sind zwei LBCs vorhanden um eine Unterstützung für verschachtelte Schleifen zu gewährleisten.
+
+\subparagraph{Inner loop count register (ILC)}$\;$ \\\\
+Im ILC ist die Gesammtzahl der Durchläufe hinterlegt, die für die Ausführung der Schleife erforderlich sind. Erreicht das LBC den Iterationsinterval-Wert, wird das ILC dekrementiert, erreicht das ILC den Wert 0, endet die SPLOOP.
+
+\subparagraph{Reload inner loop count register (RILC)}$\;$ \\\\
+Das RILC ist dafür zuständig den ILC für die nächste Ausführung einer verschachtelten Schleife zurückzusetzen.
+
+\subparagraph{TSR, ITSR und NTSR}$\;$ \\
+
+Diese drei Register sind für den Status der SPLOOP zuständig.\\
+TSR zeigt an, ob eine SPLOOP momentan ausgeführt wird oder nicht.\\
+Sollte eine eine Interruption kommen, wird der Inhalt des TSR in das ITSR kopiert.\\
+Sollte ein Fehler oder eine nicht maskiertbare Interruption auftreten, wird der Inhalt von TSR in NTSR kopiert.
+
 
 \subsubsection{Compileroptimierungsstufen}
+
 \subsubsection{Beispielverarbeitung des C674x}
 \paragraph{Beispiel der Compileroptimierung}$\;$ \\\\
 \paragraph{Beispiel des Software-Pipelinings (SPLOOP)}$\;$ \\\\
