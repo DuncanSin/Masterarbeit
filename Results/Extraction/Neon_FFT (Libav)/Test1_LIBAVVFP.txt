@@ -1,0 +1,22 @@
+Testcase 1: MFCC, SpectralCentroid, SpectralFlux, SpectralRolloff
+Opened ../../blues.00000.au
+total extraction time: 0.31027
+Time to extract FFT: 0.1865 seconds (1293 windows)
+Time to extract FFT: 0.144238 seconds (1000 windows)
+Time to extract FFT: 0.601089 %
+Time to extract AmplitudeOfSpectrum: 0.04965 seconds (1293 windows)
+Time to extract AmplitudeOfSpectrum: 0.0383991 seconds (1000 windows)
+Time to extract AmplitudeOfSpectrum: 0.160022 %
+Time to extract SpectralCentroid: 0.01587 seconds (1293 windows)
+Time to extract SpectralCentroid: 0.0122738 seconds (1000 windows)
+Time to extract SpectralCentroid: 0.051149 %
+Time to extract SpectralRolloff: 0.00559 seconds (1293 windows)
+Time to extract SpectralRolloff: 0.00432328 seconds (1000 windows)
+Time to extract SpectralRolloff: 0.0180166 %
+Time to extract SpectralFlux: 0.00312 seconds (1293 windows)
+Time to extract SpectralFlux: 0.00241299 seconds (1000 windows)
+Time to extract SpectralFlux: 0.0100558 %
+Time to extract MFCC: 0.04954 seconds (1293 windows)
+Time to extract MFCC: 0.038314 seconds (1000 windows)
+Time to extract MFCC: 0.159667 %
+Extraction took 310440000 clicks and had a runtime of 310.440002 secounds.

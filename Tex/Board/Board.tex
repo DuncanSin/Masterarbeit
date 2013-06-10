@@ -547,7 +547,7 @@ SUBDP & .L\&.S & 7 & 6 & 2\\
 \label{tab:c674x}
 \end{table}
 
-\paragraph{Pipelining auf dem C674x}$\;$ \\\\
+\paragraph{Pipelining auf dem C674x}\label{ph:dsppipe}$\;$ \\\\
 Nach dem die Registerstruktur und der Instruktionssatz des C674x vorgestellt wurde, soll nun die Pipelinestruktur erläutert werden.\\ 
 Generell besitzt die Pipeline drei Stufen:
 
@@ -566,7 +566,7 @@ Allerdings sind die drei Stufen nicht gleich lang. Die Fetch-Stufe besitzt vier 
 	\label{fig:dsppipe}
 \end{figure} 
 % 
-\subparagraph{Die Fetch-Stufe}$\;$ \\\\
+\subparagraph{Die Fetch-Stufe}\label{subph:fetch}$\;$ \\\\
 In der Fetch-Stufe werden Befehle aus dem Instruktionscache geladen. Dieses ist wie bereits erwähnt in vier Phasen unterteilt:
 
 \begin{enumerate}
@@ -634,7 +634,7 @@ Die Optimierungsstufe 2 wird mit dem Compilerflag \textit{\-opt\_level=2} oder \
 \item Loop Unrolling
 \end{itemize}
 
-\paragraph{Optimierungsstufe \-O3}$\;$ \\
+\paragraph{Optimierungsstufe \-O3}\label{ph:o3}$\;$ \\
 
 Die letzte Optimierungsstufe wird mit \textit{\-opt\_level=2} oder \textit{\-O3} aufgerufen. Auch diese schließt alle Optimierungen der vorherigen Stufen ein, außerdem kommen folgende dazu:
 
@@ -666,12 +666,12 @@ Hierbei wird während der Kompilierung ein Ausführungsplan aufgestellt, der es er
 Hierführ wird ein Iterationsschritt in sogenannte Stages unterteilt. Alle Stages besitzen eine Gemeinsamkeit, sie haben alle die selbe Ausführungszeit (in Takten), welche als Iterationsinterval bezeichnet wird.\\
 Nach der Einschwungphase der SPLOOP werden alle Stages parallel ausgeführt und jede Stage ist einem anderen Iterationsschritt zugeordnet, \textbf{Abbildung \ref{fig:sploop}} soll dieses verdeutlichen. Die Phase vor dem eingeschwungenen Zustand der SPLOOP wird als Prolog bezeichnet, die nach dem eingeschwungenen Zustand als Epilog. Der eingeschwungene Zustand an sich wird als Kernel bezeichnet.\\
 %
-%\begin{figure}[htb]
-%	\centering
-%		\includegraphics{../Pictures/sloop.pdf}
-%	\caption{Software Pipelined Execution Flow\cite{sprufe8b}}
-%	\label{fig:dsppipe}
-%\end{figure} 
+\begin{figure}[htb]
+	\centering
+		\includegraphics[width=1\textwidth]{../Pictures/sploop.pdf}
+	\caption{Software Pipelined Execution Flow\cite{sprufe8b}}
+	\label{fig:sploop}
+\end{figure} 
 % 
 Um SPLOOP während der Ausführung zu ermöglichen werden, SPLOOP-spezifische Befehle in den Assemblercode eingefügt, die der zugrundeliegenden Hardware ermöglichen, Stages etc. zu erkennen. Diese Befehle lassen sich grob in drei Gruppen unterteilen:
 
@@ -686,11 +686,11 @@ Im Loop Buffer werden die für die Schleife benötigten Instruktionen, Information
 Die Speicherung von Instruktionen im Loop Buffer bietet den Vorteil, dass sie nicht für jede Ausführung neu die Fetch-Stufe durchlaufen müssen, sondern einfach aus dem Loop Buffer geladen werden können.
 
 \subparagraph{Loop buffer count register (LBC)}$\;$ \\\\
-Das LBC fungiert als Inhaltsverzeichnis für den Lop Buffer und gibt an, welcher Stage ausgeführt werden muss. Das LBC wird in zwei Fällen auf null zurückgesetzt. Entweder wenn ein Befehl aus der SPLOOP(D/W)-Befehlsgruppe ausgeführt wird, oder wenn der Iterationsinterval-Wert erreicht ist, der beim letzten Befehl der eben genannten Gruppe mit übergeben wurde. Sollte der zwete Fall eintreten, wird das ILC um 1 dekrementiert.\\
+Das LBC fungiert als Inhaltsverzeichnis für den Loop Buffer und gibt an, welcher Stage ausgeführt werden muss. Das LBC wird in zwei Fällen auf null zurückgesetzt. Entweder wenn ein Befehl aus der SPLOOP(D/W)-Befehlsgruppe ausgeführt wird, oder wenn der Iterationsinterval-Wert erreicht ist, der beim letzten Befehl der eben genannten Gruppe mit übergeben wurde. Sollte der zweite Fall eintreten, wird das ILC um 1 dekrementiert.\\
 Es sind zwei LBCs vorhanden um eine Unterstützung für verschachtelte Schleifen zu gewährleisten.
 
 \subparagraph{Inner loop count register (ILC)}$\;$ \\\\
-Im ILC ist die Gesammtzahl der Durchläufe hinterlegt, die für die Ausführung der Schleife erforderlich sind. Erreicht das LBC den Iterationsinterval-Wert, wird das ILC dekrementiert, erreicht das ILC den Wert 0, endet die SPLOOP.
+Im ILC ist die Gesamtzahl der Durchläufe hinterlegt, die für die Ausführung der Schleife erforderlich sind. Erreicht das LBC den Iterationsinterval-Wert, wird das ILC dekrementiert, erreicht das ILC den Wert 0, endet die SPLOOP.
 
 \subparagraph{Reload inner loop count register (RILC)}$\;$ \\\\
 Das RILC ist dafür zuständig den ILC für die nächste Ausführung einer verschachtelten Schleife zurückzusetzen.
@@ -699,10 +699,171 @@ Das RILC ist dafür zuständig den ILC für die nächste Ausführung einer verschacht
 
 Diese drei Register sind für den Status der SPLOOP zuständig.\\
 TSR zeigt an, ob eine SPLOOP momentan ausgeführt wird oder nicht.\\
-Sollte eine eine Interruption kommen, wird der Inhalt des TSR in das ITSR kopiert.\\
-Sollte ein Fehler oder eine nicht maskiertbare Interruption auftreten, wird der Inhalt von TSR in NTSR kopiert.
+Sollte ein Interrupt kommen, wird der Inhalt des TSR in das ITSR kopiert.\\
+Sollte ein Fehler oder ein nicht maskierbarer Interrupt auftreten, wird der Inhalt von TSR in NTSR kopiert.
 
 \subsubsection{Beispielverarbeitung des C674x}
-\paragraph{Beispiel der Compileroptimierung}$\;$ \\\\
-\paragraph{Beispiel des Software-Pipelinings (SPLOOP)}$\;$ \\\\
+Nachdem in den vorherigen Abschnitten die Optimierungsstufen des Compilers vorgestellt wurden, sollen in diesem Kapitel Beispiele dazu gegeben werden. Das erste Beispiel (\textbf{\ref{ph:bspcomp}}) zeigt am Beispiel des \textit{Root Mean Square} eine Kompilierung mit der höchsten Optimierungsstufe O3. Als zweites Beispiel (\textbf{\ref{ph:bspsploop}}) soll mit Hilfe des \textit{Spectral Centroids} die Optimierung durch SPLOOP gezeigt werden.
+
+\paragraph{Beispiel der Compileroptimierung}\label{ph:bspcomp}$\;$ \\\\
+Anhand des \textit{Root Mean Square} soll hier die Optimierung O3 des C6EZRun-Compilers verdeutlicht werden. Hierfür soll neben den Optimierungen aus \textbf{Kapitel \ref{ph:o3}} auch die Pipeline aus \textbf{Kapitel \ref{ph:dsppipe}} gezeigt werden.\\
+\textbf{Listing \ref{code:rmsc}} zeigt den C-Code des \textit{Root Mean Square} und \textbf{Listing \ref{code:rmsasm}} den daraus Kompilierten Assembler-Code.
+
+\begin{lstlisting}[caption=C-Code des Root Mean Square, label=code:rmsc]
+	for (n = 0; n < rmsinfo.N; ++n) {
+		mean += ((realv) signal[n] / (realv) rmsinfo.N)
+		* (realv) signal[n];
+
+	}
+
+	rms[run] = sqrt(mean);
+\end{lstlisting}
+
+\begin{lstlisting}[caption=Assembler-Code des Root Mean Square, label=code:rmsasm]
+           CMPGT   .L1     A3,0,A0           ; |1| 
+||         INTSP   .L2X    A3,B10
+||         MV      .S1     A3,A10            ; |2| 
+   [!A0]   BNOP    .S1     $C$L2,5           ; |1| 
+|| [ A0]   LDW     .D1T1   *A13++,A15        ; |2| 
+	   CALL    .S1     __c6xabi_divf     ; |2| 
+           MV      .L2     B10,B4            ; |2| 
+           MV      .L1     A15,A4            ; |2| 
+           NOP             2
+           MPYSP   .M1     A15,A4,A3         ; |2| 
+||         SUB     .L1     A10,1,A0          ; |1| 
+   [ A0]   LDW     .D1T1   *A13++,A15        ; |2| 
+|| [ A0]   B       .S1     $C$L1             ; |1| 
+   [ A0]   CALL    .S1     __c6xabi_divf     ; |2| 
+   [ A0]   MV      .L2     B10,B4            ; |2| 
+           ADDSP   .L1     A3,A14,A14        ; |1| 
+           SUB     .L1     A10,1,A10         ; |1| 
+   [ A0]   MV      .L1     A15,A4            ; |2|  
+	   CALLP   .S2     sqrt,B3
+||         SPDP    .S1     A14,A5:A4         ; |7|   
+           DPSP    .L1     A5:A4,A3          ; |7| 
+           NOP             1
+           STW     .D1T1   A3,*+A12[A11]     ; |7| 
+\end{lstlisting}
+
+Zur Erläuterung der Leseweise des Assembler-Codes, sei gesagt, dass ein || am Anfang einer Zeile bedeutet, dass der folgende Befehl parallel zum Befehl der vorherigen Zeile ausgeführt wird. Die vierte Spalte gibt den Datenpfad und die entsprechende Ausführungseinheit an, so wird zum Beispiel das \textit{Zero} aus Zeile 11 im Datenpfad 1 auf der L-Einheit ausgeführt, |n| steht für die Entsprechende Zeile aus dem C-Code in \textbf{Listing \ref{code:rmsc}} (Zeile 2 und 3 werden als Zeile 2 gewertet).\\
+Wie in \textbf{Kapitel \ref{subph:fetch}} bereits erwähnt, werden immer acht Befehle zu einem Fetch Packet zusammen gefasst, so das die 23 Befehle zu drei solchen Paketen zusammen gefasst werden können (vgl. \textbf{Tabelle \ref{tab:fetch}}).
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{|c|c|c|c|c|c|c|c|c|}
+\hline
+FP Nummer & Slot 1 & Slot 2 & Slot 3 & Slot 4 & Slot 5 & Slot 6 & Slot 7 & Slot 8\\
+\hline\hline
+1 & cmpgt & intsp & mv & bnop & ldw & call & mv & mv\\
+2 & nop & mpysp & sub & ldw & b &call& mv &addsp\\
+3 & sub & mv & callp & spdp & dpsp & nop &stw &nop\\
+\hline
+\end{tabular}
+\caption{Fetch Pakets des Root Mean Square Assembler-Codes}
+\label{tab:fetch}
+\end{table}
+
+Während der Decode-Stufe werden danach Zuordnungen zu Execute Pakets durchgeführt, wo zum Beispiel für Fetch Paket 1 festgestellt wurde, dass es in fünf solcher Execute Pakets gesplittet werden kann. Diese Execute Pakets wurden danach den Ausführungseinheiten zugeordnet und in der Execute-Stufe ausgeführt.\\
+An Optimierungen lassen sich hierzum Beispiel nennen: 
+\begin{itemize}
+\item Die Inline Calls zu \textit{sqrt} und \textit{\_\_c6xabi\_dif}
+\item Die Konvertierung von Array-Aufrufen in Pointerarithmetiken, z.B. in Zeile 5.
+\item Die Propagation von Konstanten in Register, z.B. rmsinfo.N in A0
+\end{itemize} 
+\paragraph{Beispiel des Software-Pipelinings (SPLOOP)}\label{ph:bspsploop}$\;$ \\\\
+Die Funktionsweise von SPLOOP soll nachfolgend am Beispiel der Schleife innerhalb der Berechnung des \textit{Spectral Centroids} erläutert werden. \textbf{Listing \ref{code:scc}} zeigt den C-Code dieser Schleife und \textbf{Listing \ref{code:scasm}} den entsprechenden Assembler-Code.
+
+\begin{lstlisting}[caption=C-Code der Schleife des Spectral Centroids, label=code:scc]
+	for (k = 0; k < scsize; ++k) {
+		weighted += A[k] * ((realv) k);
+		total += A[k];
+	}
+\end{lstlisting}
+
+\begin{lstlisting}[caption=Assembler-Code der Schleife des Spectral Centroids, label=code:scasm]
+;** --------------------------------------------------------------------------*
+$C$L1:    ; PIPED LOOP PROLOG
+
+           SPLOOPD 4       ;12               ; (P) 
+||         MV      .L1     A4,A6
+||         MV      .S1X    B7,A8
+||         MVC     .S2     B5,ILC
+
+;** --------------------------------------------------------------------------*
+$C$L2:    ; PIPED LOOP KERNEL
+
+           INTSP   .L1     A8,A4             ; |2| (P) <0,0> 
+||         LDW     .D1T1   *A6++,A5          ; |2| (P) <0,0> 
+
+           NOP             2
+           ADD     .S1     1,A8,A8           ; |1| (P) <0,3> Define a twin register
+           NOP             1
+
+           ADDSP   .L2X    A5,B4,B4          ; |3| (P) <0,5>  ^ 
+||         MPYSP   .M1     A5,A4,A3          ; |2| (P) <0,5> 
+
+           NOP             2
+           NOP             1
+	
+           SPKERNEL 1,2
+||         ADDSP   .L1     A3,A7,A7          ; |2| <0,9>  ^ 
+
+;** --------------------------------------------------------------------------*
+$C$L3:    ; PIPED LOOP EPILOG
+;** --------------------------------------------------------------------------*
+\end{lstlisting}
+In diesem speziellen Beispiel ist der Epilog leer, dieses gilt aber nicht für die Allgemeinheit.\\
+Wie durch den Befehl \textit{SPLOOPD 4} angegeben ist, beträgt die Länge eines Iterationsintervals vier Takte. Des weiteren sind sechs Stages vorhanden (innerhalb des Codes durch Leerzeilen getrennt), die jeweils vier Takte lang sind. Die einzige Ausnahme ist der Befehl \textit{LDW}, dieser wird in fünf Takten ausgeführt, da allerdings nicht direkt nach dem 5. Takt aus A5 gelesen wird, stellt das kein Problem dar. Der Befehl \textit{SPKERNEL} markiert das Ende des Kernels, die Argumente dieses Befehls geben an, wie lange nach dem letzten Durchlauf gewartet werden muss, bis wieder Operationen ausgeführt werden können, in diesem Fall muss die Laufzeit einer Stage und 2 Takte gewartet werden, also insgesamt 6 Takte.\\
+Die Konstante \textit{scsize} steht für die halbe Breite eines betrachteten Fensters. Die Berechnung der Gesammtlaufzeit einer Schleife mit SPLOOP wird nach \textbf{Formel \ref{eqn:sploop}} berechnet. Im Fall des \textit{Spectral Centroids} mit einer Fensterbreite von 512, beträgt die Gesamtlaufzeit in Takten 976.
+
+\begin{equation}\label{eqn:sploop}
+Zeit~=~ \left[\overbrace{\#Stages}^{Einschwung}+\overbrace{\left(\frac{\#Durchl"aufe - 2 \cdot \#Stages}{\#Stages}\right)}^{Eingeschwungen}+\overbrace{\#Stages}^{Ausschwung}\right] \cdot Iterationsinterval
+\end{equation}
+
 \subsubsection{Optimierte Bibliotheken für den C674x}
+Texas Instruments bietet zu seinen DSPs der C6000-Reihe auch noch eine Reihe Bibliotheken an, diese enthalten Algorithmen die speziell für DSPs dieser Baureihe optimiert wurden. Im Folgenden sollen zwei dieser Bibliotheken näher vorgestellt werden, zum einen die DSPLIB mit Algorithmen aus der Signalverarbeitung und zum anderen die MATHLIB mit optimierten mathematischen Funktionen.
+
+\paragraph{DSPLIB}$\;$ \\\\
+Wie schon erwähnt ist die DSPLIB-Bibliothek eine Zusammenfassung von Algorithmen aus der Signalverarbeitung, die für den Gebrauch auf DSPs der C6000-Reihe optimiert wurde und direkt von Texas Instruments stammt. Diese liegen innerhalb dieser Bibliothek sowohl als C- als auch als Assembler-Code vor. \textbf{Tabelle \ref{tab:dsplib}} zeigt einen Auszug der vorhandenen Algorithmen und ihre Funktionsnamen innerhalb der Bibliothek.
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{|c|c|}
+\hline
+Funktionsname & Alorithmus\\
+\hline\hline
+DSPF\_sp\_autocor & Autocorrelation\\
+DSPF\_sp\_biquad & Biquad Filter\\
+DSPF\_sp\_blk\_move & Block Copy\\
+DSPF\_sp\_convol & Convolution\\
+DSPF\_sp\_dotp\_cplx & Complex Dot Product\\
+DSPF\_sp\_dotprod & Dot Product\\
+DSPF\_sp\_fftSPxSP & Mixed Radix Forward FFT mit Bit Reversal\\
+DSPF\_sp\_fir\_cplx & Complex FIR Filter\\
+DSPF\_sp\_fir\_gen & FIR Filter\\
+DSPF\_sp\_fir\_r2 & FIR Filter Alternate Implementation\\
+DSPF\_sp\_fircirc & FIR Filter mit Circular Input\\
+DSPF\_sp\_ifftSPxSP & Mixed Radix Inverse FFT mit Bit Reversal\\
+DSPF\_sp\_iir & IIR Filter\\
+DSPF\_sp\_irrlat & Lattice IIR Filter\\
+DSPF\_sp\_lms & LMS Adaptive Filter\\
+DSPF\_sp\_mat\_mul & Matrix Multiply\\
+DSPF\_sp\_mat\_mul\_cplx & Complex Matrix Multiply\\
+DSPF\_sp\_mat\_trans & Matrix Transpose\\
+DSPF\_sp\_maxidx & Maximum Index\\
+DSPF\_sp\_maxval & Maximum Value\\
+DSPF\_sp\_minerr & VSELP Vocoder Codebook Search\\
+DSPF\_sp\_minval & Minimum Value\\
+DSPF\_sp\_vecmul & Vector Multiplication\\
+DSPF\_sp\_vecrecip & Vectro Reciprocal\\
+DSPF\_sp\_vecsum\_sq & Vector Sum of Squares\\
+\hline
+\end{tabular}
+\caption{Auszug der Algorithmen der DSPLIB und ihre Funktionsnamen\cite{dsplib}}
+\label{tab:dsplib}
+\end{table}
+
+\paragraph{MATHLIB}$\;$ \\\\
+
+Die MATHLIB-Bibliothek ist ebenfalls für die Verwendung auf DSPs der C6000-Reihe optimiert. Auch diese Bibliothek stammt von Texas Instruments. Auch hier liegen der Quellcode sowohl als C- als auch als Assembler-Code vor.\\
+Die mathematischen Funktionen sind nur für Double-Precision vorhanden, bieten aber neben der Option einzelne Aufrufe auszuführen, bei denen auch Floatzahlen als Argumente verwendet werden können, die Möglichkeit Operationen auf Arrays auszuführen. Werden diesen Arrayoperationen zum Beispiel die Array a und b übergeben, wird immer das n-te Element von a mit dem n-ten Element von b verrechnet. Da alle Operationen auf Double-Precision ausgelegt sind, werden bei Arrayoperationen allerdings nur Eingabearray vom Datentyp \textit{double} akzeptiert, was für Single-Precision-Berechnungen eine manuelle Konvertierung von Floatarrays in Doublearrays erfordert. 
