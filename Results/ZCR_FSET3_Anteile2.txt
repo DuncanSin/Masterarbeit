@@ -1,0 +1,21 @@
+Testcase 3: ZeroCrossingRate, RootMeanSquare, LowEnergy
+Opened ../../blues.00000.au
+
+Sign: 0.05105 Anteil: 90.5624%
+Subtraktion: 0.00132 Anteil: 2.34167%
+FABS: 0.00143 Anteil: 2.53681%
+Akkumulation: 0.00109 Anteil: 1.93365%
+Result: 0.00148 Anteil: 2.62551%
+Gemessen mit 1000 Durchläufen
+
+total extraction time: 0.07064
+Time to extract ZeroCrossingRate: 0.06191 seconds (1293 windows)
+Time to extract ZeroCrossingRate: 0.0478809 seconds (1000 windows)
+Time to extract ZeroCrossingRate: 0.876416 %
+Time to extract RootMeanSquare: 0.00399 seconds (1293 windows)
+Time to extract RootMeanSquare: 0.00308585 seconds (1000 windows)
+Time to extract RootMeanSquare: 0.0564836 %
+Time to extract LowEnergy: 0.00474 seconds (1293 windows)
+Time to extract LowEnergy: 0.00366589 seconds (1000 windows)
+Time to extract LowEnergy: 0.0671008 %
+Extraction took 70780000 clicks and had a runtime of 70.779999 secounds.

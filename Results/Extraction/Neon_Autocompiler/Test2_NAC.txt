@@ -1,22 +1,22 @@
 Testcase 2: MFCC, NormalizedAudioSpectrumEnvelope, OctaveSpectralContrast
 Opened ../../blues.00000.au
-total extraction time: 1.39493
-Time to extract HammingWindow: 0.0596 seconds (2585 windows)
-Time to extract HammingWindow: 0.0230561 seconds (1000 windows)
-Time to extract HammingWindow: 0.0427262 %
-Time to extract FFT: 0.8147 seconds (2585 windows)
-Time to extract FFT: 0.315164 seconds (1000 windows)
-Time to extract FFT: 0.584044 %
-Time to extract AmplitudeOfSpectrum: 0.09932 seconds (2585 windows)
-Time to extract AmplitudeOfSpectrum: 0.0384217 seconds (1000 windows)
-Time to extract AmplitudeOfSpectrum: 0.0712007 %
-Time to extract MFCC: 0.09891 seconds (2585 windows)
-Time to extract MFCC: 0.0382631 seconds (1000 windows)
-Time to extract MFCC: 0.0709068 %
-Time to extract NormalizedAudioSpectrumEnvelope: 0.02893 seconds (2585 windows)
-Time to extract NormalizedAudioSpectrumEnvelope: 0.0111915 seconds (1000 windows)
-Time to extract NormalizedAudioSpectrumEnvelope: 0.0207394 %
-Time to extract OctaveSpectralContrast: 0.29347 seconds (2585 windows)
-Time to extract OctaveSpectralContrast: 0.113528 seconds (1000 windows)
-Time to extract OctaveSpectralContrast: 0.210383 %
-Extraction took 1395120000 clicks and had a runtime of 1395.119995 secounds.
+total extraction time: 1.43963
+Time to extract HammingWindow: 0.06039 seconds (2585 windows)
+Time to extract HammingWindow: 0.0233617 seconds (1000 windows)
+Time to extract HammingWindow: 0.0419483 %
+Time to extract FFT: 0.8435 seconds (2585 windows)
+Time to extract FFT: 0.326306 seconds (1000 windows)
+Time to extract FFT: 0.585914 %
+Time to extract AmplitudeOfSpectrum: 0.10226 seconds (2585 windows)
+Time to extract AmplitudeOfSpectrum: 0.039559 seconds (1000 windows)
+Time to extract AmplitudeOfSpectrum: 0.0710321 %
+Time to extract MFCC: 0.10171 seconds (2585 windows)
+Time to extract MFCC: 0.0393462 seconds (1000 windows)
+Time to extract MFCC: 0.0706501 %
+Time to extract NormalizedAudioSpectrumEnvelope: 0.02921 seconds (2585 windows)
+Time to extract NormalizedAudioSpectrumEnvelope: 0.0112998 seconds (1000 windows)
+Time to extract NormalizedAudioSpectrumEnvelope: 0.0202899 %
+Time to extract OctaveSpectralContrast: 0.30256 seconds (2585 windows)
+Time to extract OctaveSpectralContrast: 0.117044 seconds (1000 windows)
+Time to extract OctaveSpectralContrast: 0.210165 %
+Extraction took 1439790000 clicks and had a runtime of 1439.789917 secounds.

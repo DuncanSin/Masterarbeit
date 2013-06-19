@@ -53,7 +53,7 @@ All diese Subsysteme und Coprozessoren sind durch eine gemeinsame System Interco
 %
 \begin{figure}[htbp]
 	\centering
-		\includegraphics[width=1\textwidth]{../Pictures/dm8168.pdf}
+		\includegraphics[scale=0.5]{../Pictures/dm8168.pdf}
 	\caption{Funktionales Blockdiagramm des DM816x\cite{evm8168}}
 	\label{fig:dm8168}
 \end{figure}
@@ -70,7 +70,6 @@ Der erste Prozessor aus der heterogenen Prozessorarchitektur des DM8168 der vorg
 	\item Load/Store
 	\item L2 Cache
 	\item NEON-Coprozessor (\textbf{\ref{subsubsec:neon}})
-	\item ETM
 \end{itemize}
 %
 \begin{figure}[h]
@@ -225,15 +224,7 @@ Auch die NEON-SIMD-Einheit verwendet die in \textbf{Abbildung \ref{fig:neonbank}
 \item und mit Kombinationen aus den 128- und 64-bit Registern.
 \end{itemize}
 Die Einheit kann bis zu zwei Advanced SIMD Operationen pro Takt von der Integer Execution Einheit des ARMs empfangen und zusätzlich noch 32-bit MCR oder MRC Daten mit dieser tauschen.\\
-Des weiten werden NEON-SIMD-Befehle in einer 10-stufigen Pipeline abgearbeitet, die in \textbf{Abbildung \ref{fig:neonpipe}} dargestellt ist.
-%
-\begin{figure}[h]
-	\centering
-		\includegraphics[width=1\textwidth]{../Pictures/neonpipe.png}
-	\caption{10-Stufige Pipeline der NEON-SIMD-Einheit\cite{cortexarch}}
-	\label{fig:neonpipe}
-\end{figure} 
-%
+Des weiten werden NEON-SIMD-Befehle in einer 10-stufigen Pipeline abgearbeitet.\\
 Außerdem ist es der NEON-SIMD-Einheit möglich Teile der VFPv3-Befehle in ihrer Pipeline auszuführen um die Abarbeitungszeit zu beschleunigen.\\
 In \textbf{Tabelle \ref{tab:neon}} soll ein Auszug des NEON-SIMD-Befehlssatzes mit Takten angegeben werden. Q<n>Lo bezieht sich hierbei auf die das untere D-Register (D<2n) Q<n>Hi auf das Obere (D<2n+1>). Sigle-Precision-Befehle sind im späteren Assemblercode durch den Zusatz \textit{.f32} hinter dem Befehlsnamen gekennzeichnet\cite{cortexa8}.
 
@@ -594,8 +585,8 @@ Die Decode-Stufe besteht aus zwei Phasen:
 \item DC: Instruction decode
 \end{enumerate}
 
-In der DC-Phase werden die vorher geladenen Fetch Packets in sogenannte Execute Packets zerlegt. Hierbei stellt ein Execute Packet Befehle dar, die parallel auf den acht vorhandenen Ausführungseinheiten bearbeitet werden können, daraus folgt, dass ein Execute Packet immer mindestens aus einem und maximal aus acht Befehlen bestehen kann. Außerdem werden in dieser Phase den einzelnen Befehlen eines Execute Packets die Ausführungseinheiten zugeordnet, die sie später bearbeiten werden. Hierbei muss beachtet werden, dass bestimmte Ausführungseinheiten noch von vorherigen Execute Packets belegt sein können. An diesem Punkt spielt auch die in \textbf{Kapitel \ref{ph:dspinst}} erwähnte Funktion Unit Latency eine Rolle, die die Anzahl von Takten beschreibt, die eine Hardwareeinheit, zum Beispiel ein Single-Precison Multiplizierer, nach einer Ausführung benötigt, bis sie den nächsten Auftrag annehmen kann.\\
-Während der DP-Phase werden die Quell- und Zielregister und gegebenenfalls zugewiesene Pfade dekodiert., welche bei der späteren Ausführung benötigt werden. 
+In der DP-Phase werden die vorher geladenen Fetch Packets in sogenannte Execute Packets zerlegt. Hierbei stellt ein Execute Packet Befehle dar, die parallel auf den acht vorhandenen Ausführungseinheiten bearbeitet werden können, daraus folgt, dass ein Execute Packet immer mindestens aus einem und maximal aus acht Befehlen bestehen kann. Außerdem werden in dieser Phase den einzelnen Befehlen eines Execute Packets die Ausführungseinheiten zugeordnet, die sie später bearbeiten werden. Hierbei muss beachtet werden, dass bestimmte Ausführungseinheiten noch von vorherigen Execute Packets belegt sein können. An diesem Punkt spielt auch die in \textbf{Kapitel \ref{ph:dspinst}} erwähnte Funktion Unit Latency eine Rolle, die die Anzahl von Takten beschreibt, die eine Hardwareeinheit, zum Beispiel ein Single-Precison Multiplizierer, nach einer Ausführung benötigt, bis sie den nächsten Auftrag annehmen kann.\\
+Während der DC-Phase werden die Quell- und Zielregister und gegebenenfalls zugewiesene Pfade dekodiert., welche bei der späteren Ausführung benötigt werden. 
 
 \subparagraph{Die Execute-Stufe}$\;$ \\\\
 In der Execute-Stufe werden die vorher geladenen und decodierten Befehle auf den Hardwareeinheiten ausgeführt. Diese Stufe wird formell in fünf Phasen unterteilt, E1-E5, in denen je nach Befehl Lade- und/oder Schreiboperationen ausgeführt werden. Hierbei kann es allerdings passieren, dass bei manchen Befehlen eine bestimmte Zeit vergeht, bis das Ergebnis am Ausgang anliegt, diese Zeit wird als Delayslots bezeichnet und welche ab der Phase E1 gezählt werden (vgl. \textbf{Tabelle \ref{tab:c674x}}). Die maximale Anzahl an Delayslots im Instruktionssatz des C674x beträgt 9, daher könnte man auch von einer zehnphasigen Execute-Stufe (E1-E10) sprechen.\\
