@@ -142,7 +142,17 @@ int \_\_aeabi\_fcmpgt(float a, float b) & 1, wenn a > b\\
 \end{table}
 
 \subsubsection{Der NEON-Coprozessor}\label{subsubsec:neon}
-Dieser Coprozessor beherbergt die beiden Floating Point-Einheiten des Cortex-A8. Zum Einen ist das die VFPv3-Einheit (\textbf{\ref{ph:vfp}}) und zum Anderen die NEON-SIMD-Einheit (\textbf{\ref{ph:neon}}). Des weiten sind noch:
+Dieser Coprozessor beherbergt die beiden Floating Point-Einheiten des Cortex-A8. Zum Einen ist das die VFPv3-Einheit (\textbf{\ref{ph:vfp}}) und zum Anderen die NEON-SIMD-Einheit (\textbf{\ref{ph:neon}}). 
+%
+\begin{figure}[h]
+	\centering
+		\includegraphics[scale=0.8]{../Pictures/NEON.pdf}
+	\caption{Vereinfachtes Blockdiagramm des NEON-Coprozessors}
+	\label{fig:neon}
+\end{figure} 
+%
+
+Des weiten sind noch:
 \begin{itemize}
 \item Eine NEON-Registerbank mit 32x64-bit General-purpose Registern,
 \item eine NEON Integer Execute Pipeline (ALU,Shift,MAC),
@@ -485,9 +495,9 @@ Der C674x-DSP der Firma Texas Instruments gehört zur C6000-Familie und ist ein F
 Aus \textbf{Abbildung \ref{fig:DSPblock}} lassen sich folgende Hardwarekomponenten entnehmen:
 \begin{itemize}
 \item C674x+ CPU
-\item 32kb L1 Programm (L1P) RAM und Cache (bis zu 32kb) mit Error Detection Code (EDC)
-\item 32kb L1 Daten (L1D) RAM und Cache (bis zu 32kb)
-\item 256kb zusammenhängender L2 RAM und Cache mit Error Correction Code (ECC)
+\item 32kB L1 Programm (L1P) RAM und Cache (bis zu 32kB) mit Error Detection Code (EDC)
+\item 32kB L1 Daten (L1D) RAM und Cache (bis zu 32kB)
+\item 256kB zusammenhängender L2 RAM und Cache mit Error Correction Code (ECC)
 \item External Memory Controller (EMC)
 \item Interleaving Domain Multiple Access (IDMA)
 \end{itemize}
@@ -496,7 +506,7 @@ Die Registerarchitektur innerhalb der C674x+ CPU, ihr Instruktionssatz und die P
 
 \paragraph{Registerarchitektur}$\;$ \\\\
 Wie ebenfalls in \textbf{Abbildung \ref{fig:DSPblock}} zu sehen ist, besitzt die C674x+ CPU zwei parallele Datenpfade, die mit Register File A und B bezeichnet sind. Beide Datenpfade sind mit je mit einer 64kb-Leitung an den L1D-Cache angeschlossen, können also parallel 64kb lesen oder schreiben.\\
-Innerhalb dieser Datenpfade befinden sich acht Ausführungseinheiten zur Bearbeitung von Befehlen, je vier pro Datenpfad. Der Instruktionssatz des C674x ist in vier Gruppen von Befehlen auf geteilt und jeder Ausführungseinheit ist eine dieser Gruppen zugeordnet. Die Aufteilung der acht Ausführungseinheiten zwischen den Datenpfaden ist so gestaltet, dass jeder Datenpfad pro Gruppe von Befehlen eine Ausführungseinheit besitzt. Die Zuordnung der Befehle zu einer der vier Gruppen geschah dabei wie folgt:
+Innerhalb dieser Datenpfade befinden sich acht Ausführungseinheiten zur Bearbeitung von Befehlen, je vier pro Datenpfad. Der Instruktionssatz des C674x ist in vier Gruppen von Befehlen aufgeteilt und jeder Ausführungseinheit ist eine dieser Gruppen zugeordnet. Die Aufteilung der acht Ausführungseinheiten zwischen den Datenpfaden ist so gestaltet, dass jeder Datenpfad pro Gruppe von Befehlen eine Ausführungseinheit besitzt. Die Zuordnung der Befehle zu einer der vier Gruppen geschah dabei wie folgt:
 %
 \begin{figure}[h]
 	\centering
