@@ -33,5 +33,5 @@ extraction finished
 generate feature vector
 <signal name="ready"/>
 Time to process features: 
-=> 9.09 ms (1293 windows)
-=> 7.03016 ms (1000 windows)
+=> 5.57 ms (1293 windows)
+=> 4.30781 ms (1000 windows)

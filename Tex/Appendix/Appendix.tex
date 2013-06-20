@@ -1,0 +1,23 @@
+\chapter*{Anhang}
+\begin{table}[h]
+\centering
+\begin{tabular}{|c|c|p{6cm}|}
+\hline
+Befehl & Takte & Kommentar\\
+\hline\hline
+ADD & 1 &\\
+CMP & 1 &\\
+LDM & 2-n & n = Register/2, min 2 Cycles\\  
+LDR & 1-2 & Je nach Offset\\
+MOV \& MOVN & 1 &\\
+MUL \& MLA & 1-3 & Je nach Art\\
+STM & 2-n & n = Register/2, min 2 Cycles\\  
+STR & 1-2 & Je nach Offset\\
+SUB & 1 &\\
+MCR & min. 60 & hängt von der Auslastung des angesprochenen Coprozessors ab\\
+MRC & min. 60 & hängt von der Auslastung des angesprochenen Coprozessors ab\\
+\hline
+\end{tabular}
+\caption{Auszug der Integeroprationen des ARMv7\cite{cortexa8}}
+\label{tab:inst}
+\end{table}
