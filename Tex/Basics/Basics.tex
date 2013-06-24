@@ -14,25 +14,43 @@ Musikklassifikation findet im Wesentlichen in drei Schritten statt:
 	\item Klassifikation der Musiktitel anhand von Klassifikationsalgorithmen (\textbf{\ref{subsec:cla}})
 \end{enumerate}
 
+Hierbei werden aus den betrachteten Musikstücken in der Extraktionsphase nach vorgegebenen Algorithmen (vgl. \ref{sec:alg}) Merkmale extrahiert, die eine Beschreibung der Musikstücke liefern sollen. In der Prozessierungsphase, werden die extrahierten Merkmale für die Klassifikation vorbereitet, welches durch eine Datenreduktion der Datenmenge geschieht. Im Abschluss werden in der Klassifizierungsphase die Merkmale der Musikstücke gegen Daten aus einem Referenzset verglichen und anhand von Klassifikationsalgorithmen klassifiziert.\\
+Diese drei Schritte werden im Folgenden näher erläutert.
+
 \subsection{Extraktion}\label{subsec:ext}
-In der Extraktionsphase werden die für die spätere Klassifikation nötigen Features aus den eingelesenen Musiktitel extrahiert.\\
-Hierbei werden normalerweise vorher festgelegte FeatureSets verwendet, die unter anderem aus den in \textbf{Kapitel \ref{sec:alg}} vorgestellten Algorithmen bestehen können, darüber hinaus existieren aber noch eine Vielzahl von weiteren Algorithmen, die in dieser Arbeit aber nicht weiter betrachtet werden sollen.\\
-Die Extraktion der gewählten Features geschieht hierbei Fensterweise, d.h. dass jeweils auf ein betrachtetes Fenster, je nach der zugrunde liegenden Architektur, alle Algorithmen, die für die Extraktion der einzelnen Features nötig sind, sequenziell oder parallel durchgeführt werden. Als Ergebnis erzeugt jeder Featurealgorithmus einen Featurevektor, welcher von 1 bis n Vektorranten enthalten kann.
+In der Extraktionsphase werden die für die spätere Klassifikation nötigen Features aus den eingelesenen Musikstücken extrahiert.\\
+Hierbei werden normalerweise vorher festgelegte FeatureSets verwendet, die unter anderem aus den in \textbf{Kapitel \ref{sec:alg}} vorgestellten Algorithmen bestehen können und in der Regel drei bei vier Algorithmen umfassen. Neben den in dieser vorgestellten Algorithmen existieren eine Vielzahl weiterer Algorithmen.\\
+Für die Extraktion dieser Merkmale, im Nachfolgenden als Features bezeichnet, werden die Musikstücke als erstes in gleichgroße Fenster unterteilt. In dieser Arbeit wurde eine Fenstergröße von 512 Werten gewählt. Diese Fenster sind in der Regel nicht überlappend, müssen dieses aber nicht sein (vgl. \ref{subsec:fset3}).\\
+Erfahrungsgemäß nimmt die Extraktion den größten Anteil an der Musikklassifikation ein.
+ 
 
 \subsection{Prozessierung}\label{subsec:proc}
-Die in der Extraktionsphase erstellten Featurevektoren werden in der Prozessierungsphase anhand von dafür benötigten Algorithmen für die spätere Klassifikation vorbereitet.\\
-Die genaue Funktionsweise dieser Phase soll hier nicht näher beschrieben werden, da sie für die in dieser Arbeit durchgeführten Untersuchungen nicht weiter relevant sein wird.
+Klassifikationsalgorithmen erwarten, dass die Anzahl an Daten eines zu klassifizierenden Musikstücks mit der Anzahl der Daten in ihrem Referenzsets übereinstimmen. Da im Normalfall aber nicht alle Musikstücke nicht die selbe Länge und damit mit die selbe Fensteranzahl besitzten, muss eine Datenreduktion durchgeführt werden. Dieses geschieht in der Prozessierungsphase.\\
+Diese Datenreduktion wird durchgeführt, indem aus der Datenmenge eines jeden betrachteten Features der Mittelwert und die Standartabweichung berechnet wird.\\
+Eine solche Datenreduktion hat neben der Vereinheitlichung von Datenmengen auch noch den Vorteil, dass die zu klassifizierende Datenmenge kleiner wird und somit weniger Speicherplatz benötigt. Dieses ist besonders hilfreich, wenn auf einem System mit beschränktem Speicherplatz gearbeitet wird, wie zum Beispiel bei mobilen Endgeräten.
 
 
 \subsection{Klassifikation}\label{subsec:cla}
-In der Klassifikationsphase werden Featurevektoren, die in der Extraktionsphase extrahiert und ich der Prozessierungsphase auf die Klassifikation vorbereitet wurden, anhand von Klassifikationsalgorithmen klassifiziert.\\
-Zu den bekanntesten Klassifikationsalgorithmen zählen unter anderem der k-Nearest-Neighbor-Algorithmus (KNN-Alorithmus) und der Support-Vector-Maschine-Algorithmus (SVM-Algorithmus).\\
-Auch auf die Klassifikationsphase soll in dieser Arbeit nicht weiter eingegangen werden. Es soll nur erwähnt werden, dass alle Klassifikationsalgorithmen in zwei Schritten abgearbeitet werden:
+Während der Klassifikation wird versucht jedes der zu klassifizierenden Musikstücke anhand eines Referenzsets einer von mehreren fest vorgegebenen Gruppen eindeutig zuzuordnen. Dieses geschieht mit Hilfe eines sogenannten Klassifikators.\\
+Jeder Klassifikator klassifiziert in zwei Schritten:
 
 \begin{enumerate}
-	\item Trainieren des Klassifikators anhand eines meist per Hand klassifizierten Trainingssets, dass aus Featurevektor-Klassen-Kombinationen besteht
-	\item Klassifizierung der Featurevetoren, die die beiden zuvor beschrieben Phasen durchlaufen haben.
+\item Aufstellen des Merkmalraums anhand eines Trainingsets
+\item Abbilden des zu klassifizierenden Objekt in diesen Merksmalsraums und Klassifikation
 \end{enumerate}
+
+Der Ablauf einer Klassifikation wird nachfolgend am Beispiel der Support Vector Maschine (SVM) näher erklärt.\\\\
+SVMs lassen sich in zwei Klassen einteilen:
+
+\begin{itemize}
+\item Lineare SVMs
+\item Nichtlineare SVMs
+\end{itemize}
+
+Diese Unterteilung geschieht auf Basis des zu betrachtenden Merkmalraums. Wir dieser nur durch zwei Merkmale aufgespannt, wird die SVM als linear bezeichnet, beinhaltet er mehr als zwei Merkmale, wird die SVM als nichtlinear bezeichnet.\\
+Da in der Musikklassifikation eher mehr als zwei Merkmale betrachtet werden, wir nur der nichtlineare Fall beschrieben.\\
+
+
 
 \section{Algorithmen}\label{sec:alg}
 In diesem Kapitel sollen die Extraktionsalgorithmen vorgestellt werden, aus denen die im \textbf{Kapitel \ref{sec:fset}} beschriebenen FeatureSets zusammengesetzt sind, die für die Laufzeitanalyse des Codes verwendet werden. Hierfür werden diese in zwei Bereiche unterteilt, einmal die Features, welche im Zeitbereich arbeiten (\textbf{\ref{subsec:zeit}}) und diese die im Frequenzbereich arbeiten (\textbf{\ref{subsec:freq}})\cite{haller2008}.

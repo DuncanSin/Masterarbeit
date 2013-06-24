@@ -7,7 +7,7 @@ Dieses Board kann mit Hilfe eines DM816x (DaVinci\texttrademark) ARM-Prozessors 
 
 
 \section{Aufbau des EVM8168} \label{sec:evm816}
-Wie in \cite{spec} beschrieben bietet das EVM816x-Entwicklungsboard eine Standalone-Plattform um Programme für DaVinci\texttrademark, Integra\texttrademark~oder Sitara\texttrademark~Prozessoren der Firma Texas Instruments zu entwickeln und zu debuggen. Hierfür sind neben dem DaVinci\texttrademark~noch weitere On-Board Peripherie auf dem Board aufgebracht, die im folgenden teilweise näher erklärt werden sollen.
+Wie in \cite{spec} beschrieben bietet das EVM816x-Entwicklungsboard eine Standalone-Plattform um Programme für DaVinci\texttrademark, Integra\texttrademark~oder Sitara\texttrademark~Prozessoren der Firma Texas Instruments zu entwickeln und zu debuggen. Hierfür sind neben dem DaVinci\texttrademark~noch weitere On-Board Peripherie auf dem Board aufgebracht, die im folgenden aber nicht näher erläutert werden sollen.
 Das EVM8168-Board hat unter anderem folgende Komponenten integriert:
 
 \begin{itemize}
@@ -545,9 +545,9 @@ Hierbei wird eine Möglichkeit geboten, Schleifen, welche im Programm vorkommen, 
 \item NMI/Exception task state register (NTSR)
 \end{itemize}
 
-Hierbei wird während der Kompilierung ein Ausführungsplan aufgestellt, der es ermöglicht Befehle aus verschiedenen Interationsschritten parallel abzuarbeiten, anstatt wie im vorherigen Kapitel beschrieben, Befehle parallel auszuführen, die sequenziell aufeinander folgen.\\
-Hierführ wird ein Iterationsschritt in sogenannte Stages unterteilt. Alle Stages besitzen eine Gemeinsamkeit, sie haben alle die selbe Ausführungszeit (in Takten), welche als Iterationsinterval bezeichnet wird.\\
-Nach der Einschwungphase der SPLOOP werden alle Stages parallel ausgeführt und jede Stage ist einem anderen Iterationsschritt zugeordnet, \textbf{Abbildung \ref{fig:sploop}} soll dieses verdeutlichen. Die Phase vor dem eingeschwungenen Zustand der SPLOOP wird als Prolog bezeichnet, die nach dem eingeschwungenen Zustand als Epilog. Der eingeschwungene Zustand an sich wird als Kernel bezeichnet.\\
+Hierbei wird während der Kompilierung ein Ausführungsplan aufgestellt, wodurch sequentiell kodierte Befehle aus verschiedenen Iterationsschritten parallel verarbeitet werden.\\
+Hierführ wird ein Iterationsschritt in sogenannte Stages unterteilt. Eine Stage bezeichnet hierbei einen Teil des sequentiell auszuführenden Codes eines Interationsschritts, der sich dadurch auszeichnet, dass er eine vorgegebene Ausführungszeit in Takten besitzt. Diese Ausführungszeit wird als Iterationsintervall bezeichnet.\\
+Wenn die Pipeline der SPLOOP vollständig gefüllt ist, werden alle Stages parallel ausgeführt und jede Stage ist einem anderen Iterationsschritt zugeordnet. Dieses wird als Kernel bezeichnet. Die Phase vor dem Kernel wird als Prolog bezeichnet, die nach diesem als Epilog. \textbf{Abbildung \ref{fig:sploop}} soll dieses verdeutlichen.\\
 %
 \begin{figure}[htb]
 	\centering
@@ -565,15 +565,15 @@ Um SPLOOP während der Ausführung zu ermöglichen werden, SPLOOP-spezifische Befeh
 \end{itemize}
 
 \paragraph{Loop Buffer}$\;$ \\\\
-Im Loop Buffer werden die für die Schleife benötigten Instruktionen, Informationen über ihre Abarbeitungsreihenfolge und ob sie momentan aktiv oder inaktiv sind. Diese Instruktionen werden in Form von Execute Packets gespeichert und es können bis zu 14 solcher Pakete hinterlegt werden.\\
+Im Loop Buffer werden die für die Schleife benötigten Instruktionen, Informationen, ob diese momentan aktiv oder inaktiv sind und Informationen über ihre Abarbeitungsreihenfolge gespeichert. Diese Instruktionen werden in Form von Execute Packets gespeichert und es können bis zu 14 solcher Pakete hinterlegt werden.\\
 Die Speicherung von Instruktionen im Loop Buffer bietet den Vorteil, dass sie nicht für jede Ausführung neu die Fetch-Stufe durchlaufen müssen, sondern einfach aus dem Loop Buffer geladen werden können.
 
 \paragraph{Loop buffer count register (LBC)}$\;$ \\\\
-Das LBC fungiert als Inhaltsverzeichnis für den Loop Buffer und gibt an, welcher Stage ausgeführt werden muss. Das LBC wird in zwei Fällen auf null zurückgesetzt. Entweder wenn ein Befehl aus der SPLOOP(D/W)-Befehlsgruppe ausgeführt wird, oder wenn der Iterationsinterval-Wert erreicht ist, der beim letzten Befehl der eben genannten Gruppe mit übergeben wurde. Sollte der zweite Fall eintreten, wird das ILC um 1 dekrementiert.\\
+Das LBC fungiert als Inhaltsverzeichnis für den Loop Buffer und gibt an, welche Stages ausgeführt werden müssen. Das LBC wird in zwei Fällen auf null zurückgesetzt. Entweder wenn ein Befehl aus der SPLOOP(D/W)-Befehlsgruppe ausgeführt wird, oder wenn der Iterationsintervall-Wert erreicht ist, der beim letzten Befehl der eben genannten Gruppe mit übergeben wurde. Sollte der zweite Fall eintreten, wird das ILC um 1 dekrementiert.\\
 Es sind zwei LBCs vorhanden um eine Unterstützung für verschachtelte Schleifen zu gewährleisten.
 
 \paragraph{Inner loop count register (ILC)}$\;$ \\\\
-Im ILC ist die Gesamtzahl der Durchläufe hinterlegt, die für die Ausführung der Schleife erforderlich sind. Erreicht das LBC den Iterationsinterval-Wert, wird das ILC dekrementiert, erreicht das ILC den Wert 0, endet die SPLOOP.
+Im ILC ist die Gesamtzahl der Durchläufe hinterlegt, die für die Ausführung der Schleife erforderlich sind. Erreicht das LBC den Iterationsintervall-Wert, wird das ILC dekrementiert, erreicht das ILC den Wert 0, endet die SPLOOP.
 
 \paragraph{Reload inner loop count register (RILC)}$\;$ \\\\
 Das RILC ist dafür zuständig den ILC für die nächste Ausführung einer verschachtelten Schleife zurückzusetzen.
@@ -581,7 +581,7 @@ Das RILC ist dafür zuständig den ILC für die nächste Ausführung einer verschacht
 \paragraph{TSR, ITSR und NTSR}$\;$ \\
 
 Diese drei Register sind für den Status der SPLOOP zuständig.\\
-TSR zeigt an, ob eine SPLOOP momentan ausgeführt wird oder nicht.\\
+TSR zeigt an, ob eine SPLOOP momentan ausgeführt wird.\\
 Sollte ein Interrupt kommen, wird der Inhalt des TSR in das ITSR kopiert.\\
 Sollte ein Fehler oder ein nicht maskierbarer Interrupt auftreten, wird der Inhalt von TSR in NTSR kopiert.
 
@@ -636,7 +636,7 @@ Zeit~=~ \left[\overbrace{\#Stages}^{Einschwung}+\overbrace{\left(\frac{\#Durchl"
 \end{equation}
 
 \subsubsection{Compileroptimierungsstufen}
-In diesem Kapitel sollen die Optimierungsstufen des DSP-Compilers aus dem bereits vorgestellten C6EZRun-Framework erläutert werden.\\
+In diesem Kapitel sollen die Optimierungsstufen des DSP-Compilers aus dem bereits vorgestellten C6EZRun-Framework (siehe \textbf{Kapitel \ref{sec:c6run}}) erläutert werden.\\
 Da dieser Compiler auf dem C6000-DSP-Compiler aufsetzt, können auch die Compileroptimierungen des C6000-Compilers verwendet werden, Diese Optimierungsstufen optimieren auf Geschwindigkeit.\\
 Dieser besitzt neben den gängigen Optimierungsstufe O0-O3, auch die Möglichkeit eine softwarebasierte Pipelinestruktur zu verwenden, die sich Software Pipelined Loop oder kurz SPLOOP nennt\cite{spru187o}.
 
@@ -646,7 +646,7 @@ In der niedrigsten Optimierungsstufe, welche entweder durch das Compilerflag \te
 \begin{itemize}
 \item Kontrollfluss-Graph-Vereinfachung
 \item Allokierung von Variablen auf Register
-\item Schleifenrotation
+\item Loop Rotation 
 \item Eliminierung von unbenutztem Code
 \item Vereinfachung von Ausdrücken und Statements
 \item Unterstützung von Inline-Funktionen 
@@ -659,7 +659,7 @@ Die nächst höhere Optimierungsstufe wird mit dem Compilerflag  \textit{\-opt\_le
 \begin{itemize}
 \item Durchführung von lokalen Kopier- und Konstantenpropagation
 \item Entfernung von überflüssigen Anweisungen
-\item Lokale Eliminierung von verbreiteten Ausdrücken
+\item Lokale Eliminierung von mehrfach verwendeten Ausdrücken
 \end{itemize}
 
 \paragraph{Optimierungsstufe \-O2}$\;$ \\
@@ -677,7 +677,7 @@ Die Optimierungsstufe 2 wird mit dem Compilerflag \textit{\-opt\_level=2} oder \
 
 \paragraph{Optimierungsstufe \-O3}\label{ph:o3}$\;$ \\
 
-Die letzte Optimierungsstufe wird mit \textit{\-opt\_level=2} oder \textit{\-O3} aufgerufen. Auch diese schließt alle Optimierungen der vorherigen Stufen ein, außerdem kommen folgende dazu:
+Die letzte Optimierungsstufe wird mit \textit{\-opt\_level=3} oder \textit{\-O3} aufgerufen. Auch diese schließt alle Optimierungen der vorherigen Stufen ein, außerdem kommen folgende dazu:
 
 \begin{itemize}
 \item Entfernung von unverwendeten Funktionen
@@ -755,49 +755,49 @@ An Optimierungen lassen sich hierzum Beispiel nennen:
 \end{itemize} 
 
 \subsubsection{Optimierte Bibliotheken für den C674x}
-Texas Instruments bietet zu seinen DSPs der C6000-Reihe auch noch eine Reihe Bibliotheken an, diese enthalten Algorithmen die speziell für DSPs dieser Baureihe optimiert wurden. Im Folgenden sollen zwei dieser Bibliotheken näher vorgestellt werden, zum einen die DSPLIB mit Algorithmen aus der Signalverarbeitung und zum anderen die MATHLIB mit optimierten mathematischen Funktionen.
+Texas Instruments bietet zu seinen DSPs der C6000-Reihe auch noch eine Reihe Bibliotheken an, diese enthalten Algorithmen die speziell für DSPs dieser Baureihe optimiert wurden. Einige dieser optimierten Bibliotheken sind im Umfang des EZSDK (siehe \textbf{Kapitel \ref{sec:ezsdk}})enthalten. Im Folgenden werden zwei dieser Bibliotheken näher vorgestellt, zum einen die DSPLIB mit Algorithmen aus der Signalverarbeitung und zum anderen die MATHLIB mit optimierten mathematischen Funktionen.
 
 \paragraph{DSPLIB}$\;$ \\\\
-Wie schon erwähnt ist die DSPLIB-Bibliothek eine Zusammenfassung von Algorithmen aus der Signalverarbeitung, die für den Gebrauch auf DSPs der C6000-Reihe optimiert wurde und direkt von Texas Instruments stammt. Diese liegen innerhalb dieser Bibliothek sowohl als C- als auch als Assembler-Code vor. \textbf{Tabelle \ref{tab:dsplib}} zeigt einen Auszug der vorhandenen Algorithmen und ihre Funktionsnamen innerhalb der Bibliothek.
+Wie schon erwähnt ist die DSPLIB-Bibliothek eine Zusammenfassung von Algorithmen aus der Signalverarbeitung, die für den Gebrauch auf DSPs der C6000-Reihe optimiert wurde und direkt von Texas Instruments stammt. Diese liegen innerhalb dieser Bibliothek sowohl als C- als auch als Assembler-Code vor.
 
-\begin{table}[ht]
-\centering
-\begin{tabular}{|c|c|}
-\hline
-Funktionsname & Alorithmus\\
-\hline\hline
-DSPF\_sp\_autocor & Autocorrelation\\
-DSPF\_sp\_biquad & Biquad Filter\\
-DSPF\_sp\_blk\_move & Block Copy\\
-DSPF\_sp\_convol & Convolution\\
-DSPF\_sp\_dotp\_cplx & Complex Dot Product\\
-DSPF\_sp\_dotprod & Dot Product\\
-DSPF\_sp\_fftSPxSP & Mixed Radix Forward FFT mit Bit Reversal\\
-DSPF\_sp\_fir\_cplx & Complex FIR Filter\\
-DSPF\_sp\_fir\_gen & FIR Filter\\
-DSPF\_sp\_fir\_r2 & FIR Filter Alternate Implementation\\
-DSPF\_sp\_fircirc & FIR Filter mit Circular Input\\
-DSPF\_sp\_ifftSPxSP & Mixed Radix Inverse FFT mit Bit Reversal\\
-DSPF\_sp\_iir & IIR Filter\\
-DSPF\_sp\_irrlat & Lattice IIR Filter\\
-DSPF\_sp\_lms & LMS Adaptive Filter\\
-DSPF\_sp\_mat\_mul & Matrix Multiply\\
-DSPF\_sp\_mat\_mul\_cplx & Complex Matrix Multiply\\
-DSPF\_sp\_mat\_trans & Matrix Transpose\\
-DSPF\_sp\_maxidx & Maximum Index\\
-DSPF\_sp\_maxval & Maximum Value\\
-DSPF\_sp\_minerr & VSELP Vocoder Codebook Search\\
-DSPF\_sp\_minval & Minimum Value\\
-DSPF\_sp\_vecmul & Vector Multiplication\\
-DSPF\_sp\_vecrecip & Vectro Reciprocal\\
-DSPF\_sp\_vecsum\_sq & Vector Sum of Squares\\
-\hline
-\end{tabular}
-\caption{Auszug der Algorithmen der DSPLIB und ihre Funktionsnamen\cite{dsplib}}
-\label{tab:dsplib}
-\end{table}
+\paragraph{MATHLIB}$\;$ \\
 
-\paragraph{MATHLIB}$\;$ \\\\
+Die MATHLIB-Bibliothek ist ebenfalls für die Verwendung auf DSPs der C6000-Reihe optimiert. Auch diese Bibliothek stammt von Texas Instruments. Für diese Bibliothek liegen der Quellcode ebenfalls sowohl als C- als auch als Assembler-Code vor.\\
+Die mathematischen Funktionen sind sowohl für Double-Precision als auch für Single-Precision vorhanden und bieten neben der Option einzelne Aufrufe auszuführen, auch die Möglichkeit Operationen auf Arrays auszuführen. Werden diesen Arrayoperationen zum Beispiel die Array a und b übergeben, wird immer das n-te Element von a mit dem n-ten Element von b verrechnet.
 
-Die MATHLIB-Bibliothek ist ebenfalls für die Verwendung auf DSPs der C6000-Reihe optimiert. Auch diese Bibliothek stammt von Texas Instruments. Auch hier liegen der Quellcode sowohl als C- als auch als Assembler-Code vor.\\
-Die mathematischen Funktionen sind nur für Double-Precision vorhanden, bieten aber neben der Option einzelne Aufrufe auszuführen, bei denen auch Floatzahlen als Argumente verwendet werden können, die Möglichkeit Operationen auf Arrays auszuführen. Werden diesen Arrayoperationen zum Beispiel die Array a und b übergeben, wird immer das n-te Element von a mit dem n-ten Element von b verrechnet. Da alle Operationen auf Double-Precision ausgelegt sind, werden bei Arrayoperationen allerdings nur Eingabearray vom Datentyp \textit{double} akzeptiert, was für Single-Precision-Berechnungen eine manuelle Konvertierung von Floatarrays in Doublearrays erfordert. 
+\section{Linux EZ Software Development Kit (EZSDK)}\label{sec:ezsdk}
+Das Linux EZ Software Development Kit (EZSDK) ist eine von Texas Instruments zum EVM816x-Board mitgelieferte Sammlung von wichtigen und nützlichen Tools. Das EZSDK (gesprochen: \textit{EasySDK}) lässt sich grob in vier Softwaregruppen unterteilen:
+
+\begin{itemize}
+\item Board Support
+\begin{itemize}
+\item Kernel für embedded Linux Version 2.6.37
+\item U-Boot (Bootloader)
+\item Sammlung von Tools auf System-on-Chip-Ebene
+\end{itemize}
+\item Component Sources
+\begin{itemize}
+\item Optimierte Bibliotheken für den DSP
+\item Kommunikationsframeworks zwischen ARM und DSP
+\item DSP-Betriebssystem
+\item weitere Tools
+\end{itemize}
+\item DSP Development Kit (DSP-Toolchain)
+\item Linux Development Kit (Linux-Toolchain)
+\end{itemize}
+
+Für diese Arbeit wurde die EZSDK-Version 5.02 verwendet.
+
+\section{C6EZRun}\label{sec:c6run}
+
+C6EZRun ist ein Framework, welches für die Kommunikation zwischen ARM und DSP entwickelt wurde. Dieses Framework nimmt dem Programmierer wesentliche Aspekte der Kommunikation zwischen diesen beiden Prozessoren ab, zum Beispiel Kommunikationswege, Latenzzeiten, Speicherverwaltung, Pointerkonvertierungen, etc.\\
+Hierbei sind zwei unterschiedliche Möglichkeiten zur Kommunikation zwischen ARM und DSP vorhanden:
+
+\begin{itemize}
+\item C6Runlib
+\item C6Runapp
+\end{itemize}
+
+C6runlib bietet die Möglichkeit Teile des Programmcodes auf den DSP auszulagern. Hierbei werden die entsprechenden Programmteile in C-Code geschrieben und mit dem C6Runlib-Compiler zu einer Bibliothek compiliert. Diese Bibliothek kann anschließend in das bestehende Projekt eingefügt und die in ihr enthaltenen Funktionen so aufgerufen werden, als wenn sie auf dem ARM laufen würden.\\
+C6Runapp hingegen bietet die Möglichkeit ein komplettes Programm auf dem DSP auszuführen, dieses aber über die Konsole des ARM aufzurufen. Hierfür wird der Programm-Code ebenfalls in C-Code beschrieben und mit dem C6Runapp-Compiler kompiliert.\\
+Die in dieser Arbeit verwendete Version von C6EZRun ist 0.98 \cite{c6run}.
