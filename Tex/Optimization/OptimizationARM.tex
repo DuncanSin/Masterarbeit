@@ -2,12 +2,28 @@
 \section{Optimierung des ARM}
 In diesem Kapitel werden die Optimierungen am Code beschrieben, der rein auf dem ARM Cortex-A8 ausgeführt wird. Hierfür werden die in \textbf{Kapitel \ref{subsec:a8}} beschriebenen Hardwareemelemte ausgenutzt.\\
 In \textbf{Abschnitt \ref{subsec:armtime}} wird daher als erstes die Laufzeitmessung des gesamten Programms (Extraktion, Prozessierung und Klassifikation) erläutert, um einen Einstiegspunkt für die Optimierung zu extrahieren. In den darauffolgenden Abschnitten werden daraufhin die durchgeführten Optimierungen beschrieben. 
+
 \subsection{Laufzeitmessung des Gesamtprogramms}\label{subsec:armtime}
-
-\subsection{Laufzeitmessung der Extraktion}
-
-\subsection{Ansatzpunkte und Bottlenecks}\label{sec:ansatz}
-
+Für die erste Laufzeitmessung des gesammten Programms (Extraktion, Prozessierung und Klassifikation) wurde dieses mit den in \textbf{Kapitel \ref{ph:neoncomp}} beschriebenen Compileroptionen zur automatischen Generierung von NEON-Code kompiliert. Die dabei resultierten Laufzeiten sind in \textbf{Abbildung \ref{fig:mclneon}} abzulesen.
+%
+\begin{figure}[h]
+	\centering
+		\includegraphics[width=1\textwidth]{../Pictures/mclneon.pdf}
+	\caption{Laufzeiten in ms des Musikklassifikators}
+	\label{fig:mclneon}
+\end{figure} 
+%
+Wie man aus der Abbildung entnehmen kann, fällt der größte Anteil an der Gesamtlaufzeit in allen vier Messungen (\textif{MCL1 - MCL4}) auf die Extraktionsphase. Es macht also Sinn diese für die weitere Optimierung ins Auge zu fassen.\\\\
+Da die Extraktionsphase sich als am zeitintensivsten herausgestellt hat, soll diese jetzt näher analysiert werden. Dieses und alle weiteren Messungen werden am Beispiel des in \textbf{Kapitel \ref{subsec:fset2}} beschriebenen FeatureSets durchgeführt, die Diagramme für die anderen drei FeatureSets sind für den interessierten Leser im Anhang zu finden, aber für diese sind die beschriebenen Tatsachen equivalent.\\
+Wie aus \textbf{Abbildung \ref{fig:1fset2}} zu entnehmen ist, fallt der größte Anteil der Laufzeit der Extraktionsphase mit knapp 60\% auf die Berechnung der FFT.
+%
+\begin{figure}[h]
+	\centering
+		\includegraphics[width=1\textwidth]{../Pictures/1fset2.pdf}
+	\caption{Detailierte Laufzeitmessung der Extraktionsphase}
+	\label{fig:1fset2}
+\end{figure} 
+%
 
 \subsubsection{FFT}
 

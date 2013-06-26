@@ -271,7 +271,7 @@ Die NEON-SIMD-Einheit kann auf den üblichen vier wegen Angesprochen werden:
 \end{itemize}
 Da diese vier Optionen für die spätere Optimierung verwendet werden, soll zu jeder dieser Varianten auch noch ein Beispiel gegeben werden. Wichtig ist, dass bei allen vier Varianten das Compilerflag \textit{-mfpu=neon} gesetzt sein muss.
  
-\paragraph{Compiler}$\;$ \\\\
+\paragraph{Compiler}\label{ph:neoncomp}$\;$ \\\\
 Die erste Variante ist die am leichtesten Umzusetzende. Hierbei wird nur das vorher erwähnte Compilerflag gesetzt und der Compiler fügt während der Kompilierung an ihm sinnvoll erscheinenden Stellen NEON-Assembler-Code ein.\\
 Als Beispiel soll hier ein einfacher Beipielcode verwendet werden der in den \textbf{Listings \ref{code:spfc} - \ref{code:spfneon}} in C, ARM-Assembler und in ARM+NEON-Assembler angegeben wird.
 
