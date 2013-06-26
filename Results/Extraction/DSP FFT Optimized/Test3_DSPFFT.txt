@@ -1,8 +1,0 @@
-Testcase 3: ZeroCrossingRate, RootMeanSquare, LowEnergy
-Opened ../../blues.00000.au
-Gesammt Zeit: 0.413401 s
-RootMeanSquare: 0.384820 s (1293 winodws)
-ZeroCrossingRate: 0.026208 s (1293 winodws)
-LowEnergy: 0.002373 s (1293 winodws)
-23725.000000
-Extraction took 180000 clicks and had a runtime of 0.180000 secounds.

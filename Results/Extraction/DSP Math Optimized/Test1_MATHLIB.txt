@@ -1,10 +1,10 @@
 Testcase 1: MFCC, SpectralCentroid, SpectralFlux, SpectralRolloff
 Opened ../../blues.00000.au
-Gesammt Zeit: 0.304539 s
-FFT: 0.241474 s (1293 winodws)
-AmplitudeOfSpectrum: 0.009531 s (1293 winodws)
-MFCC: 0.046307 s (1293 winodws)
+Gesammt Zeit: 0.156538 s
+FFT: 0.093502 s (1293 winodws)
+AmplitudeOfSpectrum: 0.009483 s (1293 winodws)
+MFCC: 0.046325 s (1293 winodws)
 SpectralCentroid: 0.001787 s (1293 winodws)
-SpectralFlux: 0.002244 s (1293 winodws)
+SpectralFlux: 0.002245 s (1293 winodws)
 SpectralRolloff: 0.003196 s (1293 winodws)
-Extraction took 200000 clicks and had a runtime of 0.200000 secounds.
+Extraction took 210000 clicks and had a runtime of 0.210000 secounds.

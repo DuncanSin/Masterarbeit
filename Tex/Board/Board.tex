@@ -49,7 +49,7 @@ Genauer gibt des folgende Subsysteme:
 \item Peripherie
 \end{itemize} 
 
-All diese Subsysteme und Coprozessoren sind durch eine gemeinsame System Interconnection miteinander verbunden. \textbf{Abbildung \ref{fig:dm8168}} zeigt das funktionale Blockdiagramm des DM816x \cite{evm8168}.\\
+All diese Subsysteme und Coprozessoren sind durch eine gemeinsame System Interconnection miteinander verbunden. \textbf{Abbildung \ref{fig:dm8168}} zeigt das funktionale Blockdiagramm des DM816x.\\
 %
 \begin{figure}[htbp]
 	\centering
@@ -85,7 +85,7 @@ Wie in der Abbildung zu sehen ist, besteht der Cortex-A8 aus zwei wesentlichen T
 \item NEON-Coprozessor (\textbf{\ref{subsubsec:neon}})
 \end{itemize}
 
-Diese beiden Prozessorkerne teilen sich Instruction Fetch, Instruction Decode, Instruction Execute, Load/Store und L2 Cache\cite{cortexa8}.\\
+Diese beiden Prozessorkerne teilen sich Instruction Fetch, Instruction Decode, Instruction Execute, Load/Store und L2 Cache.\\
 
 \subsubsection{ARMv7-A Prozessorkern}\label{subsubsec:armv7}
 Der ARMv7-A Prozessorkern besitzt neben Operationen für Sprünge, etc. nur Operationen für die Berechnung von Integerwerten.\\
@@ -109,7 +109,7 @@ Instruktionen werden in einer dreiphasigen Pipeline abgearbeitet, die wiederum i
 Die Fetch-Phase besitzt drei Stufen. In ihr werden benötigte Befehle aus dem L1-Instruction-Cache geladen, der sich in der Instruction Fetch-Einheit befinden (vgl. \textbf{Abbildung \ref{fig:a8}}).\\
 Diese Instruktionen werden in einen Buffer geladen, welcher in der Decode-Phase, welche in fünf Stufen unterteilt ist, ausgelesen wird und die Instruktionen decodiert werden. Außerdem wird in der Decode-Phase die Ausführungsreihenfolge der geladenen Befehle festgelegt. Diese Reihenfolge hängt von Datenabhängigkeiten und Ausführungszeiten der einzelnen Operationen ab, die für die Ausführung benötigt werden (eine Übersicht der Instruktionen wird im Anhang gegeben).\\
 In der Execute-Phase werden anschließend die Befehle an die entsprechenden Funktionseinheiten weitergeleitet. Dieses geschieht in sechs Stufen.\\
-Wie schon erwähnt ist dieser Prozessorkern auf Integeroperationen ausgelegt, wird aber bei der Kompilierung eines Programms für den Cortex-A8 dem Compiler nicht die Benutzung einer Floating Point-Einheit vorgeschrieben (vgl. \textbf{Kapitel \ref{subsubsec:neon}}) werden auch entsprechende Befehle auf den Integeroperationen des ARMv7-A Prozessorkerns emuliert, was zu langen Ausführungszeiten führen kann \cite{cortexa8}. Derartige Floating Point Instruktionen sind durch das Präfix \textit{\_\_aeabi\_} im Assembler-Code gekennzeichnet. Dieses bedeutet, dass Floating Point-Operationen nicht auf Hardware-, sondern auf Softwareebene berechnet werden.\\
+Wie schon erwähnt ist dieser Prozessorkern auf Integeroperationen ausgelegt, wird aber bei der Kompilierung eines Programms für den Cortex-A8 dem Compiler nicht die Benutzung einer Floating Point-Einheit vorgeschrieben (vgl. \textbf{Kapitel \ref{subsubsec:neon}}) werden auch entsprechende Befehle auf den Integeroperationen des ARMv7-A Prozessorkerns emuliert, was zu langen Ausführungszeiten führen kann. Derartige Floating Point Instruktionen sind durch das Präfix \textit{\_\_aeabi\_} im Assembler-Code gekennzeichnet. Dieses bedeutet, dass Floating Point-Operationen nicht auf Hardware-, sondern auf Softwareebene berechnet werden.\\
 Die \textbf{Tabelle \ref{tab:aeabi}} gibt einen Überblick über die in Software hinterlegten Floating Point-Operationen des ARMv7 Prozessorkerns.\\
 %
 \begin{table}[h]
@@ -134,7 +134,7 @@ int \_\_aeabi\_fcmpgt(float a, float b) & 1, wenn a > b\\
 \label{tab:aeabi}
 \end{table}
 %
-Der Instruktionssatz des ARMv7-A Prozessorkerns besitzt des weiteren Operationen die für die Kommunikation zwischen ihm und angeschlossenen Coprozessoren benutzt werden können. Diese Funktionen werden mir MCR und MRC bezeichnet und weisen je nach angesprochenem Coprozessor unterschiedliche Ausführungszeiten auf, diese Operationen benötigen aber immer mindestens 60 Takte\cite{cortexa8}.
+Der Instruktionssatz des ARMv7-A Prozessorkerns besitzt des weiteren Operationen die für die Kommunikation zwischen ihm und angeschlossenen Coprozessoren benutzt werden können. Diese Funktionen werden mir MCR und MRC bezeichnet und weisen je nach angesprochenem Coprozessor unterschiedliche Ausführungszeiten auf, diese Operationen benötigen aber immer mindestens 60 Takte.
 
 \subsubsection{Der NEON-Coprozessor}\label{subsubsec:neon}
 Dieser Coprozessor beherbergt zwei Einheiten zur Berechnung von Floating Point-Operationen. Zum Einen ist das die VFPv3-Einheit (\textbf{\ref{ph:vfp}}) und zum Anderen die NEON-SIMD-Einheit (\textbf{\ref{ph:neon}}). 
@@ -235,7 +235,7 @@ Auch die NEON-SIMD-Einheit verwendet die in \textbf{Abbildung \ref{fig:neonbank}
 Die Einheit kann bis zu zwei Advanced SIMD Operationen pro Takt von der Integer Execution Einheit des ARMs empfangen und zusätzlich noch 32-bit MCR oder MRC Daten mit dieser tauschen.\\
 Des weiten werden NEON-SIMD-Befehle in einer 10-stufigen Pipeline abgearbeitet.\\
 Außerdem ist es der NEON-SIMD-Einheit möglich Teile der VFPv3-Befehle in ihrer Pipeline auszuführen um die Abarbeitungszeit zu beschleunigen.\\
-In \textbf{Tabelle \ref{tab:neon}} ist ein Auszug des NEON-SIMD-Befehlssatzes mit Ausführungszeiten in  Takten angegeben. Sigle-Precision-Befehle sind im späteren Assemblercode durch den Zusatz \textit{.f32} hinter dem Befehlsnamen gekennzeichnet\cite{cortexa8}.
+In \textbf{Tabelle \ref{tab:neon}} ist ein Auszug des NEON-SIMD-Befehlssatzes mit Ausführungszeiten in  Takten angegeben. Sigle-Precision-Befehle sind im späteren Assemblercode durch den Zusatz \textit{.f32} hinter dem Befehlsnamen gekennzeichnet.
 
 \begin{table}[hpt]
 \centering
@@ -439,7 +439,7 @@ Die Registerarchitektur innerhalb der C674x+ CPU, ihr Instruktionssatz und die P
 Wie ebenfalls in \textbf{Abbildung \ref{fig:DSPblock}} zu sehen ist, besitzt die C674x+ CPU zwei parallele Datenpfade, die mit Register File A und B bezeichnet sind. Beide Datenpfade sind mit je mit einer 64 Bit-Leitung an den L1D-Cache angeschlossen, können also parallel 64 Bit lesen oder schreiben.\\
 Innerhalb dieser Datenpfade befinden sich acht Ausführungseinheiten zur Bearbeitung von Befehlen, je vier pro Datenpfad. Jeder Ausführungseinheit ist hierbei ein Teil des Instruktionssatzes zugeordnet.\\
 Daraus folgt, dass im Idealfall acht Befehle parallel pro Takt ausgeführt werden können.\\
-\textbf{Abbildung \ref{fig:Register}} zeigt den Aufbau der beiden Datenpfade Register File A und B\cite{sprufe8b}, nicht eingezeichnet sin die beiden sogenannten Crosspaths, die es Operationen aus dem Datenpfad A erlauben ein Datum pro Takt aus Register File B zu lesen und umgekehrt. Diese Crosspaths sind im Assembler-Code durch ein X hinter der Ausführungseinheit gekennzeichnet.Insgesamt besitzt der DSP 64 32 Bit-Register, je 32 in A und B.
+\textbf{Abbildung \ref{fig:Register}} zeigt den Aufbau der beiden Datenpfade Register File A und B, nicht eingezeichnet sin die beiden sogenannten Crosspaths, die es Operationen aus dem Datenpfad A erlauben ein Datum pro Takt aus Register File B zu lesen und umgekehrt. Diese Crosspaths sind im Assembler-Code durch ein X hinter der Ausführungseinheit gekennzeichnet.Insgesamt besitzt der DSP 64 32 Bit-Register, je 32 in A und B.
 Auch wenn einige Befehle auf mehreren Ausführungseinheiten ausgeführt werden können, lassen sich sich diese wie folgt grob unterteilen: 
 \begin{itemize}
 \item .M führt Multiplikationen aus,
@@ -454,7 +454,7 @@ Auch wenn einige Befehle auf mehreren Ausführungseinheiten ausgeführt werden kön
 	\label{fig:Register}
 \end{figure} 
 %
-\textbf{Tabelle \ref{tab:c674x}} gibt einen Überlick über die vorhandenen Befehle, in welcher Gruppe sie liegen, wieviele Takte sie benötigen und ihrer  Functional Unit Latency (FUL) und Delayslots, welche fürs Pipelining wichtig sind. Hierbei gibt die Functional Unit Latency die Anzahl an Takten an, die eine Einheit nach Abschluss einer Berechnung benötigt, bis sie eine neue Berechnung annehmen kann. Die Delayslots geben die Takte an, die zwischen Einlesen der Operanden und dem Abschluss der Berechnung vergehen. Der Instruktionssatz besitzt keine Befehle für Divisionen oder Wurzeloperationen. Diese werden nach dem Newton-Raphson-Verfahren in Software emuliert\cite{sprufe8b}.
+\textbf{Tabelle \ref{tab:c674x}} gibt einen Überlick über die vorhandenen Befehle, in welcher Gruppe sie liegen, wieviele Takte sie benötigen und ihrer  Functional Unit Latency (FUL) und Delayslots, welche fürs Pipelining wichtig sind. Hierbei gibt die Functional Unit Latency die Anzahl an Takten an, die eine Einheit nach Abschluss einer Berechnung benötigt, bis sie eine neue Berechnung annehmen kann. Die Delayslots geben die Takte an, die zwischen Einlesen der Operanden und dem Abschluss der Berechnung vergehen. Der Instruktionssatz besitzt keine Befehle für Divisionen oder Wurzeloperationen. Diese werden nach dem Newton-Raphson-Verfahren in Software emuliert.
 
 \begin{table}[ht]
 \centering
@@ -491,7 +491,7 @@ Generell besitzt die Pipeline des C674x drei Phasen:
 \item Execute
 \end{enumerate}
 
-Die Fetch-Phase besitzt vier Stufen, die Decode-Phase zwei Stufen und die Execute-Phase maximal 10 Stufen (vgl. \textbf{Abbildung \ref{fig:dsppipe}}), hierbei ist eine Stufe immer einen Takt lang\cite{sprufe8b}.
+Die Fetch-Phase besitzt vier Stufen, die Decode-Phase zwei Stufen und die Execute-Phase maximal 10 Stufen (vgl. \textbf{Abbildung \ref{fig:dsppipe}}), hierbei ist eine Stufe immer einen Takt lang.
 %
 \begin{figure}[htb]
 	\centering
@@ -510,7 +510,7 @@ In der Fetch-Phase werden Befehle aus dem Instruktionscache geladen. Dieses ist 
 \item PR: Pregram fetch packet receive
 \end{enumerate}
 
-Zum Laden von Befehlen aus dem Instruktionscache wird ein sogenanntes Fetch Packet (FP) verwendet, welches aus acht Befehlen besteht. In einem Fetch Paket sind neben den acht Befehlen auch noch Informationen darüber enthalten, welche Befehle parallel ausgeführt werden können\cite{sprufe8b}.
+Zum Laden von Befehlen aus dem Instruktionscache wird ein sogenanntes Fetch Packet (FP) verwendet, welches aus acht Befehlen besteht. In einem Fetch Paket sind neben den acht Befehlen auch noch Informationen darüber enthalten, welche Befehle parallel ausgeführt werden können.
 
 \subparagraph{Die Decode-Phase}$\;$ \\\\
 Die Decode-Phase besteht aus zwei Stufen:
@@ -520,17 +520,17 @@ Die Decode-Phase besteht aus zwei Stufen:
 \end{enumerate}
 
 In der DP-Phase werden die vorher geladenen Fetch Packets in sogenannte Execute Packets zerlegt. Hierbei stellt ein Execute Packet Befehle dar, die parallel auf den acht vorhandenen Ausführungseinheiten bearbeitet werden können, daraus folgt, dass ein Execute Packet immer mindestens aus einem und maximal aus acht Befehlen bestehen kann. Außerdem werden in dieser Phase den einzelnen Befehlen eines Execute Packets die Ausführungseinheiten zugeordnet, die sie bearbeiten werden. Hierbei muss beachtet werden, dass Ausführungseinheiten noch auf Grund von Latenzen belegt sein können (siehe \textbf{\ref{ph:reginst}}). Operationen die parallel bearbeitet werden sind im späteren Assembler-Code mit einem \glqq ||\grqq\  gekennzeichnet.\\
-Während der DC-Phase werden die Quell- und Zielregister und gegebenenfalls zugewiesene Crosspaths dekodiert, welche bei der späteren Ausführung benötigt werden\cite{sprufe8b}. 
+Während der DC-Phase werden die Quell- und Zielregister und gegebenenfalls zugewiesene Crosspaths dekodiert, welche bei der späteren Ausführung benötigt werden. 
 
 \subparagraph{Die Execute-Phase}$\;$ \\\\
-In der Execute-Stufe werden die vorher geladenen und decodierten Befehle auf den Hardwareeinheiten ausgeführt. Diese Stufe wird formell in zehn Stufen unterteilt, E1-E10, in denen je nach Befehl Lade- und/oder Schreiboperationen ausgeführt werden. Hierbei kann es allerdings passieren, dass bei manchen Befehlen eine bestimmte Zeit vergeht, bis das Ergebnis am Ausgang anliegt, diese Zeit wird als Delayslots bezeichnet und welche ab der Phase E1 gezählt werden (vgl. \textbf{Tabelle \ref{tab:c674x}}). Die maximale Anzahl an Delayslots im Instruktionssatz des C674x beträgt 9\cite{sprufe8b}.\\
+In der Execute-Stufe werden die vorher geladenen und decodierten Befehle auf den Hardwareeinheiten ausgeführt. Diese Stufe wird formell in zehn Stufen unterteilt, E1-E10, in denen je nach Befehl Lade- und/oder Schreiboperationen ausgeführt werden. Hierbei kann es allerdings passieren, dass bei manchen Befehlen eine bestimmte Zeit vergeht, bis das Ergebnis am Ausgang anliegt, diese Zeit wird als Delayslots bezeichnet und welche ab der Phase E1 gezählt werden (vgl. \textbf{Tabelle \ref{tab:c674x}}). Die maximale Anzahl an Delayslots im Instruktionssatz des C674x beträgt 9.\\
 
 \subparagraph*{Die Execute-Phase bei Double-Precision}$\;$ \\\\
 Durch die Besonderheit von Double-Precision-Funktionen Operanden und Ergebnisse in zwei Schritten zu lesen, bzw. zu schreiben, ergeben sich Möglichkeiten diese beim Scheduling solcher Funktionen auszunutzen. Hierbei werden immer erst die LSBs gelesen, bzw. geschrieben und einen Takt später die MSBs.\\
 Soll zum Beispiel erst eine Multiplikation (MPYSP2DP) und danach eine Addition (ADDDP) dieses Ergebnisses mit einem andern Wert geschehen, so kann die Addition bereits in dem Takt mit der Bearbeitung anfangen, in dem das LSB des Ergebnisses der Multiplikation geschrieben wurde.
 
 \subsubsection{Code Parallelisierung durch Software Pipelined Loop (SPLOOP)}\label{ph:sploop}
-Wenn Schleifen optimiert werden sollen gibt es neben Loop-Unrolling meistens keine andere Möglichkeit. Dieses Unrolling nutzt aber nicht effektiv alle acht Ausführungseinheiten aus.
+Wenn Schleifen optimiert werden sollen gibt es neben Loop-Unrolling meistens keine andere Möglichkeit. Dieses Unrolling nutzt aber nicht effektiv alle acht Ausführungseinheiten des DSPs aus.
 Hier kommt die Software Piplined Loop ins spielt.\\ 
 SPLOOP besteht zum einen Teil aus Hardware und zum anderen Teil aus Planungsarbeit, die während der Kompilierung vom Compiler aufgebracht wird.\\
 Hierbei wird eine Möglichkeit geboten, Schleifen, welche im Programm vorkommen, in Form einer Pipeline abzuarbeiten. Hierfür sind Hardwarekomponenten innerhalb des C674x vorhanden:
@@ -545,8 +545,8 @@ Hierbei wird eine Möglichkeit geboten, Schleifen, welche im Programm vorkommen, 
 \item NMI/Exception task state register (NTSR)
 \end{itemize}
 
-Hierbei wird während der Kompilierung ein Ausführungsplan aufgestellt, wodurch sequentiell kodierte Befehle aus verschiedenen Iterationsschritten parallel verarbeitet werden.\\
-Hierführ wird ein Iterationsschritt in sogenannte Stages unterteilt. Eine Stage bezeichnet hierbei einen Teil des sequentiell auszuführenden Codes eines Interationsschritts, der sich dadurch auszeichnet, dass er eine vorgegebene Ausführungszeit in Takten besitzt. Diese Ausführungszeit wird als Iterationsintervall bezeichnet.\\
+Als erstes wird während der Kompilierung ein Ausführungsplan aufgestellt, wodurch sequentiell kodierte Befehle aus verschiedenen Iterationsschritten parallel verarbeitet werden.\\
+Hierfür wird ein Iterationsschritt in sogenannte Stages unterteilt. Eine Stage bezeichnet hierbei einen Teil des sequentiell auszuführenden Codes eines Interationsschritts, der sich dadurch auszeichnet, dass er eine vorgegebene Ausführungszeit in Takten besitzt. Diese Ausführungszeit wird als Iterationsintervall bezeichnet.\\
 Wenn die Pipeline der SPLOOP vollständig gefüllt ist, werden alle Stages parallel ausgeführt und jede Stage ist einem anderen Iterationsschritt zugeordnet. Dieses wird als Kernel bezeichnet. Die Phase vor dem Kernel wird als Prolog bezeichnet, die nach diesem als Epilog. \textbf{Abbildung \ref{fig:sploop}} soll dieses verdeutlichen.\\
 %
 \begin{figure}[htb]
@@ -566,7 +566,8 @@ Um SPLOOP während der Ausführung zu ermöglichen werden, SPLOOP-spezifische Befeh
 
 \paragraph{Loop Buffer}$\;$ \\\\
 Im Loop Buffer werden die für die Schleife benötigten Instruktionen, Informationen, ob diese momentan aktiv oder inaktiv sind und Informationen über ihre Abarbeitungsreihenfolge gespeichert. Diese Instruktionen werden in Form von Execute Packets gespeichert und es können bis zu 14 solcher Pakete hinterlegt werden.\\
-Die Speicherung von Instruktionen im Loop Buffer bietet den Vorteil, dass sie nicht für jede Ausführung neu die Fetch-Stufe durchlaufen müssen, sondern einfach aus dem Loop Buffer geladen werden können.
+Die Speicherung von Instruktionen im Loop Buffer bietet den Vorteil, dass sie nicht für jede Ausführung neu die Fetch-Stufe durchlaufen müssen, sondern einfach aus dem Loop Buffer geladen werden können.\\
+Aus diesem Buffer ließt die Hardwareeinheit, der SPLOOP, die die parallele Abbarbeitung ermöglicht.
 
 \paragraph{Loop buffer count register (LBC)}$\;$ \\\\
 Das LBC fungiert als Inhaltsverzeichnis für den Loop Buffer und gibt an, welche Stages ausgeführt werden müssen. Das LBC wird in zwei Fällen auf null zurückgesetzt. Entweder wenn ein Befehl aus der SPLOOP(D/W)-Befehlsgruppe ausgeführt wird, oder wenn der Iterationsintervall-Wert erreicht ist, der beim letzten Befehl der eben genannten Gruppe mit übergeben wurde. Sollte der zweite Fall eintreten, wird das ILC um 1 dekrementiert.\\
@@ -638,7 +639,7 @@ Zeit~=~ \left[\overbrace{\#Stages}^{Einschwung}+\overbrace{\left(\frac{\#Durchl"
 \subsubsection{Compileroptimierungsstufen}
 In diesem Kapitel sollen die Optimierungsstufen des DSP-Compilers aus dem bereits vorgestellten C6EZRun-Framework (siehe \textbf{Kapitel \ref{sec:c6run}}) erläutert werden.\\
 Da dieser Compiler auf dem C6000-DSP-Compiler aufsetzt, können auch die Compileroptimierungen des C6000-Compilers verwendet werden, Diese Optimierungsstufen optimieren auf Geschwindigkeit.\\
-Dieser besitzt neben den gängigen Optimierungsstufe O0-O3, auch die Möglichkeit eine softwarebasierte Pipelinestruktur zu verwenden, die sich Software Pipelined Loop oder kurz SPLOOP nennt\cite{spru187o}.
+Dieser besitzt neben den gängigen Optimierungsstufe O0-O3, auch die Möglichkeit eine softwarebasierte Pipelinestruktur zu verwenden, die sich Software Pipelined Loop oder kurz SPLOOP nennt.
 
 \paragraph{Optimierungsstufe \-O0}$\;$ \\\\
 In der niedrigsten Optimierungsstufe, welche entweder durch das Compilerflag \textit{\-opt\_level=0} oder \textit{\-O0} aufgerufen wird, werden nur einfache Optimierungen des Codes durchgeführt:
@@ -800,4 +801,4 @@ Hierbei sind zwei unterschiedliche Möglichkeiten zur Kommunikation zwischen ARM 
 
 C6runlib bietet die Möglichkeit Teile des Programmcodes auf den DSP auszulagern. Hierbei werden die entsprechenden Programmteile in C-Code geschrieben und mit dem C6Runlib-Compiler zu einer Bibliothek compiliert. Diese Bibliothek kann anschließend in das bestehende Projekt eingefügt und die in ihr enthaltenen Funktionen so aufgerufen werden, als wenn sie auf dem ARM laufen würden.\\
 C6Runapp hingegen bietet die Möglichkeit ein komplettes Programm auf dem DSP auszuführen, dieses aber über die Konsole des ARM aufzurufen. Hierfür wird der Programm-Code ebenfalls in C-Code beschrieben und mit dem C6Runapp-Compiler kompiliert.\\
-Die in dieser Arbeit verwendete Version von C6EZRun ist 0.98 \cite{c6run}.
+Die in dieser Arbeit verwendete Version von C6EZRun ist 0.98.

@@ -1,10 +1,10 @@
 Testcase 2: MFCC, NormalizedAudioSpectrumEnvelope, OctaveSpectralContrast
 Opened ../../blues.00000.au
-Gesammt Zeit: 0.608844 s
-FFT: 0.482757 s (2585 winodws)
-AmplitudeOfSpectrum: 0.019055 s (2585 winodws)
-MFCC: 0.092588 s (2585 winodws)
-SpectralCentroid: 0.003572 s (2585 winodws)
-SpectralFlux: 0.004487 s (2585 winodws)
-SpectralRolloff: 0.006384 s (2585 winodws)
-Extraction took 180000 clicks and had a runtime of 0.180000 secounds.
+Gesammt Zeit: 0.397222 s
+HammingWindow: 0.002744 s (2585 winodws)
+FFT: 0.186877 s (2585 winodws)
+AmplitudeOfSpectrum: 0.019081 s (2585 winodws)
+MFCC: 0.092623 s (2585 winodws)
+NASE: 0.010156 s (2585 winodws)
+OctaveSpectralContrast: 0.085740 s (2585 winodws)
+Extraction took 190000 clicks and had a runtime of 0.190000 secounds.

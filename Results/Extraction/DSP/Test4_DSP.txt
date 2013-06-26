@@ -1,10 +1,10 @@
 Testcase 4: AmplitudeOfMaximumInChromagram, SubBandEnergyRatio, SpectralCrestFactor
 Opened ../../blues.00000.au
-Gesammt Zeit: 0.728041 s
-FFT: 0.241624 s (1293 winodws)
-AmplitudeOfSpectrum: 0.432032 s (1293 winodws)
-MFCC: 0.046332 s (1293 winodws)
-SpectralCentroid: 0.002502 s (1293 winodws)
-SpectralFlux: 0.002355 s (1293 winodws)
-SpectralRolloff: 0.003196 s (1293 winodws)
-Extraction took 180000 clicks and had a runtime of 0.180000 secounds.
+Gesammt Zeit: 0.542913 s
+FFT: 0.093499 s (1293 winodws)
+AmplitudeOfSpectrum: 0.431868 s (1293 winodws)
+Chroma: 0.006363 s (1293 winodws)
+AmplitudeOfMaximumInChromagram: 0.000617 s (1293 winodws)
+SubBandEnergyRatio: 0.006651 s (1293 winodws)
+SpectralCrestFactor: 0.003914 s (1293 winodws)
+Extraction took 190000 clicks and had a runtime of 0.190000 secounds.
