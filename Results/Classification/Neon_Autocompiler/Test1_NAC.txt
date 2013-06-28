@@ -15,5 +15,5 @@
 
 Opened /home/root/performance/tracks.csv
 Opened /home/root/performance/refsets/fset1ref.arff
-Time to perform SVM (train): 1.77 seconds (1 times with 1000 training vectors)
-Time to perform SVM (classify): 2.45 seconds (1000 times with 1000 training vectors)
+Time to perform SVM (train): 1.67 seconds (1 times with 1000 training vectors)
+Time to perform SVM (classify): 2.38 seconds (1000 times with 1000 training vectors)

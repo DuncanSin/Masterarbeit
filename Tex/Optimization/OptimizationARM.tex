@@ -41,11 +41,51 @@ Wie aus \textbf{Abbildung \ref{fig:1fset2}} zu entnehmen ist, fallt der größte A
 	\label{fig:1fset2}
 \end{figure} 
 %
+Nachdem die FFT als größter Bottleneck identifiziert wurde, stellt sich die Frage welcher Teil der Berechnung die meiste Zeit einnimmt. Wie in \textbf{Kapitel \ref{subsubsec:fft}} beschrieben, besteht die FFT-Berechnung aus drei Teilen:
+
+\begin{itemize}
+\item Bitreverse
+\item Butterfly
+\item Nachverarbeitung
+\end{itemize}  
+
+Eine Analyse dieser drei Teilberechnungen ergibt, dass der größte Anteil an der Laufzeit der Butterfly-Berechnung zufällt, in Zahlen liegt dieser bei knapp 72\%.
 
 \subsection{Libav als Optimierung der FFT}\label{subsec:optFFT}
+
+Im vorherigen Kapitel haben sich folgende Ergebnisse gezeigt:
+
+\begin{enumerate}
+\item ARM+NEON ist die schnellste Kombination
+\item Die Extraktionsphase nimmt den größten Anteil der Gesamtlaufzeit ein
+\item Die FFT nimmt den größten Anteil an der Laufzeit der Extraktionsphase ein
+\item Innerhalb der FFT nimmt die Butterfly-Berechnung den größten Anteil ein
+\end{enumerate}
+
+Daraus folgt, dass eine erste Optimierung in Richtung der FFT und der NEON-SIMD-Einheit erfolgen sollte.\\
+Bibliotheken, die NEON optimierte FFT-Versionen bieten, sind im Internet reichlich vertreten. Für diese Arbeit wurde sich dafür entschieden die weitverbreiteste Bibliothek \textit{Libav} einzusetzen.\\
+Libav ist eine opensource Bibliothek zur Audio- und Videoverarbeitung, die neben einer Vielzahl von Audio- und Videocodecs, Prozessierungsalgorithmen für diese und Tools zur Audio- und Videoverarbeitung auch wie schon erwähnt eine NEON optimierte FFT besitzt.
+ 
 \subsubsection{Laufzeitmessung}
-\subsubsection{Aufbau der FFT}
+Da der Aufbau der FFT-Berechnung (siehe \textbf{Kapitel \ref{subsubsec:libavfft}}) der Libav-Bibliothek an anderer ist, als der der Referenzimplementierung, wäre ein direkter Laufzeitvergleich zwischen Libav-FFT und Referenz-FFT unfair. Hier für wurden die Messungen der drei Kombinationen aus \textbf{Abbildung \ref{fig:armtime}} für die Libav-FFT wiederholt (vgl. \textbf{Abbildung \ref{fig:libavtime}}).
+%
+\begin{figure}[h]
+	\centering
+		\includegraphics[width=1\textwidth]{../Pictures/libavtime.pdf}
+	\caption{Laufzeitmessung der Libav-FFT für ARM, ARM+VFP und ARM+NEON}
+	\label{fig:libavtime}
+\end{figure} 
+%
+Auch hierbei lässt sich erkennen, dass eine reine ARM-Implementation die langsamste Variante ist. Allerdings lässt sich ebenfalls erkennen, dass der Unterschied von der VFP-Implementierung und der NEON-Implementierung sehr deutlich ist, so wie es zu erwarten war. Dass dieser Unterschied hier so deutlich ist, liegt vor allem daran, dass die NEON-Version nicht wie bei der FFT des Referenzcodes mit der Compileroption für NEON-Code erstellt wurde, sondern wie in \textbf{Kapitel \ref{ph:neonasm}} beschrieben per Hand in NEON-Assembler geschrieben wurde.
+
+\subsubsection{Aufbau der FFT}\label{subsubsec:libavfft}
+Wie im vorherigen Kapitel schon erwähnt, unterscheiden sich der Aufbau von Libav-FFT und FFT des Referenzcodes stark, was unter anderem eine Komplexitätsreduktion der Butterfly-Berechnung und damit eine geringere Laufzeit mit sich bringt. In diesem Abschnitt wird nun dieser Unterschiedliche Aufbau näher erläutert.\\
+Die FFT des Referenzcodes basiert auf den in \textbf{Kapitel \ref{subsubsec:fft}} beschriebenen Reduktionen einer 256-Punkt-FFT auf kleinere FFTs und gehört zur Familie der DIT-FFTs. Der Aufbau der Libav-FFT hingegen basiert auf der Reduktion auf Splitradix-FFTs, allerdings gehört auch diese FFT zur Familie der DIT-FFTs.\\
+\textbf{Abbildung \ref{fig:libav-bf}} zeigt den Aufbau eines Splitradix-Butterflys der Libav-FFT.
+
+
 \subsubsection{Einbindung}
+\subsubsection{Abschließende Laufzeitmessung nach der FFT-Optimierung mit Libav}
 
 \subsection{Optimierung der Amplitude of Spectrum}\label{subsec:optAOS}
 \subsubsection{Laufzeitmessung}
