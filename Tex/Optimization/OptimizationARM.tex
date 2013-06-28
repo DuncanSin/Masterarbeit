@@ -6,15 +6,32 @@ In \textbf{Abschnitt \ref{subsec:armtime}} wird daher als erstes die Laufzeitmes
 \subsection{Laufzeitmessung des Gesamtprogramms}\label{subsec:armtime}
 Für die erste Laufzeitmessung des gesammten Programms (Extraktion, Prozessierung und Klassifikation) wurde dieses mit den in \textbf{Kapitel \ref{ph:neoncomp}} beschriebenen Compileroptionen zur automatischen Generierung von NEON-Code kompiliert. Die dabei resultierten Laufzeiten sind in \textbf{Abbildung \ref{fig:mclneon}} abzulesen.
 %
-\begin{figure}[h]
+\begin{figure}[htp]
 	\centering
 		\includegraphics[width=1\textwidth]{../Pictures/mclneon.pdf}
 	\caption{Laufzeiten in ms des Musikklassifikators}
 	\label{fig:mclneon}
 \end{figure} 
 %
-Wie man aus der Abbildung entnehmen kann, fällt der größte Anteil an der Gesamtlaufzeit in allen vier Messungen (\textit{MCL1 - MCL4}) auf die Extraktionsphase. Es macht also Sinn diese für die weitere Optimierung ins Auge zu fassen.\\\\
-Da die Extraktionsphase sich als am zeitintensivsten herausgestellt hat, soll diese jetzt näher analysiert werden. Dieses und alle weiteren Messungen werden am Beispiel des in \textbf{Kapitel \ref{subsec:fset2}} beschriebenen FeatureSets durchgeführt, die Diagramme für die anderen drei FeatureSets sind für den interessierten Leser im Anhang zu finden, aber für diese sind die beschriebenen Tatsachen equivalent.\\
+Wie man aus der Abbildung entnehmen kann, fällt der größte Anteil an der Gesamtlaufzeit in allen vier Messungen (\textit{MCL1 - MCL4}) auf die Extraktionsphase. Hierbei stellt sich jetzt allerdings die Frage, ob das nur an der Komibation aus ARM und NEON liegt oder ob dieses eine generelle Tendenz ist. Darum muss die Laufzeitmessung der genannten Komibation noch mit den Laufzeitmessungen von einer reinen ARM-Implementation und der Kombination aus ARM und VFP-Einheit (vgl. \textbf{Kapitel \ref{ph:vfp}}) verglichen werden. Die Ergebnisse dieser sind in \textbf{Abbildung \ref{fig:armtime}} abzulesen. Diese und alle weiteren Messungen werden am Beispiel des in \textbf{Kapitel \ref{subsec:fset2}} beschriebenen FeatureSets durchgeführt, die Diagramme für die anderen drei FeatureSets sind für den interessierten Leser im Anhang zu finden, aber für diese sind die beschriebenen Tatsachen equivalent.
+%
+\begin{figure}[h]
+	\centering
+		\includegraphics[width=1\textwidth]{../Pictures/fset2AVN.pdf}
+	\caption{Laufzeiten in ms des Musikklassifikators für ARM, ARM+VFP und ARM+NEON am Beispiel des FeatureSets 2}
+	\label{fig:armtime}
+\end{figure} 
+%
+Aus \textbf{Abbildung \ref{fig:armtime}} lassen sich drei wesentliche Schlüsse ziehen:
+
+\begin{enumerate}
+\item Die Extraktionsphase hat in allen drei Fällen den größten Anteil an der Laufzeit
+\item Die reine ARM-Implementation hat die schlechteste Laufzeit
+\item ARM+VFP und ARM+NEON scheinen gleichwertig zu sein
+\end{enumerate}
+
+Die Punkte 1 und 2 kann man so stehen lassen, da diese zu den erwarteten Ergebnissen zählen, aber Punkt 3 verwundert einen doch sehr. Wie kann es sein, dass trotz der in \textbf{Kapitel \ref{subsubsec:neon}} beschriebenen Vorteile der NEON-SIMD-Einheit gegen über der VFP-Einheit, beide Einheiten doch gleichwertig erscheinen? Es soll nochmals erwähnt werden, dass beide Implementationen mit einer Compileroption für die jeweilige Floating Point-Einheit optimiert wurden. Ein Blick in den entstandenen Assemblercode der beiden Implementierungen gibt die Antwort auf die gestellte Frage. Hier finden sich in beiden Fällen nahezu gleiche Codes, das heißt auch die NEON-SIMD-Einheit für nur die rein sklaren Operationen des VFP aus. Dieses erklärt einerseits, warum sich die Laufzeiten der beiden Implementationen nicht wesentlich voneinander unterscheiden und zeigt andererseits, dass es dem Compiler scheinbar nicht möglich ist effektiv für die NEON-SIMD-Einheit optimierten Code zu generieren.\\\\
+Da die Extraktionsphase sich als am zeitintensivsten herausgestellt hat, soll diese jetzt näher analysiert werden.\\ 
 Wie aus \textbf{Abbildung \ref{fig:1fset2}} zu entnehmen ist, fallt der größte Anteil der Laufzeit der Extraktionsphase mit knapp 60\% auf die Berechnung der FFT.
 %
 \begin{figure}[h]
@@ -24,9 +41,6 @@ Wie aus \textbf{Abbildung \ref{fig:1fset2}} zu entnehmen ist, fallt der größte A
 	\label{fig:1fset2}
 \end{figure} 
 %
-
-\subsubsection{FFT}
-
 
 \subsection{Libav als Optimierung der FFT}\label{subsec:optFFT}
 \subsubsection{Laufzeitmessung}

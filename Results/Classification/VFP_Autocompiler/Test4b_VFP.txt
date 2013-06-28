@@ -1,0 +1,19 @@
+<commandList>
+	<command name="setClassificationConfig" type="SVM" mode="train" enabled="1">
+		<files>
+			<file name="/home/root/performance/refsets/fset4bref.arff"/>
+		</files>
+		<labelInfo name="/home/root/performance/tracks.csv"/>
+	</command>
+	<command name="getClassificationPerformance"/>
+	<command name="classifyFile">
+		<file name="blues.00000"/>
+	</command>
+	<command name="setClassificationConfig" type="SVM" mode="classify" enabled="1"/>
+	<command name="getClassificationPerformance"/>
+</commandList>
+
+Opened /home/root/performance/tracks.csv
+Opened /home/root/performance/refsets/fset4bref.arff
+Time to perform SVM (train): 1.3 seconds (1 times with 1000 training vectors)
+Time to perform SVM (classify): 1.62 seconds (1000 times with 1000 training vectors)
