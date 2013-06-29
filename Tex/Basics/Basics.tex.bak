@@ -14,28 +14,58 @@ Musikklassifikation findet im Wesentlichen in drei Schritten statt:
 	\item Klassifikation der Musiktitel anhand von Klassifikationsalgorithmen (\textbf{\ref{subsec:cla}})
 \end{enumerate}
 
+Hierbei werden aus den betrachteten Musikstücken in der Extraktionsphase nach vorgegebenen Algorithmen (vgl. \ref{sec:alg}) Merkmale extrahiert, die eine Beschreibung der Musikstücke liefern sollen. In der Prozessierungsphase, werden die extrahierten Merkmale für die Klassifikation vorbereitet, welches durch eine Datenreduktion der Datenmenge geschieht. Im Abschluss werden in der Klassifizierungsphase die Merkmale der Musikstücke gegen Daten aus einem Referenzset verglichen und anhand von Klassifikationsalgorithmen klassifiziert.\\
+Diese drei Schritte werden im Folgenden näher erläutert.
+
 \subsection{Extraktion}\label{subsec:ext}
-In der Extraktionsphase werden die für die spätere Klassifikation nötigen Features aus den eingelesenen Musiktitel extrahiert.\\
-Hierbei werden normalerweise vorher festgelegte FeatureSets verwendet, die unter anderem aus den in \textbf{Kapitel \ref{sec:alg}} vorgestellten Algorithmen bestehen können, darüber hinaus existieren aber noch eine Vielzahl von weiteren Algorithmen, die in dieser Arbeit aber nicht weiter betrachtet werden sollen.\\
-Die Extraktion der gewählten Features geschieht hierbei Fensterweise, d.h. dass jeweils auf ein betrachtetes Fenster, je nach der zugrunde liegenden Architektur, alle Algorithmen, die für die Extraktion der einzelnen Features nötig sind, sequenziell oder parallel durchgeführt werden. Als Ergebnis erzeugt jeder Featurealgorithmus einen Featurevektor, welcher von 1 bis n Vektorranten enthalten kann.
+In der Extraktionsphase werden die für die spätere Klassifikation nötigen Features aus den eingelesenen Musikstücken extrahiert.\\
+Hierbei werden normalerweise vorher festgelegte FeatureSets verwendet, die unter anderem aus den in \textbf{Kapitel \ref{sec:alg}} vorgestellten Algorithmen bestehen können und in der Regel drei bei vier Algorithmen umfassen. Neben den in dieser vorgestellten Algorithmen existieren eine Vielzahl weiterer Algorithmen.\\
+Für die Extraktion dieser Merkmale, im Nachfolgenden als Features bezeichnet, werden die Musikstücke als erstes in gleichgroße Fenster unterteilt. In dieser Arbeit wurde eine Fenstergröße von 512 Werten gewählt. Diese Fenster sind in der Regel nicht überlappend, müssen dieses aber nicht sein (vgl. \ref{subsec:fset3}).\\
+Erfahrungsgemäß nimmt die Extraktion den größten Anteil an der Musikklassifikation ein.
+ 
 
 \subsection{Prozessierung}\label{subsec:proc}
-Die in der Extraktionsphase erstellten Featurevektoren werden in der Prozessierungsphase anhand von dafür benötigten Algorithmen für die spätere Klassifikation vorbereitet.\\
-Die genaue Funktionsweise dieser Phase soll hier nicht näher beschrieben werden, da sie für die in dieser Arbeit durchgeführten Untersuchungen nicht weiter relevant sein wird.
+Klassifikationsalgorithmen erwarten, dass die Anzahl an Daten eines zu klassifizierenden Musikstücks mit der Anzahl der Daten in ihrem Referenzsets übereinstimmen. Da im Normalfall aber nicht alle Musikstücke nicht die selbe Länge und damit mit die selbe Fensteranzahl besitzen, muss eine Datenreduktion durchgeführt werden. Dieses geschieht in der Prozessierungsphase.\\
+Diese Datenreduktion wird durchgeführt, indem aus der Datenmenge eines jeden betrachteten Features der Mittelwert und die Standartabweichung berechnet wird.\\
+Eine solche Datenreduktion hat neben der Vereinheitlichung von Datenmengen auch noch den Vorteil, dass die zu klassifizierende Datenmenge kleiner wird und somit weniger Speicherplatz benötigt. Dieses ist besonders hilfreich, wenn auf einem System mit beschränktem Speicherplatz gearbeitet wird, wie zum Beispiel bei mobilen Endgeräten.
 
 
 \subsection{Klassifikation}\label{subsec:cla}
-In der Klassifikationsphase werden Featurevektoren, die in der Extraktionsphase extrahiert und ich der Prozessierungsphase auf die Klassifikation vorbereitet wurden, anhand von Klassifikationsalgorithmen klassifiziert.\\
-Zu den bekanntesten Klassifikationsalgorithmen zählen unter anderem der k-Nearest-Neighbor-Algorithmus (KNN-Alorithmus) und der Support-Vector-Maschine-Algorithmus (SVM-Algorithmus).\\
-Auch auf die Klassifikationsphase soll in dieser Arbeit nicht weiter eingegangen werden. Es soll nur erwähnt werden, dass alle Klassifikationsalgorithmen in zwei Schritten abgearbeitet werden:
+Während der Klassifikation wird versucht jedes der zu klassifizierenden Musikstücke anhand eines Referenzsets einer von mehreren fest vorgegebenen Gruppen eindeutig zuzuordnen. Dieses geschieht mit Hilfe eines sogenannten Klassifikators.\\
+Jeder Klassifikator klassifiziert in zwei Schritten:
 
 \begin{enumerate}
-	\item Trainieren des Klassifikators anhand eines meist per Hand klassifizierten Trainingssets, dass aus Featurevektor-Klassen-Kombinationen besteht
-	\item Klassifizierung der Featurevetoren, die die beiden zuvor beschrieben Phasen durchlaufen haben.
+\item Training des Klassifikators
+\item Klassifizierung
 \end{enumerate}
 
+Der Ablauf einer Klassifikation wird nachfolgend am Beispiel einer zweidimensionalen Support Vector Maschine (SVM) näher erklärt.
+
+\paragraph*{Zweidimensionalen Support Vector Maschine (SVM)}$\;$ \\\\
+SVMs lassen sich in zwei Klassen einteilen:
+
+\begin{itemize}
+\item Lineare SVMs
+\item Nichtlineare SVMs
+\end{itemize}
+
+Diese Unterteilung geschieht auf Basis des zu betrachtenden Merkmalraums. Eine SVM wird als linear bezeichnet, wenn Gruppen eindeutig durch eine Gerade oder Ebene voneinander getrennt werden können. Befinden sich Gruppen auch innerhalb anderer Gruppen, so ist die SVM nicht linear (vgl. \textbf{Abbildung \ref{fig:svm}})\\
+Da in der Musikklassifikation eher mehr als zwei Merkmale betrachtet werden, wir nur der nichtlineare Fall beschrieben.\\
+%
+\begin{figure}[htp]
+	\centering
+		\includegraphics[width=1\textwidth]{../Pictures/SVM.pdf}
+	\caption{Beispiel für eine a) lineare und b) nichtlineare SVM\cite{Leimig2009}}
+	\label{fig:svm}
+\end{figure}
+%
+Vor der eigentlichen Klassifikation muss der Klassifikator trainiert und ein Klassifikationsmodell aufgestellt werden. Dieses geschieht durch ein Trainingsset, in dem bereits vorklassifizierte Objekte enthalten sind. Auf Basis dieses Trainingssets wird ein mehrdimensionaler Werteraum aufgestellt, der für jedes betrachtete Feature eine Dimension enthält.\\
+In diesen Werteraum werden alle Elemente des Trainingssets eingetragen. Dieses passiert auf Grundlage ihrer Featurevektoren. Ein Featurevektor bezeichnet einen Vektor, in dessen Stellen die einzelnen prozessierten Werte pro betrachtetem Feature eingetragen sind. Anschließend wird eine Hyperebene so in den Raum gespannt, dass sie maximalen Abstand zu allen Objekten im Raum besitzt (vgl. \textbf{Abbildung \ref{fig:svm}}). Hiermit lassen sich zwei eindeutig voneinander getrennte Klassifikationsgruppen erkennen und die Trainingsphase ist beendet.\\
+Die Klassifikation geschieht auf Basis des in der Trainingsphase erstellten Modells. Ein zu klassifizierendes Objekt wird anhand seines Featurevektors in den Wertebereich abgebildet (grünes Dreieck in \textbf{Abbildung \ref{fig:svm}}). Anhand seiner Lage zur aufgespannten Hyperebene kann er eindeutig einer der beiden Gruppen zugeordnet werden.
+
+
 \section{Algorithmen}\label{sec:alg}
-In diesem Kapitel sollen die Extraktionsalgorithmen vorgestellt werden, aus denen die im \textbf{Kapitel \ref{sec:fset}} beschriebenen FeatureSets zusammengesetzt sind, die für die Laufzeitanalyse des Codes verwendet werden. Hierfür werden diese in zwei Bereiche unterteilt, einmal die Features, welche im Zeitbereich arbeiten (\textbf{\ref{subsec:zeit}}) und diese die im Frequenzbereich arbeiten (\textbf{\ref{subsec:freq}})\cite{haller2008}.
+In diesem Kapitel sollen die Extraktionsalgorithmen vorgestellt werden, aus denen die im \textbf{Kapitel \ref{sec:fset}} beschriebenen FeatureSets zusammengesetzt sind, die für die Laufzeitanalyse des Codes verwendet werden. Hierfür werden diese in zwei Bereiche unterteilt, einmal die Features, welche im Zeitbereich arbeiten (\textbf{\ref{subsec:zeit}}) und diese die im Frequenzbereich arbeiten (\textbf{\ref{subsec:freq}}).
 
 \subsection{Notation von Ausdrücken und Variablen}\label{subsec:note}
 
@@ -68,7 +98,7 @@ Hier sollen kurz die verwendeten Ausdrücke und Variablen eingeführt werden, die 
 \subsection{Features des Zeitbreichs}\label{subsec:zeit}
 
 \subsubsection{Root Mean Square (RMS)}\label{subsubsec:rms}
-Root Mean Square oder auch das quadratische Mittel normiert die einzelnen Signalenergien innerhalb eines Zeitfensters (\textbf{Formel \ref{eqn:rms}})\cite{haller2008}\cite{Theimer2008}.
+Root Mean Square oder auch das quadratische Mittel normiert die einzelnen Signalenergien innerhalb eines Zeitfensters (\textbf{Formel \ref{eqn:rms}}).
 
 \begin{equation}
 	\label{eqn:rms}
@@ -77,7 +107,7 @@ Root Mean Square oder auch das quadratische Mittel normiert die einzelnen Signal
 
 \subsubsection{Low Energy}\label{subsubsec:le}
 
-Low Energy fasst mehrere aufeinander folgende Zeitfenster $n$ zu einem sogenannten Analysezeitraum zusammen und gibt die Rate der Zeitfenster an, deren RMS unter dem Mittel aller RMS im Analysezeitraum liegen (\textbf{Formel \ref{eqn:le}}). Hierfür sei $N_{a}$ die Anzahl der betrachteten Zeitfenster im Analysezeitraum\cite{haller2008}\cite{Theimer2008}.
+Low Energy fasst mehrere aufeinander folgende Zeitfenster $n$ zu einem sogenannten Analysezeitraum zusammen und gibt die Rate der Zeitfenster an, deren RMS unter dem Mittel aller RMS im Analysezeitraum liegen (\textbf{Formel \ref{eqn:le}}). Hierfür sei $N_{a}$ die Anzahl der betrachteten Zeitfenster im Analysezeitraum.
 
 \begin{equation}
 	\label{eqn:le}
@@ -91,7 +121,7 @@ mit \[\mu_{rms}~=~\frac{1}{N_{a}}\sum^{N_{a}-1}_{i=0}x_{rms}(n)\] und \[u(x)~=~\
 
 \subsubsection{Zero Crossing Rate}\label{subsubsec:zcr}
 
-Bei der Zero Crossing Rate werden die Auftreten von Vorzeichenwechseln innerhalb eines Zeitfensters berechnet. Diese Rate gibt ein Maß für den hochfrequenten Anteil des Signals an (\textbf{Formel \ref{eqn:zero}})\cite{haller2008}\cite{Theimer2008}.
+Bei der Zero Crossing Rate werden die Auftreten von Vorzeichenwechseln innerhalb eines Zeitfensters berechnet. Diese Rate gibt ein Maß für den hochfrequenten Anteil des Signals an (\textbf{Formel \ref{eqn:zero}}).
 
 \begin{equation}
 	\label{eqn:zero}			   r_{zcr}~=~\frac{1}{2(N~-~1)}\sum^{N-2}_{n=0}\left|sgn~x(n~+~1)~-~sgn~x(n)\right|
@@ -102,7 +132,7 @@ Bei der Zero Crossing Rate werden die Auftreten von Vorzeichenwechseln innerhalb
 \subsubsection{Fast Fourier Transformation (FFT)}\label{subsubsec:fft}
 
 Unter dem Begriff \textit{Fast Fourier Transformation} werden werden Algorithmen zusammengefasst, die eine schnelle und effiziente Berechnung von \textit{diskreten Fourier-Transformationen (DFT)} bieten. Diese effizienten Algorithmen kann man im wesentlichen in zwei Gruppen unterteilen, diejenigen die mit Zeitzerlegung (\textbf{\ref{ph:dit}}) und diejenigen die mit Frequenzzerlegung (\textbf{\ref{ph:dif}}) arbeiten.\\
-Für beide Gruppen von Algorithmen wird immer eine Operation benötigt, die entweder die Eingänge oder die Ausgänge in einer bestimmten Form sortiert. Diese Operation wird als \textit{Bitumkehrordnung} oder engl. \textit{bit-reversed order} bezeichnet (\textbf{\ref{ph:bit}})\cite{Opp1999}.
+Für beide Gruppen von Algorithmen wird immer eine Operation benötigt, die entweder die Eingänge oder die Ausgänge in einer bestimmten Form sortiert. Diese Operation wird als \textit{Bitumkehrordnung} oder engl. \textit{bit-reversed order} bezeichnet (\textbf{\ref{ph:bit}}).
 
 \paragraph{FFT mit Zeitzerlegung (DIT)}\label{ph:dit}$\;$ \\
 
@@ -136,12 +166,12 @@ Diese 2-Punkt DFTs führen zu einem Signalflussgraph, wie er in \textbf{Abbildung
 %
 \begin{figure}[ht]
 	\centering
-		\includegraphics{../Pictures/BF-DIT.pdf}
+		\includegraphics[scale=0.5]{../Pictures/BF-DIT.pdf}
 	\caption{Signalflussgraph eines vereinfachten Butterfly einer DIT\cite{Opp1999}}
 	\label{fig:BF-DIT}
 \end{figure}
 %
-Aufgrund der Form dieses Signalflussgraphen wird die dargestellte Operation als \textit{Butterfly} bezeichnet. Der vollständige Signalflussgraph einer 8-Punkte DFT mit Zeitzerlegung ist in \textbf{Abbildung \ref{fig:dit}} zu sehen\cite{Opp1999}.\\
+Aufgrund der Form dieses Signalflussgraphen wird die dargestellte Operation als \textit{Butterfly} bezeichnet. Der vollständige Signalflussgraph einer 8-Punkte DFT mit Zeitzerlegung ist in \textbf{Abbildung \ref{fig:dit}} zu sehen.\\
 %
 \begin{figure}[ht]
 	\centering
@@ -206,11 +236,11 @@ Fasst man nun jeweils die Summationen der beiden Teilfolgen zusammen und nutzt w
 	\end{split}
 \end{equation}
 
-In \textbf{Abbildung \ref{fig:BF-DIF}} ist der aus \textbf{Formel \ref{eqn:dif6}} abgeleitete Signalflussgraph der \textit{Butterfly}-Operation zu sehen und \textbf{Abbildung \ref{fig:dif}} zeigt den vollständigen Signalflussgraph einer 8-Punkte DFT nach Frequenzzerlegung\cite{Opp1999}.\\
+In \textbf{Abbildung \ref{fig:BF-DIF}} ist der aus \textbf{Formel \ref{eqn:dif6}} abgeleitete Signalflussgraph der \textit{Butterfly}-Operation zu sehen und \textbf{Abbildung \ref{fig:dif}} zeigt den vollständigen Signalflussgraph einer 8-Punkte DFT nach Frequenzzerlegung.\\
 %
 \begin{figure}[ht]
 	\centering
-		\includegraphics{../Pictures/BF-DIF.pdf}
+		\includegraphics[scale=0.5]{../Pictures/BF-DIF.pdf}
 	\caption{Signalflussgraph eines vereinfachten Butterfly einer DIF\cite{Opp1999}}
 	\label{fig:BF-DIF}
 \end{figure}
@@ -268,11 +298,11 @@ Z.B. für Vierteltöne gilt
 
 \[p(k)~=~\left\lfloor 24~log_{2}\left(\frac{2k}{N}\frac{f_{s}}{f_{1}}\right) \right\rfloor~mod~24\textrm{ und }f_{1}~=~440~Hz \]
 
-Für Halbtöne müsste 24 durch 12 ersetzt werden\cite{haller2008}\cite{Theimer2008}.
+Für Halbtöne müsste 24 durch 12 ersetzt werden.
 
 \subsubsection{Amplitude Of Maximum In Chromagram}\label{subsubsec:aomic}
 
-Die maximale Amplitude des Chromagrams gibt den maximalen Chroma Vektor an und stellt daher die Stärke eines Tons in verschiedenen Oktavstufen dar (\textbf{Formel \ref{eqn:aomic}})\cite{haller2008}\cite{Theimer2008}.
+Die maximale Amplitude des Chromagrams gibt den maximalen Chroma Vektor an und stellt daher die Stärke eines Tons in verschiedenen Oktavstufen dar (\textbf{Formel \ref{eqn:aomic}}).
 
 \begin{equation}
 	\label{eqn:aomic}			   
@@ -299,8 +329,8 @@ Als Erstes wird wie bei allen Features des Frequenzbereiches die Spektralkompone
 \end{equation}
 
 Hierbei beschreibt $w_{k'}(k)$ Dreiecksfenster, deren Breite für wachsendes $k$ zunehmen. Im Normalfall wird für diese Transformation in das Mel-Band 12 oder 24 Dreiecksfenster verwendet, wobei die Anzahl der Dreiecksfenster gleichzeitig die Auflösung der Transformation beschreibt.\\
-Im nächsten Schritt wird der Logarithmus von $M(k')$ gebildet. Letztendlich wird zur Berechnung der MFCC eine Diskrete Cosinuns Transformation (DCT) durchgeführt.\\
-Wird die Bandpassfilterung mit 12 Dreiecksfenstern durchgeführt, liefert dieser Algorithmus einen Ergebnisvektor mit 13 Komponenten \cite{Lee2009}\cite{haller2008}\cite{Theimer2008}. 
+Im nächsten Schritt wird der Logarithmus von $M(k')$ gebildet. Letztendlich wird zur Berechnung der MFCC eine Diskrete Cosinus Transformation (DCT) durchgeführt.\\
+Wird die Bandpassfilterung mit 12 Dreiecksfenstern durchgeführt, liefert dieser Algorithmus einen Ergebnisvektor mit 13 Komponenten. 
 
 \subsubsection{Normalized Audio Spectrum Envelope}\label{subsubsec:nase}
 
@@ -355,7 +385,7 @@ Hierbei steht $R$ für den normierten RMS-Wert, der nach \textbf{Formel \ref{eqn:
 	R~=~\sqrt{\sum^{B+1}_{b=0}\left(ASE_{dB}(b)\right)^2}
 \end{equation}
 
-Aus den einzelnen NASE-Werten der einzelnen Unterbänder wird abschließend der Ergebnisvektor $X_{NASE}$ gebildet (\textbf{Formel \ref{eqn:nasex}})\cite{Lee2009}.
+Aus den einzelnen NASE-Werten der einzelnen Unterbänder wird abschließend der Ergebnisvektor $X_{NASE}$ gebildet (\textbf{Formel \ref{eqn:nasex}}).
 
 \begin{equation}
 	\label{eqn:nasex}			   
@@ -399,7 +429,7 @@ Hierbei ist $\alpha$ ein Nachbarschaftsfactor, der in der Literatur mit 0,2 ange
 	\label{eqn:oscsc}			   	
 	SC(b)~=~Peak(b)~-~Valley(b)
 \end{equation}
-Und der resultierende Featurevektor $x_{OSC}$ abschließend aus den Valleys und spektralen Kontrasten eines Audioframes (\textbf{Formel \ref{eqn:osc}})\cite{Lee2009}.
+Und der resultierende Featurevektor $x_{OSC}$ abschließend aus den Valleys und spektralen Kontrasten eines Audioframes (\textbf{Formel \ref{eqn:osc}}).
 
 \begin{equation}
 	\label{eqn:osc}			   	
@@ -419,7 +449,7 @@ Und der resultierende Featurevektor $x_{OSC}$ abschließend aus den Valleys und s
 
 \subsubsection{Spectral Centroid}\label{subsubsec:sc}
 
-Der Spectral Centroid gibt den Schwerpunkt des Amplitudenspektrums des Signals an (\textbf{Formel \ref{eqn:sc}})\cite{haller2008}\cite{Theimer2008}.
+Der Spectral Centroid gibt den Schwerpunkt des Amplitudenspektrums des Signals an (\textbf{Formel \ref{eqn:sc}}).
 
 \begin{equation}
 	\label{eqn:sc}			   	S_{centroid}~=~\frac{\sum\limits^{\frac{K}{2}-1}_{k=0}k~A(k)}{\sum\limits^{\frac{K}{2}-1}_{k=0}A(k)} 
@@ -428,7 +458,7 @@ Der Spectral Centroid gibt den Schwerpunkt des Amplitudenspektrums des Signals a
 \subsubsection{Spectral Crest Factor}\label{subsubsec:scf}
 
 Der Spectral Crest Factor stellt ein Maß der spektralen Flachheit eines Frequenzbandes dar und ist im Wertebereich $\left[1,\infty\right]$ definiert. Hierbei bedeutet 1, dass alle spektral Amplituden gleich sind und $\infty$ das gar keine Flachheit existiert (\textbf{Formel \ref{eqn:scf}}).\\
-Dieser Faktor wird auf folgenden Frequenzbändern berechnet\cite{Theimer2008}:
+Dieser Faktor wird auf folgenden Frequenzbändern berechnet:
 \begin{itemize}
 	\item 250 - 500 Hz ($k_{1l}$ - $K_{1u}$)
 	\item 500 - 1000 Hz ($k_{2l}$ - $K_{2u}$)
@@ -444,7 +474,7 @@ Dieser Faktor wird auf folgenden Frequenzbändern berechnet\cite{Theimer2008}:
 
 \subsubsection{Spectral Flux}\label{subsubsec:sf}
 
-Der Spectral Flux ist definiert als die quadrierte Differenz zwischen den normalisierten Betragsspektren von zwei aufeinander folgenden Zeitfenstern (\textbf{Formel \ref{eqn:sf}})\cite{haller2008}\cite{Theimer2008}.
+Der Spectral Flux ist definiert als die quadrierte Differenz zwischen den normalisierten Betragsspektren von zwei aufeinander folgenden Zeitfenstern (\textbf{Formel \ref{eqn:sf}}).
 
 \begin{equation}
 	\label{eqn:sf}			   
@@ -454,7 +484,7 @@ Der Spectral Flux ist definiert als die quadrierte Differenz zwischen den normal
 
 \subsubsection{Spectral Rolloff}\label{subsubsec:sr}
 
-Als Spectral Rolloff bezeichnet man der Frequenzwert ($k_{rolloff}$) unter dem sich eine bestimmte Prozentzahl ($p_{rolloff}$) der Spektralwerte konzentrieren (\textbf{Formel \ref{eqn:sr}})\cite{haller2008}\cite{Tza2002}. 
+Als Spectral Rolloff bezeichnet man der Frequenzwert ($k_{rolloff}$) unter dem sich eine bestimmte Prozentzahl ($p_{rolloff}$) der Spektralwerte konzentrieren (\textbf{Formel \ref{eqn:sr}}). 
 
 \begin{equation}
 	\label{eqn:sr}			   
@@ -463,7 +493,7 @@ Als Spectral Rolloff bezeichnet man der Frequenzwert ($k_{rolloff}$) unter dem s
 
 \subsubsection{Sub-Band Energy Ratio}\label{subsubsec:sber}
 
-Die Sub-Band Energy Ratio gibt die Verteilung der Spektralenergie auf die Frequenzintervalle $\left[0,\frac{f_s}{16}\right)$,$\left[\frac{f_s}{16},\frac{f_s}{8}\right)$,$\left[\frac{f_s}{8},\frac{f_s}{4}\right)$ und $\left[\frac{f_s}{4},\frac{f_s}{2}\right)$ an und kann in Indexbereiche $\left[0,\frac{K}{16}\right)$,$\left[\frac{K}{16},\frac{K}{8}\right)$,$\left[\frac{K}{8},\frac{K}{4}\right)$ und $\left[\frac{K}{4},\frac{K}{2}\right)$ überführt werden (\textbf{Formel \ref{eqn:sber}})\cite{Theimer2008}.
+Die Sub-Band Energy Ratio gibt die Verteilung der Spektralenergie auf die Frequenzintervalle $\left[0,\frac{f_s}{16}\right)$,$\left[\frac{f_s}{16},\frac{f_s}{8}\right)$,$\left[\frac{f_s}{8},\frac{f_s}{4}\right)$ und $\left[\frac{f_s}{4},\frac{f_s}{2}\right)$ an und kann in Indexbereiche $\left[0,\frac{K}{16}\right)$,$\left[\frac{K}{16},\frac{K}{8}\right)$,$\left[\frac{K}{8},\frac{K}{4}\right)$ und $\left[\frac{K}{4},\frac{K}{2}\right)$ überführt werden (\textbf{Formel \ref{eqn:sber}}).
 
 \begin{equation}
 	\label{eqn:sber}			   

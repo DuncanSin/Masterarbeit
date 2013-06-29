@@ -76,19 +76,17 @@ Da der Aufbau der FFT-Berechnung (siehe \textbf{Kapitel \ref{subsubsec:libavfft}
 	\label{fig:libavtime}
 \end{figure} 
 %
-Auch hierbei lässt sich erkennen, dass eine reine ARM-Implementation die langsamste Variante ist. Allerdings lässt sich ebenfalls erkennen, dass der Unterschied von der VFP-Implementierung und der NEON-Implementierung sehr deutlich ist, so wie es zu erwarten war. Dass dieser Unterschied hier so deutlich ist, liegt vor allem daran, dass die NEON-Version nicht wie bei der FFT des Referenzcodes mit der Compileroption für NEON-Code erstellt wurde, sondern wie in \textbf{Kapitel \ref{ph:neonasm}} beschrieben per Hand in NEON-Assembler geschrieben wurde.
+Auch hierbei lässt sich erkennen, dass eine reine ARM-Implementation die langsamste Variante ist. Allerdings lässt sich ebenfalls erkennen, dass der Unterschied von der VFP-Implementierung und der NEON-Implementierung sehr deutlich ist, so wie es zu erwarten war. Dass dieser Unterschied hier so deutlich ist, liegt vor allem daran, dass die NEON-Version nicht wie bei der FFT des Referenzcodes mit der Compileroption für NEON-Code erstellt wurde, sondern wie in \textbf{Kapitel \ref{ph:neonasm}} beschrieben per Hand in NEON-Assembler geschrieben wurde.\\Im Vergleich zur Referenzimplementierung lässt sich für die reine ARM-Implementierung ein Speedup von knapp 1,4, für die VFP-Implementierung von 2,2 und für die NEON-Implementierung sogar von 19,2 erkennen. Bei der ARM-Implementierung ist dieses aus der geringeren Komplexität der Libav-FFT erklären, bei den andern Beiden kommt noch eine bessere Ausnutzung der Architektur hinzu.
 
 \subsubsection{Aufbau der FFT}\label{subsubsec:libavfft}
 Wie im vorherigen Kapitel schon erwähnt, unterscheiden sich der Aufbau von Libav-FFT und FFT des Referenzcodes stark, was unter anderem eine Komplexitätsreduktion der Butterfly-Berechnung und damit eine geringere Laufzeit mit sich bringt. In diesem Abschnitt wird nun dieser Unterschiedliche Aufbau näher erläutert.\\
-Die FFT des Referenzcodes basiert auf den in \textbf{Kapitel \ref{subsubsec:fft}} beschriebenen Reduktionen einer 256-Punkt-FFT auf kleinere FFTs und gehört zur Familie der DIT-FFTs. Der Aufbau der Libav-FFT hingegen basiert auf der Reduktion auf Splitradix-FFTs, allerdings gehört auch diese FFT zur Familie der DIT-FFTs.\\
-\textbf{Abbildung \ref{fig:libav-bf}} zeigt den Aufbau eines Splitradix-Butterflys der Libav-FFT.
+Die FFT des Referenzcodes basiert auf den in \textbf{Kapitel \ref{subsubsec:fft}} beschriebenen Reduktionen einer 256-Punkt-FFT auf kleinere FFTs des Radix 2 Der Aufbau der Libav-FFT hingegen basiert auf der Reduktion auf Splitradix-FFTs. Beide FFTs basieren auf dem DIT-Prinzip (vgl. \textbf{Kapitel \ref{ph:dit}}).
 
 
 \subsubsection{Einbindung}
 \subsubsection{Abschließende Laufzeitmessung nach der FFT-Optimierung mit Libav}
 
 \subsection{Optimierung der Amplitude of Spectrum}\label{subsec:optAOS}
-\subsubsection{Laufzeitmessung}
 \subsubsection{Codeanpassung}
 
 \subsection{Optimierung von MFCC}
