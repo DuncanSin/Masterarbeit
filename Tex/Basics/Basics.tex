@@ -105,7 +105,7 @@ Root Mean Square oder auch das quadratische Mittel normiert die einzelnen Signal
 	x_{rms}~=~\sqrt{\frac{1}{N}\sum^{N-1}_{n=0}x^{2}(n)}
 \end{equation}
 
-\subsubsection{Low Energy}\label{subsubsec:le}
+\subsubsection{Low Energy (LE)}\label{subsubsec:le}
 
 Low Energy fasst mehrere aufeinander folgende Zeitfenster $n$ zu einem sogenannten Analysezeitraum zusammen und gibt die Rate der Zeitfenster an, deren RMS unter dem Mittel aller RMS im Analysezeitraum liegen (\textbf{Formel \ref{eqn:le}}). Hierfür sei $N_{a}$ die Anzahl der betrachteten Zeitfenster im Analysezeitraum.
 
@@ -119,7 +119,7 @@ mit \[\mu_{rms}~=~\frac{1}{N_{a}}\sum^{N_{a}-1}_{i=0}x_{rms}(n)\] und \[u(x)~=~\
 \end{array}\right.\]
  
 
-\subsubsection{Zero Crossing Rate}\label{subsubsec:zcr}
+\subsubsection{Zero Crossing Rate (LCR)}\label{subsubsec:zcr}
 
 Bei der Zero Crossing Rate werden die Auftreten von Vorzeichenwechseln innerhalb eines Zeitfensters berechnet. Diese Rate gibt ein Maß für den hochfrequenten Anteil des Signals an (\textbf{Formel \ref{eqn:zero}}).
 
@@ -128,6 +128,14 @@ Bei der Zero Crossing Rate werden die Auftreten von Vorzeichenwechseln innerhalb
 \end{equation}
 
 \subsection{Features des Frequenzbereichs}\label{subsec:freq}
+
+\subsubsection{Hamming Window (HW)}\label{subsubsec:hw}
+
+Hamming Window bezeichnet eine andere Form eines Fensters als der Standartform eines quadratischen Fensters. Das Hamming Window ergibt sich nach \textbf{Formel \ref{eqn:hw}}.
+
+\begin{equation}
+w_{HW}(n)~=~0,54-0,46\cdot \cos \left( \frac{2 \pi n}{N-1} \right)
+\end{equation}
 
 \subsubsection{Fast Fourier Transformation (FFT)}\label{subsubsec:fft}
 
@@ -276,8 +284,8 @@ Dieses Prinzip soll in \textbf{Tabelle \ref{tab:bit}} für 8-Bit lange Indizes ve
 	\label{tab:bit}
 \end{table}
 %
-\subsubsection{Amplitude of Spectrum}\label{subsubsec:aos}
-Bei der Amplitude of Spectrum wird werden die normalisierten Spektralkomponenten eines Fenster berechnet. \\
+\subsubsection{Magnitude of Spectrum (MAG)}\label{subsubsec:aos}
+Bei der Magnitude of Spectrum wird werden die normalisierten Spektralkomponenten eines Fenster berechnet. \\
 Hierfür wird zu erst der Betrag der diskreten Transformierten berechnet, der danach durch die Größe des betrachteten Fensters geteilt wird (\textbf{Formel \ref{eqn:aos}}).
 
 \begin{equation}
@@ -285,7 +293,7 @@ Hierfür wird zu erst der Betrag der diskreten Transformierten berechnet, der dan
 	A(k)~=~\frac{\sqrt{\Re\left[X(k)\right]^2+\Im\left[X(k)\right]^2}}{N}
 \end{equation}
 
-\subsubsection{Chroma Vektor}\label{subsubsec:cv}
+\subsubsection{Chroma Vektor (CV)}\label{subsubsec:cv}
 
 Der Chroma Vektor fasst alle Spektralkomponenten einer Tonhöhe zusammen und fasst alle Frequenzen zu einer Oktave zusammen. Hierbei werden alle spektralen Amplituden des gleichen Halb- oder Vierteltons aufsummiert (\textbf{Formel \ref{eqn:cv}}).
 
@@ -300,7 +308,7 @@ Z.B. für Vierteltöne gilt
 
 Für Halbtöne müsste 24 durch 12 ersetzt werden.
 
-\subsubsection{Amplitude Of Maximum In Chromagram}\label{subsubsec:aomic}
+\subsubsection{Amplitude Of Maximum In Chromagram (AOMIC)}\label{subsubsec:aomic}
 
 Die maximale Amplitude des Chromagrams gibt den maximalen Chroma Vektor an und stellt daher die Stärke eines Tons in verschiedenen Oktavstufen dar (\textbf{Formel \ref{eqn:aomic}}).
 
@@ -332,7 +340,7 @@ Hierbei beschreibt $w_{k'}(k)$ Dreiecksfenster, deren Breite für wachsendes $k$ 
 Im nächsten Schritt wird der Logarithmus von $M(k')$ gebildet. Letztendlich wird zur Berechnung der MFCC eine Diskrete Cosinus Transformation (DCT) durchgeführt.\\
 Wird die Bandpassfilterung mit 12 Dreiecksfenstern durchgeführt, liefert dieser Algorithmus einen Ergebnisvektor mit 13 Komponenten. 
 
-\subsubsection{Normalized Audio Spectrum Envelope}\label{subsubsec:nase}
+\subsubsection{Normalized Audio Spectrum Envelope (NASE)}\label{subsubsec:nase}
 
 Der Normalized Audio Spectrum Envelope (NASE) gibt Auskunft über das Energiespektrum jedes Fensters. Hierbei wird pro Fenster ein Vektor generiert, bei dem jedes Vektorelement die normalisierte, quadrierte Magnitude eines definierten Frequenz-Unterbandes entspricht.\\
 Die Frequenz-Unterbänder spannen sich logarithmisch zwischen 62.4 Hz ("`loEdge"') und 16 kHz ("`hiEdge"') über 8 Oktaven. Die Anzahl $B$ von Unterbändern wird hierbei mit
@@ -392,7 +400,7 @@ Aus den einzelnen NASE-Werten der einzelnen Unterbänder wird abschließend der Er
 	x_{NASE}~=~\left[R,NASE(0),NASE(1),...,NASE(B+1)\right]^T
 \end{equation}
 
-\subsubsection{Octave Spectral Contrast}\label{subsubsec:osc}
+\subsubsection{Octave Spectral Contrast (OSC)}\label{subsubsec:osc}
 
 Beim Octave Spectral Contrast wird das Frequenzspektrum als erstes via Bandpass-Filtern in Unterbänder aufgeteilt (siehe \textbf{Tabelle \ref{tab:osc}}), danach werden für jedes Unterband \textit{spektrale Peaks} (\textbf{Formel \ref{eqn:peak}}) und\textit{spektrale Valleys}(\textbf{Formel \ref{eqn:valley}}) berechnet, wobei Peaks den harmonischen Komponenten und Valleys nicht-harmonischen Komponenten oder Rauschen des Unterbandes $b$ entsprechen. Hierbei werden die Power Spektren $P_{b,n}$ vorher so sortiert, dass $P_{b,1}\geq P_{b,2}\geq ... \geq P_{b,n}$ gilt.\\
 \begin{table}[ht]
@@ -447,7 +455,7 @@ Und der resultierende Featurevektor $x_{OSC}$ abschließend aus den Valleys und s
 
 
 
-\subsubsection{Spectral Centroid}\label{subsubsec:sc}
+\subsubsection{Spectral Centroid (SC)}\label{subsubsec:sc}
 
 Der Spectral Centroid gibt den Schwerpunkt des Amplitudenspektrums des Signals an (\textbf{Formel \ref{eqn:sc}}).
 
@@ -455,7 +463,7 @@ Der Spectral Centroid gibt den Schwerpunkt des Amplitudenspektrums des Signals a
 	\label{eqn:sc}			   	S_{centroid}~=~\frac{\sum\limits^{\frac{K}{2}-1}_{k=0}k~A(k)}{\sum\limits^{\frac{K}{2}-1}_{k=0}A(k)} 
 \end{equation}
 
-\subsubsection{Spectral Crest Factor}\label{subsubsec:scf}
+\subsubsection{Spectral Crest Factor (SCF)}\label{subsubsec:scf}
 
 Der Spectral Crest Factor stellt ein Maß der spektralen Flachheit eines Frequenzbandes dar und ist im Wertebereich $\left[1,\infty\right]$ definiert. Hierbei bedeutet 1, dass alle spektral Amplituden gleich sind und $\infty$ das gar keine Flachheit existiert (\textbf{Formel \ref{eqn:scf}}).\\
 Dieser Faktor wird auf folgenden Frequenzbändern berechnet:
@@ -472,7 +480,7 @@ Dieser Faktor wird auf folgenden Frequenzbändern berechnet:
 	S_{crest}~=~frac{\max\limits_{k\in\left[k_{il},k_{iu}\right]}A(k)}{\frac{1}{k_{iu}~-~k_{il}~+~1}\sum\limits^{k_{iu}}_{k=k_{il}}A(k)}
 \end{equation}
 
-\subsubsection{Spectral Flux}\label{subsubsec:sf}
+\subsubsection{Spectral Flux (SF)}\label{subsubsec:sf}
 
 Der Spectral Flux ist definiert als die quadrierte Differenz zwischen den normalisierten Betragsspektren von zwei aufeinander folgenden Zeitfenstern (\textbf{Formel \ref{eqn:sf}}).
 
@@ -482,7 +490,7 @@ Der Spectral Flux ist definiert als die quadrierte Differenz zwischen den normal
 \end{equation}
 
 
-\subsubsection{Spectral Rolloff}\label{subsubsec:sr}
+\subsubsection{Spectral Rolloff (SR)}\label{subsubsec:sr}
 
 Als Spectral Rolloff bezeichnet man der Frequenzwert ($k_{rolloff}$) unter dem sich eine bestimmte Prozentzahl ($p_{rolloff}$) der Spektralwerte konzentrieren (\textbf{Formel \ref{eqn:sr}}). 
 
@@ -491,7 +499,7 @@ Als Spectral Rolloff bezeichnet man der Frequenzwert ($k_{rolloff}$) unter dem s
 	\sum^{k_{rolloff}}_{k=0}A(k)~=~p_{rolloff}~\cdot~\sum^{\frac{K}{2}-1}_{k=0}A(k)
 \end{equation}
 
-\subsubsection{Sub-Band Energy Ratio}\label{subsubsec:sber}
+\subsubsection{Sub-Band Energy Ratio (SBER)}\label{subsubsec:sber}
 
 Die Sub-Band Energy Ratio gibt die Verteilung der Spektralenergie auf die Frequenzintervalle $\left[0,\frac{f_s}{16}\right)$,$\left[\frac{f_s}{16},\frac{f_s}{8}\right)$,$\left[\frac{f_s}{8},\frac{f_s}{4}\right)$ und $\left[\frac{f_s}{4},\frac{f_s}{2}\right)$ an und kann in Indexbereiche $\left[0,\frac{K}{16}\right)$,$\left[\frac{K}{16},\frac{K}{8}\right)$,$\left[\frac{K}{8},\frac{K}{4}\right)$ und $\left[\frac{K}{4},\frac{K}{2}\right)$ überführt werden (\textbf{Formel \ref{eqn:sber}}).
 

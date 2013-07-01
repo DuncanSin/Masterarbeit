@@ -313,7 +313,7 @@ Als Beispiel soll hier ein einfacher Beipielcode verwendet werden der in den \te
 
 Hierbei sieht man, dass sowohl die Lade und Speicheroperationen, als auch, dass die Multiplikation an sich parallelisiert wurden.
 
-\paragraph{C-Code}$\;$ \\\\
+\paragraph{C-Code}\label{ph:neonc}$\;$ \\\\
 Die zweite Variante erfordert ein Eingreifen in die Code-Struktur. Hierbei geht es darum, kritische Stellen im Code zu identifizieren und zu isolieren, die es dem Compiler nicht erlauben eine auf den NEON abbildbare Codestelle zu erkennen. Dieses kommt insbesondere bei verschachtelten Anweisungen und bei unklaren Datenabhänigikeiten vor.
 
 \paragraph{Intrinsics}$\;$ \\\\

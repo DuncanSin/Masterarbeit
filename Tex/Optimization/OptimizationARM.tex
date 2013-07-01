@@ -84,14 +84,78 @@ Die FFT des Referenzcodes basiert auf den in \textbf{Kapitel \ref{subsubsec:fft}
 
 
 \subsubsection{Einbindung}
-\subsubsection{Abschließende Laufzeitmessung nach der FFT-Optimierung mit Libav}
+Die Einbindung der Libav-FFT in den bestehenden FFT-Code ist schier einfach. Eigentlich muss nur die Referenzimplementierung der FFT durch den Aufruf der Libav-FFT ersetzt werden. Hinzu kommt eine Umdefinieren des verwendeten Vektors \textit{source}. Dieser wird um einen benutzerdefinierten  erweitert, der sicher stellt, dass die enthaltenen Werte alle mit 16 bit allokiert sind. Die Definition dieses Allokators ist in \cite{libavtemp} zu finden. Nach der Berechnung der FFT muss abschließend noch eine Auftrennung des resultierenden Vektors in Real- und Imaginärteil geschehen, da das Ergebnis der Libav einen Vektor darstellt, der abwechselt den Real- und Imaginärteil der Ergebnisse enthält.
 
-\subsection{Optimierung der Amplitude of Spectrum}\label{subsec:optAOS}
-\subsubsection{Codeanpassung}
+\subsubsection{Laufzeitmessung nach der FFT-Optimierung mit Libav}
 
-\subsection{Optimierung von MFCC}
+Nach der Optimierung des Bottlenecks FFT wird eine weitere Laufzeitmessung durchgeführt, um nachzuvollziehen, ob dieser Bottleneck verwunden und eventuell neue Bottlenecks aufgetaucht sind. Diese Messung ist in \textbf{Abbildung \ref{fig:postlibav}} zu finden.
+%
+\begin{figure}[h]
+	\centering
+		\includegraphics[width=1\textwidth]{../Pictures/postlibav.pdf}
+	\caption{Laufzeitmessung nach der FFT-Optimierung}
+	\label{fig:postlibav}
+\end{figure} 
+%
+Wie man in \textbf{Abbildung \ref{fig:postlibav}} sieht, ergeben sich nach dieser Optimierung vier Algorithmen die langsamer sind als die neue FFT, hinzu kommt noch ein weiterer Algorithmus aus FeatureSet 3:
 
-\subsection{Optimierung der Zero Crossing Rate}
+\begin{itemize}
+\item Octave Spectral Contrast (siehe \textbf{Kapitel \ref{sec:vista}})
+\item Magnitude of Sprectrum (\textbf{\ref{subsec:optAOS}})
+\item MFCC (\textbf{\ref{subsec:optMFCC}})
+\item Hamming Window (\textbf{\ref{subsec:optHAM}})
+\item Zero Crossing Rate (\textbf{\ref{subsec:optZCR}})
+\end{itemize}
+
+Auf die Optimierung von OSC wird im Rahmen dieser Arbeit verzichtet, da 76\% der Laufzeit dieses Features auf die Sortierung fallen. Eine NEON-SIMD-Umsetzung dieser Sortierung würde den Rahmen dieser Arbeit sprengen.
+
+
+\subsection{Optimierung der Magnitude of Spectrum}\label{subsec:optAOS}
+
+Für die Optimierung der Magnitude of Spectrum wird auf die in \textbf{Kapitel \ref{ph:neonc}} beschriebene Taktik der Codeanpassung zurückgegriffen. Diese Codeanpassung soll es dem Compiler erleichtern stellen zu erkennen, die mit der NEON-SIMD-Einheit parallel berechnet werden können.\\
+Hierfür müssen als erstes die Codestellen identifiziert werden, die es dem Compiler nicht ermöglichen eine Einbindmöglichkeit der NEON-SIMD-Einheit festzustellen. Ein Blick in den Instruktionssatz der NEON-SIMD-Einheit ermöglicht es die Wurzelberechnung als eine solche Problemstelle zu identifizieren. Dieses begründet sich auf die Tatsache, dass die NEON-SIMD-Einheit keine Befehle für die Berechnung einer Wurzel besitzt. Da sich die Division beschleunigen ließe, diese aber erst nach der Wurzelberechnung angewandt wird (vgl. \textbf{Formel \ref{eqn:aos}}), wird diese auf mathematischem Weg in die Wurzel gezogen. \textbf{Listing \ref{code:aosc}} zeigt den geänderten C-Code und \textbf{Listing \ref{code:aosasm}} den daraus resultierenden Assemblercode.
+
+\begin{lstlisting}[caption=Codeanpassung der Magnitude of Spectrum, label=code:aosc]
+	realv tmp, size2;
+
+	size2 = (realv) size * size;
+	for (int k = 0; k < size; k++) {
+		tmp = fftX[k] * fftX[k] + fftY[k] * fftY[k];
+
+		temp[k] = tmp / size2;
+
+	}
+	for (int k = 0; k < size; k++) {
+		amplitude[k] = sqrt(temp[k]);
+	}
+\end{lstlisting}
+Aus den beiden Listings lässt sich erkennen, dass sowohl die Zeile 5 aus \textbf{Listing \ref{code:aosc}} als auch die Division mit der NEON-SIMD-Einheit parallelisiert wurden, was eine kürzere Ausführungszeit bewirkt.
+\newpage
+
+\begin{lstlisting}[caption=Resultierender Assemblercode, label=code:aosasm]
+	add	r2, r7, r1
+	add	r3, r6, r1
+	vld1.32	{d16}, [r2]       ;laden aus fftX;
+	add	r0, r0, #1
+	vld1.32	{d17}, [r3]		  ;laden aus fftY;
+	vmul.f32	d16, d16, d16 ;fftX[k] * fftX[k];
+	cmp	r0, ip
+	vmla.f32	d16, d17, d17 ;+ fftY[k] * fftY[k];
+	add	r3, r4, r1
+	vmul.f32	d16, d18, d16 ;Division dargestellt als Multiplikation;
+	add	r1, r1, #8
+	fstd	d16, [r3, #0]
+	bcc	.L95
+	cmp	r5, sl
+	mov	r1, sl
+\end{lstlisting}
+
+
+\subsection{Optimierung von MFCC}\label{subsec:optMFCC}
+
+\subsection{Optimierung von Hamming Window}\label{subsec:optHAM}
+
+\subsection{Optimierung der Zero Crossing Rate}\label{subsec:optZCR}
 
 
 
