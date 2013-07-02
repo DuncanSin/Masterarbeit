@@ -133,7 +133,7 @@ Bei der Zero Crossing Rate werden die Auftreten von Vorzeichenwechseln innerhalb
 
 Hamming Window bezeichnet eine andere Form eines Fensters als der Standartform eines quadratischen Fensters. Das Hamming Window ergibt sich nach \textbf{Formel \ref{eqn:hw}}.
 
-\begin{equation}
+\begin{equation}\label{eqn:hw}
 w_{HW}(n)~=~0,54-0,46\cdot \cos \left( \frac{2 \pi n}{N-1} \right)
 \end{equation}
 
@@ -333,7 +333,7 @@ Als Erstes wird wie bei allen Features des Frequenzbereiches die Spektralkompone
 
 \begin{equation}
 	\label{eqn:melm}			   
-	M(k')~=~\sum\limits^{\frac{K}{2}-1}_{k=0}A(k)\cdots w_{k'}(k)
+	M(k')~=~\sum\limits^{\frac{K}{2}-1}_{k=0}A(k)\cdot w_{k'}(k)
 \end{equation}
 
 Hierbei beschreibt $w_{k'}(k)$ Dreiecksfenster, deren Breite für wachsendes $k$ zunehmen. Im Normalfall wird für diese Transformation in das Mel-Band 12 oder 24 Dreiecksfenster verwendet, wobei die Anzahl der Dreiecksfenster gleichzeitig die Auflösung der Transformation beschreibt.\\

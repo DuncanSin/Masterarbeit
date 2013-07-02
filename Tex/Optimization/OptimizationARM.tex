@@ -4,7 +4,7 @@ In diesem Kapitel werden die Optimierungen am Code beschrieben, der rein auf dem
 In \textbf{Abschnitt \ref{subsec:armtime}} wird daher als erstes die Laufzeitmessung des gesamten Programms (Extraktion, Prozessierung und Klassifikation) erläutert, um einen Einstiegspunkt für die Optimierung zu extrahieren. In den darauffolgenden Abschnitten werden daraufhin die durchgeführten Optimierungen beschrieben. 
 
 \subsection{Laufzeitmessung des Gesamtprogramms}\label{subsec:armtime}
-Für die erste Laufzeitmessung des gesammten Programms (Extraktion, Prozessierung und Klassifikation) wurde dieses mit den in \textbf{Kapitel \ref{ph:neoncomp}} beschriebenen Compileroptionen zur automatischen Generierung von NEON-Code kompiliert. Die dabei resultierten Laufzeiten sind in \textbf{Abbildung \ref{fig:mclneon}} abzulesen.
+Für die erste Laufzeitmessung des gesamten Programms (Extraktion, Prozessierung und Klassifikation) wurde dieses mit den in \textbf{Kapitel \ref{ph:neoncomp}} beschriebenen Compileroptionen zur automatischen Generierung von NEON-Code kompiliert. Die dabei resultierten Laufzeiten sind in \textbf{Abbildung \ref{fig:mclneon}} abzulesen.
 %
 \begin{figure}[htp]
 	\centering
@@ -13,7 +13,7 @@ Für die erste Laufzeitmessung des gesammten Programms (Extraktion, Prozessierung
 	\label{fig:mclneon}
 \end{figure} 
 %
-Wie man aus der Abbildung entnehmen kann, fällt der größte Anteil an der Gesamtlaufzeit in allen vier Messungen (\textit{MCL1 - MCL4}) auf die Extraktionsphase. Hierbei stellt sich jetzt allerdings die Frage, ob das nur an der Komibation aus ARM und NEON liegt oder ob dieses eine generelle Tendenz ist. Darum muss die Laufzeitmessung der genannten Komibation noch mit den Laufzeitmessungen von einer reinen ARM-Implementation und der Kombination aus ARM und VFP-Einheit (vgl. \textbf{Kapitel \ref{ph:vfp}}) verglichen werden. Die Ergebnisse dieser sind in \textbf{Abbildung \ref{fig:armtime}} abzulesen. Diese und alle weiteren Messungen werden am Beispiel des in \textbf{Kapitel \ref{subsec:fset2}} beschriebenen FeatureSets durchgeführt, die Diagramme für die anderen drei FeatureSets sind für den interessierten Leser im Anhang zu finden, aber für diese sind die beschriebenen Tatsachen equivalent.
+Wie man aus der Abbildung entnehmen kann, fällt der größte Anteil an der Gesamtlaufzeit in allen vier Messungen (\textit{MCL1 - MCL4}) auf die Extraktionsphase. Hierbei stellt sich jetzt allerdings die Frage, ob das nur an der Kombination aus ARM und NEON liegt oder ob dieses eine generelle Tendenz ist. Darum muss die Laufzeitmessung der genannten Kombination noch mit den Laufzeitmessungen von einer reinen ARM-Implementation und der Kombination aus ARM und VFP-Einheit (vgl. \textbf{Kapitel \ref{ph:vfp}}) verglichen werden. Die Ergebnisse dieser sind in \textbf{Abbildung \ref{fig:armtime}} abzulesen. Diese und alle weiteren Messungen werden am Beispiel des in \textbf{Kapitel \ref{subsec:fset2}} beschriebenen FeatureSets durchgeführt, die Diagramme für die anderen drei FeatureSets sind für den interessierten Leser im Anhang zu finden, aber für diese sind die beschriebenen Tatsachen äquivalent.
 %
 \begin{figure}[h]
 	\centering
@@ -30,7 +30,7 @@ Aus \textbf{Abbildung \ref{fig:armtime}} lassen sich drei wesentliche Schlüsse z
 \item ARM+VFP und ARM+NEON scheinen gleichwertig zu sein
 \end{enumerate}
 
-Die Punkte 1 und 2 kann man so stehen lassen, da diese zu den erwarteten Ergebnissen zählen, aber Punkt 3 verwundert einen doch sehr. Wie kann es sein, dass trotz der in \textbf{Kapitel \ref{subsubsec:neon}} beschriebenen Vorteile der NEON-SIMD-Einheit gegen über der VFP-Einheit, beide Einheiten doch gleichwertig erscheinen? Es soll nochmals erwähnt werden, dass beide Implementationen mit einer Compileroption für die jeweilige Floating Point-Einheit optimiert wurden. Ein Blick in den entstandenen Assemblercode der beiden Implementierungen gibt die Antwort auf die gestellte Frage. Hier finden sich in beiden Fällen nahezu gleiche Codes, das heißt auch die NEON-SIMD-Einheit für nur die rein sklaren Operationen des VFP aus. Dieses erklärt einerseits, warum sich die Laufzeiten der beiden Implementationen nicht wesentlich voneinander unterscheiden und zeigt andererseits, dass es dem Compiler scheinbar nicht möglich ist effektiv für die NEON-SIMD-Einheit optimierten Code zu generieren.\\\\
+Die Punkte 1 und 2 kann man so stehen lassen, da diese zu den erwarteten Ergebnissen zählen, aber Punkt 3 verwundert einen doch sehr. Wie kann es sein, dass trotz der in \textbf{Kapitel \ref{subsubsec:neon}} beschriebenen Vorteile der NEON-SIMD-Einheit gegen über der VFP-Einheit, beide Einheiten doch gleichwertig erscheinen? Es soll nochmals erwähnt werden, dass beide Implementationen mit einer Compileroption für die jeweilige Floating Point-Einheit optimiert wurden. Ein Blick in den entstandenen Assemblercode der beiden Implementierungen gibt die Antwort auf die gestellte Frage. Hier finden sich in beiden Fällen nahezu gleiche Codes, das heißt auch die NEON-SIMD-Einheit für nur die rein skalaren Operationen des VFP aus. Dieses erklärt einerseits, warum sich die Laufzeiten der beiden Implementationen nicht wesentlich voneinander unterscheiden und zeigt andererseits, dass es dem Compiler scheinbar nicht möglich ist effektiv für die NEON-SIMD-Einheit optimierten Code zu generieren.\\\\
 Da die Extraktionsphase sich als am zeitintensivsten herausgestellt hat, soll diese jetzt näher analysiert werden.\\ 
 Wie aus \textbf{Abbildung \ref{fig:1fset2}} zu entnehmen ist, fallt der größte Anteil der Laufzeit der Extraktionsphase mit knapp 60\% auf die Berechnung der FFT.
 %
@@ -44,7 +44,7 @@ Wie aus \textbf{Abbildung \ref{fig:1fset2}} zu entnehmen ist, fallt der größte A
 Nachdem die FFT als größter Bottleneck identifiziert wurde, stellt sich die Frage welcher Teil der Berechnung die meiste Zeit einnimmt. Wie in \textbf{Kapitel \ref{subsubsec:fft}} beschrieben, besteht die FFT-Berechnung aus drei Teilen:
 
 \begin{itemize}
-\item Bitreverse
+\item Bit Reverse
 \item Butterfly
 \item Nachverarbeitung
 \end{itemize}  
@@ -104,10 +104,11 @@ Wie man in \textbf{Abbildung \ref{fig:postlibav}} sieht, ergeben sich nach diese
 \item Magnitude of Sprectrum (\textbf{\ref{subsec:optAOS}})
 \item MFCC (\textbf{\ref{subsec:optMFCC}})
 \item Hamming Window (\textbf{\ref{subsec:optHAM}})
-\item Zero Crossing Rate (\textbf{\ref{subsec:optZCR}})
+\item Zero Crossing Rate (siehe \textbf{Kapitel \ref{sec:vista}})
 \end{itemize}
 
-Auf die Optimierung von OSC wird im Rahmen dieser Arbeit verzichtet, da 76\% der Laufzeit dieses Features auf die Sortierung fallen. Eine NEON-SIMD-Umsetzung dieser Sortierung würde den Rahmen dieser Arbeit sprengen.
+Auf die Optimierung von OSC wird im Rahmen dieser Arbeit verzichtet, da 76\% der Laufzeit dieses Features auf die Sortierung fallen. Eine NEON-SIMD-Umsetzung dieser Sortierung würde den Rahmen dieser Arbeit sprengen.\\
+Des weiteren wurde auf die Optimierung von ZCR verzichtet. Bei diesem Feature fallen über 90\% auf die Signum-Berechnung, diese ließe sich zwar durch geschicktes Anordnen der drei IF-Bedingungen optimieren, dieses kann sich aber von Musikstück zu Musikstück ändern und wäre rein datenabhängig.
 
 
 \subsection{Optimierung der Magnitude of Spectrum}\label{subsec:optAOS}
@@ -150,12 +151,105 @@ Aus den beiden Listings lässt sich erkennen, dass sowohl die Zeile 5 aus \textbf
 	mov	r1, sl
 \end{lstlisting}
 
+\subsection{Optimierung von Hamming Window}\label{subsec:optHAM}
+Für die Optimierung des Hamming Windows wird eine Optimierung durch den in \textbf{Kapitel \ref{ph:neonint}} beschriebenen Einsatz von Intrinsics gewählt. Hierbei wurden immer vier Multiplikationen der Eingangsdaten mit dem entsprechenden Hamming Window parallelisiert. \textbf{Listing \ref{code:hamc}} zeigt den Referenzcode und \textbf{Listing \ref{code:hamint}} den entsprechenden Code mit NEON-Intrinsics. Die Variable \textit{table[i]} hält hierbei den entsprechenden Wert für $w_{HW}(i)$, wie diese in \textbf{Kapitel \ref{subsubsec:hw}} beschrieben sind.
+
+\begin{lstlisting}[caption=Referenzcode von Hamming Window, label=code:hamc]
+	for (unsigned int i = 0; i < size; i++) {
+		result[i] = (*signal)[i] * table[i];
+	}
+\end{lstlisting}
+
+\begin{lstlisting}[caption=Hamming Window mit NEON-Intrinsics, label=code:hamint]
+	for (unsigned int i = 0; i < size; i += 4) {
+		s4 = vld1q_f32((float32_t*) &(*signal)[i]);
+		t4 = vld1q_f32((float32_t*) &table[i]);
+		r4 = vmulq_f32(s4, t4);
+		vst1q_f32((float32_t*) &result[i], r4);
+	}
+\end{lstlisting}
+
+In die Variablen \textit{s4} und \textit{t4} werden jeweils vier Werte vom Eingangssignal, bzw. den Hammingwerten geladen und danach parallel mit dem Intrinsic \textit{vmulg\_f32} Multipliziert. Abschließend wird das Ergebnis dieser Multiplikationen (\textit{r4}) in den Ausgangsvektor geschrieben.
 
 \subsection{Optimierung von MFCC}\label{subsec:optMFCC}
+Wie in \textbf{Kapitel \ref{subsubsec:mfcc}} beschrieben, besteht die Berechnung des MFCC aus drei Teilen:
 
-\subsection{Optimierung von Hamming Window}\label{subsec:optHAM}
+\begin{itemize}
+\item Einer Akkumulation,
+\item einer Logarithmusberechnung
+\item und einer anschließenden DCT
+\end{itemize}
 
-\subsection{Optimierung der Zero Crossing Rate}\label{subsec:optZCR}
+Zur Optimierung dieses Features muss als erstes der Bottleneck innerhalb dieser Feature-Berechnung identifiziert werden. Ein Detailprofiling dieser Berechnung zeigt, dass der größte Anteil mit knapp 44\% auf die Akkumulation fällt, die übrigen 56\% verteilen sich relativ gleichmäßig auf Logarithmus und DCT.\\
+\textbf{Listing \ref{code:mfccc}} zeigt den Referenzcode der Akkumulation innerhalb der MFCC-Berechnung.
+
+\begin{lstlisting}[caption=Referenzcode der Akkumulation innerhalb der MFCC-Berechnung, label=code:mfccc]
+for (unsigned int m = 1; m <= M; m++) {
+   for (unsigned int k = f_edge_table_bd[m - 1];k <= f_edge_table_bd[m + 1]; k++) {
+		log_M[m - 1] += (*signal)[k] * wk[m - 1][k];
+
+   }
+}
+\end{lstlisting}
+
+Aus diesem Code-Schnipsel lässt sich entnehmen, dass die in den zwei Schleifen enthaltene Akkumulation nicht für jeden Durchlauf gleich oft ausgeführt werden muss. Diese Tatsache führt bei der angestrebten Optimierung mit NEON-Intrinsics zu einem Problem. Im Gegensatz zur vorher beschriebenen Optimierung von Hamming Window kann also nicht einfach der Schleifendurchlauf durch vier geteilt werden.\\
+Die Optimierung der MFCC erfolgt daher in fünf Schritten:
+
+\begin{enumerate}
+\item Feststellen der benötigten Durchläufe
+\item Vier parallele Berechnungen sooft wie möglich
+\item Gegebenenfalls noch eine Berechnung von zwei werten parallel
+\item Gegebenenfalls noch eine einzelne Berechnung
+\item Aufsummierung der Werte der drei vorherigen Schritte
+\end{enumerate}
+
+\textbf{Listing \ref{code:mfccint}} zeigt die gewählte Lösung und ersetzt die innere Schleife aus \textbf{Listing \ref{code:mfccc}}. In der Variable \textit{mod} wird die Anzahl der nicht durch vier parallele Rechnungen berechenbaren Durchläufe gespeichert, danach werden in den Zeilen 8-15 so viele parallelen vierfach Berechnung durchgeführt wie möglich. Sollte \textit{mod} größer als 1 sein, also noch zwei parallele Berechnungen möglich sein, werden diese in den Zeilen 17-25 durchgeführt. Wenn danach immer noch eine Berechnung fehlen sollte, wird diese in den Zeilen 27-29 durchgeführt. Abschließend wir werden in Zeile 31 die Einzelergebnisse aufsummiert. 
+
+\begin{lstlisting}[caption=Der Akkumulation innerhalb der MFCC-Berechnung mit NEON-Intrinsics, label=code:mfccint]
+	mod = (f_edge_table_bd[m + 1] - f_edge_table_bd[m - 1]+1) % 4;
+
+	memset(&temp[0], 0., temp.size() * sizeof(realv));
+
+	fedtbd = f_edge_table_bd[m + 1];
+	fedtbd2 = fedtbd-mod+1;
+
+	r4 = vld1q_f32((float32_t*) &temp[0]);
+	for (unsigned int k = f_edge_table_bd[m - 1]; k < (fedtbd - mod); k +=4) {
+		s4 = vld1q_f32((float32_t*) &(*signal)[k]);
+		w4 = vld1q_f32((float32_t*) &(wk.data()[m - 1])[k]);
+
+		r4 = vmlaq_f32(r4, s4, w4);
+	}
+	vst1q_f32((float32_t*) &temp[0], r4);
+
+	if (mod > 1) {
+		s2 = vld1_f32((float32_t*) &(*signal)[fedtbd2]);
+		w2 = vld1_f32((float32_t*) &(wk.data()[m - 1])[fedtbd2]);
+		r2 = vld1_f32((float32_t*) &temp[0]);
+		t2 = vmla_f32(r2, s2, w2);
+		vst1_f32((float32_t*) &temp[0], t2);
+		mod -= 2;
+		fedtbd2 += 2;
+	}
+
+	if (mod == 1) {
+		log_M[m - 1] = (*signal)[fedtbd] * wk[m - 1][fedtbd];
+	}
+	
+	log_M[m - 1] += temp[0] + temp[1] + temp[2] + temp[3]+1;
+\end{lstlisting}
+
+\subsection{Zwischenevaluation der ARM-Optimierung}
+Nach den in den vorherigen Abschnitten durchgeführten Optimierungen wird ein Vergleich der optimierten Algorithmen durchgeführt. In \textbf{Abbildung \ref{fig:endarm}} werden die Laufzeiten in ms/Fenster vor und nach der Optimierung gegenübergestellt.
+%
+\begin{figure}[h]
+	\centering
+		\includegraphics[width=1\textwidth]{../Pictures/endarm.pdf}
+	\caption{Gegenüberstellung der Laufzeiten der optimierten Algorithmen vor und nach der Optimierung}
+	\label{fig:endarm}
+\end{figure} 
+%
+Wie man der Abbildung entnehmen kann, wurde der größte Speedup bei der FFT-Berechnung erreicht. Dieser beträgt, wie schon in \textbf{Kapitel \ref{subsec:optFFT}} erwähnt knapp 19,2. Des weiteren wurden bei Magnitude of Spectrum ein Speedup von 2, bei MFCC ein Speedup von 1,2 und beim Hamming Window von 3,4. Für die gesamte Extraktion des FeatureSets 2 wird ein Speedup von 2,7 erreicht.
 
 
 

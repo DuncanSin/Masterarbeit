@@ -316,18 +316,18 @@ Hierbei sieht man, dass sowohl die Lade und Speicheroperationen, als auch, dass 
 \paragraph{C-Code}\label{ph:neonc}$\;$ \\\\
 Die zweite Variante erfordert ein Eingreifen in die Code-Struktur. Hierbei geht es darum, kritische Stellen im Code zu identifizieren und zu isolieren, die es dem Compiler nicht erlauben eine auf den NEON abbildbare Codestelle zu erkennen. Dieses kommt insbesondere bei verschachtelten Anweisungen und bei unklaren Datenabhänigikeiten vor.
 
-\paragraph{Intrinsics}$\;$ \\\\
+\paragraph{Intrinsics}\label{ph:neonint}$\;$ \\\\
 Eine weitere Variante bietet das Ersetzten von Berechnungen durch Intrinsics, die die entsprechende Berechnung auf Assembler-Ebene darstellen. Eine Liste der vorhandenen Intrinsics ist in \cite{intrinsics} zu finden.\\
-Eine solche Ersetzung von Berechnungen durch Intrinsics soll an einem weiteren einfachen  Beispiel in den \textbf{Listings \ref{code:hamc} - \ref{code:hamneon}} verdeutlicht werden.
+Eine solche Ersetzung von Berechnungen durch Intrinsics soll an einem weiteren einfachen  Beispiel in den \textbf{Listings \ref{code:firstc} - \ref{code:firstneon}} verdeutlicht werden.
 
-\begin{lstlisting}[caption=2. einfaches Beispiel in C, label=code:hamc]
+\begin{lstlisting}[caption=2. einfaches Beispiel in C, label=code:firstc]
 	int i;
  	for(i=0;i<200;i++) {
  	z[i] = x[i] + y[i];
  	}
 \end{lstlisting}
 
-\begin{lstlisting}[caption=2. einfaches Beipiel mit Intrinsics, label=code:hamcv]
+\begin{lstlisting}[caption=2. einfaches Beipiel mit Intrinsics, label=code:firstcv]
 	int i;
 	uint32x4_t x4,y4; // Hier werden 128 bit Register definiert, die die Operanten halten 
 	uint32x4_t z4;    // Hier wird ein 128 bit Register definiert, dass das Ergebnis hält 
@@ -347,7 +347,7 @@ Eine solche Ersetzung von Berechnungen durch Intrinsics soll an einem weiteren e
 	}
 \end{lstlisting}
 
-\begin{lstlisting}[caption=ARM+NEON-Assembler, label=code:hamneon]
+\begin{lstlisting}[caption=ARM+NEON-Assembler, label=code:firstneon]
         add      r3, r1, #800
 .L2:
         vld1.32  {d4-d5}, [r1] ;Zeile 10;
@@ -755,7 +755,7 @@ An Optimierungen lassen sich hierzum Beispiel nennen:
 \item Die Propagation von Konstanten in Register, z.B. rmsinfo.N in A0
 \end{itemize} 
 
-\subsubsection{Optimierte Bibliotheken für den C674x}
+\subsubsection{Optimierte Bibliotheken für den C674x}\label{subsubsec:optbib}
 Texas Instruments bietet zu seinen DSPs der C6000-Reihe auch noch eine Reihe Bibliotheken an, diese enthalten Algorithmen die speziell für DSPs dieser Baureihe optimiert wurden. Einige dieser optimierten Bibliotheken sind im Umfang des EZSDK (siehe \textbf{Kapitel \ref{sec:ezsdk}})enthalten. Im Folgenden werden zwei dieser Bibliotheken näher vorgestellt, zum einen die DSPLIB mit Algorithmen aus der Signalverarbeitung und zum anderen die MATHLIB mit optimierten mathematischen Funktionen.
 
 \paragraph{DSPLIB}$\;$ \\\\
