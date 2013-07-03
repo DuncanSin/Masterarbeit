@@ -11,17 +11,17 @@ Als erstes muss der C++-Referenzcode in C-Code übersetzt werden, da der C674x nu
 \end{figure} 
 %
 Wie man der Abbildung entnehmen kann fällt der größte Anteil mit über 60\% der Magnitude of Spectrum zu, aber auch FFT und Octave Spectral Contrast mit je 14\% sind nicht zu vernachlässigen.\\
-Ein Detailprofiling der Magnitude of Spectrum ergibt, dass 
+Ein Detailprofiling der Magnitude of Spectrum ergibt, dass Division und Wurzelberechnung zusammen knapp 98\% der Laufzeit ausmachen, das heißt, dass eine Optimierung in Richtung der Rechenfunktionen geschehen sollte.
 
 \subsection{Optimierung der Rechenfunktionen mit MATHLIB}\label{sec:mathlib}
 Da wie bereits erwähnt, die Rechenfunktionen bei zum Beispiel der Magnitude of Spectrum als Bottlenecks identifiziert wurden und wie in \textbf{Kapitel \ref{subsubsec:optbib}} erwähnt eine Bibliothek (MATHLIB) existiert, in der genau diese Rechenoperationen optimiert wurden, werden alle problematischen Funktionen durch ihre optimierten Varianten ersetzt. Wie ebenfalls in dem Kapitel erwähnt, existieren für alle in MATHLIB implementierten Operationen auch Varianten, die auf Vektoren von Eingangswerten arbeiten können. Daher wird als erstes versucht, soweit es möglich ist, Operationen wie zum Beispiel Divisionen, Wurzelberechnungen oder Logarithmusfunktionen durch diese Vektoroperationen zu ersetzten. Sollte eine Ersetzung durch Vektoroperationen nicht möglich sein, werden Einzelaufrufe durch die optimierten Varianten der MATHLIB ersetzt.\\
-Diese Ersetzung wird Beispielhaft für Magnitude of Spectrum in \textbf{Listing \ref{code:aosc}} und \textbf{Listing \ref{code:aosm}} gezeigt.
+Diese Ersetzung wird Beispielhaft für Magnitude of Spectrum in \textbf{Listing \ref{code:aoscc}} und \textbf{Listing \ref{code:aoscm}} gezeigt.
 \newpage
-\begin{lstlisting}[caption=Referenzcode von Magnitude of Spectrum, label=code:aosc]
+\begin{lstlisting}[caption=Referenzcode von Magnitude of Spectrum, label=code:aoscc]
 	A[k] = sqrt(X[k] * X[k] + Y[k] * Y[k]) / G;
 \end{lstlisting}
 
-\begin{lstlisting}[caption=Magnitude of Spectrum mit MATHLIB, label=code:aosm]
+\begin{lstlisting}[caption=Magnitude of Spectrum mit MATHLIB, label=code:aoscm]
 	for (k = 0; k < G; ++k) {
 		tmp1 = X[k] * X[k];
 		tmp2 = Y[k] * Y[k];
@@ -49,6 +49,59 @@ Eine Optimierung mit MATHLIB wurde bei folgenden Algorithmen durchgeführt:
 \item Sub-band Energy Ratio
 \end{itemize}
 
-\subsection{Optimierung der FFT mit DSPLIB}\label{sec:dsplib}
+Abschließend wird nach der Optimierung mit MATHLIB eine weitere Laufzeitmessung durchgeführt. Diese soll zwei Dinge zeigen:
 
-\subsection{Optimierung für den Compiler}\label{sec:compiler} 
+\begin{enumerate}
+\item ist Magnitude of Spectrum immer noch der größte Bottleneck oder
+\item haben sich neue Bottlenecks aufgetan
+\end{enumerate}
+%
+\begin{figure}[h]
+	\centering
+		\includegraphics[width=1\textwidth]{../Pictures/dsp2.pdf}
+	\caption{Laufzeitmessung nach der Optimierung durch MATHLIB}
+	\label{fig:dsp2}
+\end{figure} 
+%
+\textbf{Abbildung \ref{fig:dsp2}} zeigt die angesprochene Laufzeitmessung. Wie man dort erkennen kann, ist Magnitude of Spectrum nicht mehr der größte Bottleneck, jetzt zeigt sich, dass die FFT-Berechnung zum größten Bottleneck geworden ist, also wird in diese Richtung weiter optimiert.
+
+\subsection{Optimierung der FFT mit DSPLIB}\label{sec:dsplib}
+Wie ebenfalls in \textbf{Kapitel \ref{subsubsec:optbib}} erwähnt, wird von Texas Instruments auch eine optimierte Bibliothek bereitgestellt, in der eine FFT-Implementierung vorhanden ist. Durch diesen Umstand macht es Sinn diese für die Optimierung der FFT-Berechnung zu verwenden.\\
+Bei der FFT aus der DSPLIB handelt es sich um eine Complex2Complex-Mixedradix-FFT. Diese C2C-FFT lässt sich aber nach der in \cite{rfft} beschriebenen Methode in eine Real2Complex-FFT umwandeln.\\
+Die Einbindung der DSPLIB-FFT geschieht ebenfalls auf die in \cite{rfft} beschriebene Weise. Des weiteren wurde die Übergabe zwischen FFT und MAG geändert, so dass ncith wie vorher je ein Signal für Real- und Imaginärteil übergeben werden, sondern ein einzelnes Signal in dem Real- und zugehöriger Imaginärteil hintereinander stehen. \\
+Auch nach der Optimierung der FFT durch die Einbindung der DSPLIB wird wieder eine Laufzeitmessung durchgeführt um eventuell weitere Bottlenecks zu identifizieren.\\
+%
+\begin{figure}[h]
+	\centering
+		\includegraphics[width=1\textwidth]{../Pictures/dsp3.pdf}
+	\caption{Laufzeitmessung nach der Optimierung durch MATHLIB und DSPLIB}
+	\label{fig:dsp3}
+\end{figure} 
+%
+\textbf{Abbildung \ref{fig:dsp3}} zeigt das Ergebnis der erwähnten Laufzeitmessung, die Features aus FeatureSet 2 wurden um die Zero Crossing Rate aus FeatureSet 3 ergänzt, da diese nach der FFT-Optimierung langsamer als die FFT ist.\\
+Nach dieser Messung ergeben sich zwei neue Bottlenecks, Octave Spectral Contrast und Zero Crossing Rate. Bei OSC nimmt mit 55\% die Sortierung den größten Anteil der Laufzeit ein, auch bei der DSP-Implementierung soll keine Optimierung in diese Richtung vorgenommen werden.
+
+\subsection{Optimierung für SPLOOP}\label{sec:compiler} 
+Ein Blick in den Assemblercode der Zero Crossing Rate zeigt, dass für die Schleife keine SPLOOP-Optimierung vom Compiler durchgeführt wurde. Dieses lässt sich aber durch eine einfache Codeumstellung lösen. \textbf{Listing \ref{code:zcrc}} zeigt den Referenzcode der Zero Crossing Rate und \textbf{Listing \ref{code:zcrs}} den umgestellen Code.
+
+\begin{lstlisting}[caption=Referenzcode der Schleife der Zero Crossing Rate, label=code:zcrc]
+	for (n = 0; n < zinfo.N - 1; ++n) {
+		zero_crossings += ABS(SGN(signal[n])-SGN(signal[n+1]));
+	}
+\end{lstlisting}
+
+\begin{lstlisting}[caption=Für SPLOOP umgestellter Code der Schleife der Zero Crossing Rate, label=code:zcrs]
+	for (n = 0; n < zinfo.N - 1; ++n) {
+		tsgn1 = SGN(signal[n]);
+
+		tsgn2 = SGN(signal[n+1]);
+
+		tsub = tsgn1 - tsgn2;
+
+		tabs = ABS(tsub);
+
+		zero_crossings += tabs;
+	}
+\end{lstlisting}
+
+\subsection{Zwischenevaluation der DSP-Optimierung}

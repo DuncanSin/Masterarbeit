@@ -1,0 +1,16 @@
+Testcase 1: MFCC, SpectralCentroid, SpectralFlux, SpectralRolloff
+Opened ../../blues.00000.au
+
+Akkumulation: 11107.001000 Anteil: 73.655005 
+Logarithmus: 418.390000 Anteil: 2.774513
+DCT: 3554.373000 Anteil: 23.570482
+Gemessen mit 1000 Durchläufen
+
+Gesammt Zeit: 15.205633 s
+FFT: 0.100067 s (1293 winodws)
+AmplitudeOfSpectrum: 0.010893 s (1293 winodws)
+MFCC: 15.084459 s (1293 winodws)
+SpectralCentroid: 0.002773 s (1293 winodws)
+SpectralFlux: 0.003281 s (1293 winodws)
+SpectralRolloff: 0.004160 s (1293 winodws)
+Extraction took 200000 clicks and had a runtime of 0.200000 secounds.
