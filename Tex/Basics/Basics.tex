@@ -9,29 +9,29 @@ Musikklassifikation findet im Wesentlichen in drei Schritten statt:
 \begin{enumerate}
 
 
-	\item Extraktion der zu betrachteten Features (\textbf{\ref{subsec:ext}})
+	\item Extraktion der zu betrachtenden Features (\textbf{\ref{subsec:ext}})
 	\item Prozessierung der extrahierten Featurevektoren (\textbf{\ref{subsec:proc}})
 	\item Klassifikation der Musiktitel anhand von Klassifikationsalgorithmen (\textbf{\ref{subsec:cla}})
 \end{enumerate}
 
-Hierbei werden aus den betrachteten Musikstücken in der Extraktionsphase nach vorgegebenen Algorithmen (vgl. \ref{sec:alg}) Merkmale extrahiert, die eine Beschreibung der Musikstücke liefern sollen. In der Prozessierungsphase, werden die extrahierten Merkmale für die Klassifikation vorbereitet, welches durch eine Datenreduktion der Datenmenge geschieht. Im Abschluss werden in der Klassifizierungsphase die Merkmale der Musikstücke gegen Daten aus einem Referenzset verglichen und anhand von Klassifikationsalgorithmen klassifiziert.\\
+Hierbei werden aus den betrachteten Musikstücken in der Extraktionsphase nach vorgegebenen Algorithmen (vgl. \textbf{Kapitel \ref{sec:alg}}) Merkmale extrahiert, die eine Beschreibung der Musikstücke liefern sollen. In der Prozessierungsphase, werden die extrahierten Merkmale für die Klassifikation vorbereitet, welches durch eine Datenreduktion der Datenmenge geschieht. Im Abschluss werden in der Klassifikationsphase die Merkmale der Musikstücke gegen Daten aus einem Referenzset verglichen und anhand von Klassifikationsalgorithmen klassifiziert.\\
 Diese drei Schritte werden im Folgenden näher erläutert.
 
 \subsection{Extraktion}\label{subsec:ext}
 In der Extraktionsphase werden die für die spätere Klassifikation nötigen Features aus den eingelesenen Musikstücken extrahiert.\\
-Hierbei werden normalerweise vorher festgelegte FeatureSets verwendet, die unter anderem aus den in \textbf{Kapitel \ref{sec:alg}} vorgestellten Algorithmen bestehen können und in der Regel drei bei vier Algorithmen umfassen. Neben den in dieser vorgestellten Algorithmen existieren eine Vielzahl weiterer Algorithmen.\\
-Für die Extraktion dieser Merkmale, im Nachfolgenden als Features bezeichnet, werden die Musikstücke als erstes in gleichgroße Fenster unterteilt. In dieser Arbeit wurde eine Fenstergröße von 512 Werten gewählt. Diese Fenster sind in der Regel nicht überlappend, müssen dieses aber nicht sein (vgl. \ref{subsec:fset3}).\\
+Hierbei werden normalerweise vorher festgelegte FeatureSets verwendet, die unter anderem aus den in \textbf{Kapitel \ref{sec:alg}} vorgestellten Algorithmen bestehen können und in der Regel drei bis vier Algorithmen umfassen. Neben den in dieser Arbeit vorgestellten Algorithmen existieren eine Vielzahl weiterer Algorithmen.\\
+Für die Extraktion dieser Merkmale, im Nachfolgenden als Features bezeichnet, werden die Musikstücke als erstes in gleichgroße Fenster unterteilt. In dieser Arbeit wurde eine Fenstergröße von 512 Werten gewählt. Diese Fenster sind in der Regel nicht überlappend, müssen dieses aber nicht sein (vgl. \textbf{Kapitel \ref{subsec:fset3}}).\\
 Erfahrungsgemäß nimmt die Extraktion den größten Anteil an der Musikklassifikation ein.
  
 
 \subsection{Prozessierung}\label{subsec:proc}
-Klassifikationsalgorithmen erwarten, dass die Anzahl an Daten eines zu klassifizierenden Musikstücks mit der Anzahl der Daten in ihrem Referenzsets übereinstimmen. Da im Normalfall aber nicht alle Musikstücke nicht die selbe Länge und damit mit die selbe Fensteranzahl besitzen, muss eine Datenreduktion durchgeführt werden. Dieses geschieht in der Prozessierungsphase.\\
+Klassifikationsalgorithmen erwarten, dass die Anzahl an Daten eines zu klassifizierenden Musikstücks mit der Anzahl der Daten in ihrem Referenzsets übereinstimmen. Da im Normalfall aber nicht alle Musikstücke die selbe Länge und damit mit die selbe Fensteranzahl besitzen, muss eine Datenreduktion durchgeführt werden. Dieses geschieht in der Prozessierungsphase.\\
 Diese Datenreduktion wird durchgeführt, indem aus der Datenmenge eines jeden betrachteten Features der Mittelwert und die Standartabweichung berechnet wird.\\
 Eine solche Datenreduktion hat neben der Vereinheitlichung von Datenmengen auch noch den Vorteil, dass die zu klassifizierende Datenmenge kleiner wird und somit weniger Speicherplatz benötigt. Dieses ist besonders hilfreich, wenn auf einem System mit beschränktem Speicherplatz gearbeitet wird, wie zum Beispiel bei mobilen Endgeräten.
 
 
 \subsection{Klassifikation}\label{subsec:cla}
-Während der Klassifikation wird versucht jedes der zu klassifizierenden Musikstücke anhand eines Referenzsets einer von mehreren fest vorgegebenen Gruppen eindeutig zuzuordnen. Dieses geschieht mit Hilfe eines sogenannten Klassifikators.\\
+Während der Klassifikation wird versucht, jedes der zu klassifizierenden Musikstücke anhand eines Referenzsets einer von mehreren fest vorgegebenen Gruppen eindeutig zuzuordnen. Dieses geschieht mit Hilfe eines sogenannten Klassifikators.\\
 Jeder Klassifikator klassifiziert in zwei Schritten:
 
 \begin{enumerate}
@@ -41,16 +41,15 @@ Jeder Klassifikator klassifiziert in zwei Schritten:
 
 Der Ablauf einer Klassifikation wird nachfolgend am Beispiel einer zweidimensionalen Support Vector Maschine (SVM) näher erklärt.
 
-\paragraph*{Zweidimensionalen Support Vector Maschine (SVM)}$\;$ \\\\
+\paragraph*{Zweidimensionale Support Vector Maschine (SVM)}$\;$ \\\\
 SVMs lassen sich in zwei Klassen einteilen:
 
 \begin{itemize}
-\item Lineare SVMs
+\item Lineare SVMs und
 \item Nichtlineare SVMs
 \end{itemize}
 
 Diese Unterteilung geschieht auf Basis des zu betrachtenden Merkmalraums. Eine SVM wird als linear bezeichnet, wenn Gruppen eindeutig durch eine Gerade oder Ebene voneinander getrennt werden können. Befinden sich Gruppen auch innerhalb anderer Gruppen, so ist die SVM nicht linear (vgl. \textbf{Abbildung \ref{fig:svm}})\\
-Da in der Musikklassifikation eher mehr als zwei Merkmale betrachtet werden, wir nur der nichtlineare Fall beschrieben.\\
 %
 \begin{figure}[htp]
 	\centering
@@ -60,16 +59,16 @@ Da in der Musikklassifikation eher mehr als zwei Merkmale betrachtet werden, wir
 \end{figure}
 %
 Vor der eigentlichen Klassifikation muss der Klassifikator trainiert und ein Klassifikationsmodell aufgestellt werden. Dieses geschieht durch ein Trainingsset, in dem bereits vorklassifizierte Objekte enthalten sind. Auf Basis dieses Trainingssets wird ein mehrdimensionaler Werteraum aufgestellt, der für jedes betrachtete Feature eine Dimension enthält.\\
-In diesen Werteraum werden alle Elemente des Trainingssets eingetragen. Dieses passiert auf Grundlage ihrer Featurevektoren. Ein Featurevektor bezeichnet einen Vektor, in dessen Stellen die einzelnen prozessierten Werte pro betrachtetem Feature eingetragen sind. Anschließend wird eine Hyperebene so in den Raum gespannt, dass sie maximalen Abstand zu allen Objekten im Raum besitzt (vgl. \textbf{Abbildung \ref{fig:svm}}). Hiermit lassen sich zwei eindeutig voneinander getrennte Klassifikationsgruppen erkennen und die Trainingsphase ist beendet.\\
-Die Klassifikation geschieht auf Basis des in der Trainingsphase erstellten Modells. Ein zu klassifizierendes Objekt wird anhand seines Featurevektors in den Wertebereich abgebildet (grünes Dreieck in \textbf{Abbildung \ref{fig:svm}}). Anhand seiner Lage zur aufgespannten Hyperebene kann er eindeutig einer der beiden Gruppen zugeordnet werden.
+In diesen Werteraum werden alle Elemente des Trainingssets eingetragen. Dieses passiert auf Grundlage ihrer Featurevektoren. Ein Featurevektor bezeichnet einen Vektor, in dessen Stellen die einzelnen prozessierten Werte pro betrachtetem Feature eingetragen sind. Anschließend wird eine Hyperebene so in den Raum gespannt, dass sie maximalen Abstand zu allen Objekten im Raum besitzt (vgl. \textbf{Abbildung \ref{fig:svm}}). Hiermit lassen sich eindeutig voneinander getrennte Klassifikationsgruppen erkennen und die Trainingsphase ist beendet.\\
+Die Klassifikation geschieht auf Basis des in der Trainingsphase erstellten Modells. Ein zu klassifizierendes Objekt wird anhand seines Featurevektors in den Wertebereich abgebildet (grünes Dreieck in \textbf{Abbildung \ref{fig:svm}}). Anhand seiner Lage zur aufgespannten Hyperebene kann es eindeutig einer der beiden Gruppen zugeordnet werden.
 
 
 \section{Algorithmen}\label{sec:alg}
-In diesem Kapitel sollen die Extraktionsalgorithmen vorgestellt werden, aus denen die im \textbf{Kapitel \ref{sec:fset}} beschriebenen FeatureSets zusammengesetzt sind, die für die Laufzeitanalyse des Codes verwendet werden. Hierfür werden diese in zwei Bereiche unterteilt, einmal die Features, welche im Zeitbereich arbeiten (\textbf{\ref{subsec:zeit}}) und diese die im Frequenzbereich arbeiten (\textbf{\ref{subsec:freq}}).
+In diesem Kapitel sollen die Extraktionsalgorithmen vorgestellt werden, aus denen die im \textbf{Kapitel \ref{sec:fset}} beschriebenen FeatureSets zusammengesetzt sind. Diese werden für die Laufzeitanalyse des Codes verwendet. Hierfür werden diese in zwei Bereiche unterteilt, einmal die Features, welche im Zeitbereich arbeiten (\textbf{\ref{subsec:zeit}}) und diese die im Frequenzbereich arbeiten (\textbf{\ref{subsec:freq}}).
 
 \subsection{Notation von Ausdrücken und Variablen}\label{subsec:note}
 
-Hier sollen kurz die verwendeten Ausdrücke und Variablen eingeführt werden, die für die spätere Definition der einzelnen Features benötigt werden (\textbf{Tabelle \ref{tab:note}}), wie sie in  \cite{haller2008} und \cite{Theimer2008} definiert sind.
+Hier werden kurz die verwendeten Ausdrücke und Variablen eingeführt werden, die für die spätere Definition der einzelnen Features benötigt werden (\textbf{Tabelle \ref{tab:note}}). Diese Definition wird aus \cite{haller2008} und \cite{Theimer2008} übernommen.
 
 \begin{table*}[ht]
 	\centering
@@ -113,10 +112,21 @@ Low Energy fasst mehrere aufeinander folgende Zeitfenster $n$ zu einem sogenannt
 	\label{eqn:le}
 	r_{low}~=~\frac{1}{N_{a}}\sum^{N_{a}-1}_{i=0}u(\mu_{rms}~-~x_{rms}(n))
 \end{equation}
-mit \[\mu_{rms}~=~\frac{1}{N_{a}}\sum^{N_{a}-1}_{i=0}x_{rms}(n)\] und \[u(x)~=~\left\{ \begin{array}{ll} 
+
+mit 
+
+\begin{equation}
+\mu_{rms}~=~\frac{1}{N_{a}}\sum^{N_{a}-1}_{i=0}x_{rms}(n)
+\end{equation} 
+
+und
+ 
+\begin{equation}
+u(x)~=~\left\{ \begin{array}{ll} 
 1 & \textrm{für } x~>~0 \\
 0 & \textrm{für } x~\leq~0\\
-\end{array}\right.\]
+\end{array}\right.
+\end{equation} 
  
 
 \subsubsection{Zero Crossing Rate (LCR)}\label{subsubsec:zcr}
@@ -139,7 +149,7 @@ w_{HW}(n)~=~0,54-0,46\cdot \cos \left( \frac{2 \pi n}{N-1} \right)
 
 \subsubsection{Fast Fourier Transformation (FFT)}\label{subsubsec:fft}
 
-Unter dem Begriff \textit{Fast Fourier Transformation} werden werden Algorithmen zusammengefasst, die eine schnelle und effiziente Berechnung von \textit{diskreten Fourier-Transformationen (DFT)} bieten. Diese effizienten Algorithmen kann man im wesentlichen in zwei Gruppen unterteilen, diejenigen die mit Zeitzerlegung (\textbf{\ref{ph:dit}}) und diejenigen die mit Frequenzzerlegung (\textbf{\ref{ph:dif}}) arbeiten.\\
+Unter dem Begriff \textit{Fast Fourier Transformation} werden Algorithmen zusammengefasst, die eine schnelle und effiziente Berechnung von \textit{diskreten Fourier-Transformationen (DFT)} bieten. Diese effizienten Algorithmen kann man im Wesentlichen in zwei Gruppen unterteilen, diejenigen die mit Zeitzerlegung (\textbf{\ref{ph:dit}}) und diejenigen die mit Frequenzzerlegung (\textbf{\ref{ph:dif}}) arbeiten.\\
 Für beide Gruppen von Algorithmen wird immer eine Operation benötigt, die entweder die Eingänge oder die Ausgänge in einer bestimmten Form sortiert. Diese Operation wird als \textit{Bitumkehrordnung} oder engl. \textit{bit-reversed order} bezeichnet (\textbf{\ref{ph:bit}}).
 
 \paragraph{FFT mit Zeitzerlegung (DIT)}\label{ph:dit}$\;$ \\
@@ -234,7 +244,7 @@ Und für die zweite Summe aus (\textbf{\ref{eqn:dif3b}}):
 \end{equation}
 
 Die letzte Umformung aus \textbf{Formel \ref{eqn:dif5}} verwendet die Tatsache, dass $W^{(N/2)2r}_N=1$ und $W^{(N/2)}_N=0$ gilt.\\
-Fasst man nun jeweils die Summationen der beiden Teilfolgen zusammen und nutzt wie in (\textbf{\ref{ph:dit}})$W^2_N=W_{N/2}$, kann man die Teilfolgen auch wie in \textbf{Formel \ref{eqn:dif6}} darstellen.
+Fasst man nun jeweils die Summationen der beiden Teilfolgen zusammen und nutzt wie in (\textbf{\ref{ph:dit}}) $W^2_N=W_{N/2}$, kann man die Teilfolgen auch wie in \textbf{Formel \ref{eqn:dif6}} darstellen.
 
 \begin{equation}
 	\label{eqn:dif6}
@@ -262,9 +272,9 @@ In \textbf{Abbildung \ref{fig:BF-DIF}} ist der aus \textbf{Formel \ref{eqn:dif6}
 %
 \paragraph{Bitumkehrungordnung (bit-reversed order)}\label{ph:bit}$\;$ \\
 
-Wie man in \textbf{Abbildung \ref{fig:dit}} und \textbf{Abbildung \ref{fig:dif}} gut erkennen kann, liegen entweder die Eingänge oder die Ausgänge in einer nicht numerisch sortierten Form vor. Diese Sortierung ergibt sich aus den in (\textbf{\ref{ph:dit}}) und (\textbf{\ref{ph:dif}}) gezeigten Algorithmen, diese folgt aber immer dem selben Schema.\\ 
+Wie man in \textbf{Abbildung \ref{fig:dit}} und \textbf{Abbildung \ref{fig:dif}} gut erkennen kann, liegen entweder die Eingänge oder die Ausgänge in einer nicht numerisch sortierten Form vor. Diese Sortierung ergibt sich aus den in (\textbf{\ref{ph:dit}}) und (\textbf{\ref{ph:dif}}) gezeigten Algorithmen, folgt aber immer dem selben Schema.\\ 
 Es werden die Indizes des Ein- oder Ausgangs anhand ihrer Bits vom \textit{Least Significant Bit (LSB)} zum \textit{Most Significant Bit (MSB)} sortiert, so dass pro Ebene in der oberen Hälfte die Indizes stehen, die beim momentan betrachteten Bit eine 0 aufweisen.\\
-Dieses Prinzip soll in \textbf{Tabelle \ref{tab:bit}} für 8-Bit lange Indizes veranschaulicht werden.\\
+Dieses Prinzip soll in \textbf{Tabelle \ref{tab:bit}} für 3-Bit lange Indizes veranschaulicht werden.\\
 %
 \begin{table}[ht]
 	\centering
@@ -285,8 +295,8 @@ Dieses Prinzip soll in \textbf{Tabelle \ref{tab:bit}} für 8-Bit lange Indizes ve
 \end{table}
 %
 \subsubsection{Magnitude of Spectrum (MAG)}\label{subsubsec:aos}
-Bei der Magnitude of Spectrum wird werden die normalisierten Spektralkomponenten eines Fenster berechnet. \\
-Hierfür wird zu erst der Betrag der diskreten Transformierten berechnet, der danach durch die Größe des betrachteten Fensters geteilt wird (\textbf{Formel \ref{eqn:aos}}).
+Bei der Magnitude of Spectrum werden die normalisierten Spektralkomponenten eines Fenster berechnet. \\
+Hierfür wird zu erst der Betrag der diskreten Transformierten berechnet, welche danach durch die Größe des betrachteten Fensters geteilt werden (\textbf{Formel \ref{eqn:aos}}).
 
 \begin{equation}
 	\label{eqn:aos}			   
@@ -295,7 +305,7 @@ Hierfür wird zu erst der Betrag der diskreten Transformierten berechnet, der dan
 
 \subsubsection{Chroma Vektor (CV)}\label{subsubsec:cv}
 
-Der Chroma Vektor fasst alle Spektralkomponenten einer Tonhöhe zusammen und fasst alle Frequenzen zu einer Oktave zusammen. Hierbei werden alle spektralen Amplituden des gleichen Halb- oder Vierteltons aufsummiert (\textbf{Formel \ref{eqn:cv}}).
+Der Chroma Vektor fasst alle Spektralkomponenten einer Tonhöhe und alle Frequenzen zu einer Oktave zusammen. Hierbei werden alle spektralen Amplituden des gleichen Halb- oder Vierteltons aufsummiert (\textbf{Formel \ref{eqn:cv}}).
 
 \begin{equation}
 	\label{eqn:cv}			   
@@ -320,7 +330,7 @@ Die maximale Amplitude des Chromagrams gibt den maximalen Chroma Vektor an und s
 \subsubsection{Mel Frequency Cepstral Coefficients (MFCC)}\label{subsubsec:mfcc}
 
 Das Cepstrum ist definiert als die Fouriertransformation (oder die DCT) des logerithmierten Amplitudenspektrums.\\
-Normalerweise wird ein Cepstrum auf der Basis des Frequenzspektrums berechnet, für die Berechnung der MFCC wird allerdings das Mel-Band zugrunde gelegt. Das Mel-Band basiert auf der Mel-Skala, die als psychoakustische Maßeinheit definiert ist. Wird zum Beispiel eine Frequenz als doppelt so hoch wahrgenommen wie eine festgelegte Referenzfrequenz, so wird auf der Mel-Skala diesem auch der doppelte Wert dieser Referenzfrequenz zugewiesen. Die hierfür verwendete Referenzfrequenz liegt bei 1000 Hz.\\
+Normalerweise wird ein Cepstrum auf der Basis des Frequenzspektrums berechnet, für die Berechnung der MFCC wird allerdings das Mel-Band zugrunde gelegt. Das Mel-Band basiert auf der Mel-Skala, die als psychoakustische Maßeinheit definiert ist. Wird zum Beispiel eine Frequenz als doppelt so hoch wahrgenommen wie eine festgelegte Referenzfrequenz, so wird auf der Mel-Skala diesem auch der doppelte Wert der Referenzfrequenz zugewiesen. Die hierfür verwendete Referenzfrequenz liegt bei 1000 Hz.\\
 Soll nun eine Frequenz $f$ in den zugehörigen Mel-Wert $m$ umrechnen werden, wird hierfür die \textbf{Formel \ref{eqn:mel}} verwendet.
 
 \begin{equation}
@@ -328,7 +338,7 @@ Soll nun eine Frequenz $f$ in den zugehörigen Mel-Wert $m$ umrechnen werden, wir
 	m~=~2595 \log_{10} \left(1+\frac{f}{700}\right)
 \end{equation}
 
-Für die Berechnung der MFCC wird in 4 Schritten durchgeführt.\\
+Die Berechnung der MFCC wird in 4 Schritten durchgeführt.\\
 Als Erstes wird wie bei allen Features des Frequenzbereiches die Spektralkomponenten durch eine Fouriertransformation berechnet. Der zweite Schritt besteht in einer Bandpassfilterung dieser Spektralkomponenten nach \textbf{Formel \ref{eqn:melm}}.
 
 \begin{equation}
@@ -336,8 +346,8 @@ Als Erstes wird wie bei allen Features des Frequenzbereiches die Spektralkompone
 	M(k')~=~\sum\limits^{\frac{K}{2}-1}_{k=0}A(k)\cdot w_{k'}(k)
 \end{equation}
 
-Hierbei beschreibt $w_{k'}(k)$ Dreiecksfenster, deren Breite für wachsendes $k$ zunehmen. Im Normalfall wird für diese Transformation in das Mel-Band 12 oder 24 Dreiecksfenster verwendet, wobei die Anzahl der Dreiecksfenster gleichzeitig die Auflösung der Transformation beschreibt.\\
-Im nächsten Schritt wird der Logarithmus von $M(k')$ gebildet. Letztendlich wird zur Berechnung der MFCC eine Diskrete Cosinus Transformation (DCT) durchgeführt.\\
+Hierbei beschreibt $w_{k'}(k)$ Dreiecksfenster, deren Breite für wachsendes $k$ zunehmen. Im Normalfall werden für diese Transformation in das Mel-Band 12 oder 24 Dreiecksfenster verwendet, wobei die Anzahl der Dreiecksfenster gleichzeitig die Auflösung der Transformation beschreibt.\\
+Im nächsten Schritt wird der Logarithmus von $M(k')$ gebildet. Abschließend wird zur Berechnung der MFCC eine Diskrete Cosinus Transformation (DCT) durchgeführt.\\
 Wird die Bandpassfilterung mit 12 Dreiecksfenstern durchgeführt, liefert dieser Algorithmus einen Ergebnisvektor mit 13 Komponenten. 
 
 \subsubsection{Normalized Audio Spectrum Envelope (NASE)}\label{subsubsec:nase}
@@ -402,7 +412,7 @@ Aus den einzelnen NASE-Werten der einzelnen Unterbänder wird abschließend der Er
 
 \subsubsection{Octave Spectral Contrast (OSC)}\label{subsubsec:osc}
 
-Beim Octave Spectral Contrast wird das Frequenzspektrum als erstes via Bandpass-Filtern in Unterbänder aufgeteilt (siehe \textbf{Tabelle \ref{tab:osc}}), danach werden für jedes Unterband \textit{spektrale Peaks} (\textbf{Formel \ref{eqn:peak}}) und\textit{spektrale Valleys}(\textbf{Formel \ref{eqn:valley}}) berechnet, wobei Peaks den harmonischen Komponenten und Valleys nicht-harmonischen Komponenten oder Rauschen des Unterbandes $b$ entsprechen. Hierbei werden die Power Spektren $P_{b,n}$ vorher so sortiert, dass $P_{b,1}\geq P_{b,2}\geq ... \geq P_{b,n}$ gilt.\\
+Beim Octave Spectral Contrast wird das Frequenzspektrum als erstes mit Bandpass-Filtern in Unterbänder aufgeteilt (siehe \textbf{Tabelle \ref{tab:osc}}. Danach werden für jedes Unterband \textit{spektrale Peaks} (\textbf{Formel \ref{eqn:peak}}) und \textit{spektrale Valleys}(\textbf{Formel \ref{eqn:valley}}) berechnet, wobei Peaks den harmonischen Komponenten und Valleys nicht-harmonischen Komponenten oder Rauschen des Unterbandes $b$ entsprechen. Hierbei werden die Power Spektren $P_{b,n}$ vorher so sortiert, dass $P_{b,1}\geq P_{b,2}\geq ... \geq P_{b,n}$ gilt.\\
 \begin{table}[ht]
 	\centering
 		\begin{tabular}{c | c}
@@ -432,12 +442,12 @@ Beim Octave Spectral Contrast wird das Frequenzspektrum als erstes via Bandpass-
 	\label{eqn:valley}			   	
 	Valley(b)~=~\log\left(\frac{1}{\alpha N_b}\sum\limits^{\alpha N_b}_{i=1}P_{b,N_b - i+1}\right)
 \end{equation}
-Hierbei ist $\alpha$ ein Nachbarschaftsfactor, der in der Literatur mit 0,2 angenommen wird. Der spektrale Kontrast eines Unterbandes errechnet sich nun als Differenz von $Peak(b)$ und $Valley(b)$ (\textbf{Formel \ref{eqn:oscsc}}).
+In diesem Zusammenhang ist $\alpha$ ein Nachbarschaftsfactor, der in der Literatur mit 0,2 angenommen wird. Der spektrale Kontrast eines Unterbandes errechnet sich nun als Differenz von $Peak(b)$ und $Valley(b)$ (\textbf{Formel \ref{eqn:oscsc}}).
 \begin{equation}
 	\label{eqn:oscsc}			   	
 	SC(b)~=~Peak(b)~-~Valley(b)
 \end{equation}
-Und der resultierende Featurevektor $x_{OSC}$ abschließend aus den Valleys und spektralen Kontrasten eines Audioframes (\textbf{Formel \ref{eqn:osc}}).
+und der resultierende Featurevektor $x_{OSC}$ abschließend aus den Valleys und spektralen Kontrasten eines Audioframes (\textbf{Formel \ref{eqn:osc}}).
 
 \begin{equation}
 	\label{eqn:osc}			   	
@@ -465,7 +475,7 @@ Der Spectral Centroid gibt den Schwerpunkt des Amplitudenspektrums des Signals a
 
 \subsubsection{Spectral Crest Factor (SCF)}\label{subsubsec:scf}
 
-Der Spectral Crest Factor stellt ein Maß der spektralen Flachheit eines Frequenzbandes dar und ist im Wertebereich $\left[1,\infty\right]$ definiert. Hierbei bedeutet 1, dass alle spektral Amplituden gleich sind und $\infty$ das gar keine Flachheit existiert (\textbf{Formel \ref{eqn:scf}}).\\
+Der Spectral Crest Factor stellt ein Maß der spektralen Flachheit eines Frequenzbandes dar und ist im Wertebereich $\left[1,\infty\right]$ definiert. Hierbei bedeutet 1, dass alle Spektralamplituden gleich sind und $\infty$ das gar keine Flachheit existiert (\textbf{Formel \ref{eqn:scf}}).\\
 Dieser Faktor wird auf folgenden Frequenzbändern berechnet:
 \begin{itemize}
 	\item 250 - 500 Hz ($k_{1l}$ - $K_{1u}$)
@@ -510,7 +520,7 @@ Die Sub-Band Energy Ratio gibt die Verteilung der Spektralenergie auf die Freque
 
 \section{Featuresets}\label{sec:fset}
 
-Für die Laufzeitanalysen des \textit{Music Classificators} wurden vier verschiedene Featuresets (im späteren mit \textit{FSetN} bezeichnet) verwendet, die in den folgenden Unterkapiteln näher spezifiziert werden sollen. Diese Featuresets wurden nicht selbst erstellt, sondern so aus der Literatur übernommen. Die einzelnen Referenzen sind passen zu den Featuresets angegeben.
+Für die Laufzeitanalysen des \textit{Musikklassifikators} wurden vier verschiedene Featuresets (im späteren mit \textit{FSetN} bezeichnet) verwendet, die in den folgenden Unterkapiteln näher spezifiziert werden sollen. Diese Featuresets wurden nicht selbst erstellt, sondern so aus der Literatur übernommen.
 
 \subsection{Featureset 1 (FSet1)}\label{subsec:fset1}
 

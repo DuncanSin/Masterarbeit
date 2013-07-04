@@ -30,7 +30,7 @@ Aus \textbf{Abbildung \ref{fig:armtime}} lassen sich drei wesentliche Schlüsse z
 \item ARM+VFP und ARM+NEON scheinen gleichwertig zu sein
 \end{enumerate}
 
-Die Punkte 1 und 2 kann man so stehen lassen, da diese zu den erwarteten Ergebnissen zählen, aber Punkt 3 verwundert einen doch sehr. Wie kann es sein, dass trotz der in \textbf{Kapitel \ref{subsubsec:neon}} beschriebenen Vorteile der NEON-SIMD-Einheit gegen über der VFP-Einheit, beide Einheiten doch gleichwertig erscheinen? Es soll nochmals erwähnt werden, dass beide Implementationen mit einer Compileroption für die jeweilige Floating Point-Einheit optimiert wurden. Ein Blick in den entstandenen Assemblercode der beiden Implementierungen gibt die Antwort auf die gestellte Frage. Hier finden sich in beiden Fällen nahezu gleiche Codes, das heißt auch die NEON-SIMD-Einheit für nur die rein skalaren Operationen des VFP aus. Dieses erklärt einerseits, warum sich die Laufzeiten der beiden Implementationen nicht wesentlich voneinander unterscheiden und zeigt andererseits, dass es dem Compiler scheinbar nicht möglich ist effektiv für die NEON-SIMD-Einheit optimierten Code zu generieren.\\\\
+Die Punkte 1 und 2 kann man so stehen lassen, da diese zu den erwarteten Ergebnissen zählen, aber Punkt 3 verwundert einen doch sehr. Wie kann es sein, dass trotz der in \textbf{Kapitel \ref{subsubsec:neon}} beschriebenen Vorteile der NEON-SIMD-Einheit gegen über der VFP-Einheit, beide Einheiten doch gleichwertig erscheinen? Es soll nochmals erwähnt werden, dass beide Implementationen mit einer Compileroption für die jeweilige Floating Point-Einheit optimiert wurden. Ein Blick in den entstandenen Assemblercode der beiden Implementierungen gibt die Antwort auf die gestellte Frage. Hier finden sich in beiden Fällen nahezu gleiche Codes, das heißt auch die NEON-SIMD-Einheit führt nur die rein skalaren Operationen des VFP aus. Dieses erklärt einerseits, warum sich die Laufzeiten der beiden Implementationen nicht wesentlich voneinander unterscheiden und zeigt andererseits, dass es dem Compiler scheinbar nicht möglich ist effektiv für die NEON-SIMD-Einheit optimierten Code zu generieren.\\\\
 Da die Extraktionsphase sich als am zeitintensivsten herausgestellt hat, soll diese jetzt näher analysiert werden.\\ 
 Wie aus \textbf{Abbildung \ref{fig:1fset2}} zu entnehmen ist, fallt der größte Anteil der Laufzeit der Extraktionsphase mit knapp 60\% auf die Berechnung der FFT.
 %
@@ -79,12 +79,12 @@ Da der Aufbau der FFT-Berechnung (siehe \textbf{Kapitel \ref{subsubsec:libavfft}
 Auch hierbei lässt sich erkennen, dass eine reine ARM-Implementation die langsamste Variante ist. Allerdings lässt sich ebenfalls erkennen, dass der Unterschied von der VFP-Implementierung und der NEON-Implementierung sehr deutlich ist, so wie es zu erwarten war. Dass dieser Unterschied hier so deutlich ist, liegt vor allem daran, dass die NEON-Version nicht wie bei der FFT des Referenzcodes mit der Compileroption für NEON-Code erstellt wurde, sondern wie in \textbf{Kapitel \ref{ph:neonasm}} beschrieben per Hand in NEON-Assembler geschrieben wurde.\\Im Vergleich zur Referenzimplementierung lässt sich für die reine ARM-Implementierung ein Speedup von knapp 1,4, für die VFP-Implementierung von 2,2 und für die NEON-Implementierung sogar von 19,2 erkennen. Bei der ARM-Implementierung ist dieses aus der geringeren Komplexität der Libav-FFT erklären, bei den andern Beiden kommt noch eine bessere Ausnutzung der Architektur hinzu.
 
 \subsubsection{Aufbau der FFT}\label{subsubsec:libavfft}
-Wie im vorherigen Kapitel schon erwähnt, unterscheiden sich der Aufbau von Libav-FFT und FFT des Referenzcodes stark, was unter anderem eine Komplexitätsreduktion der Butterfly-Berechnung und damit eine geringere Laufzeit mit sich bringt. In diesem Abschnitt wird nun dieser Unterschiedliche Aufbau näher erläutert.\\
-Die FFT des Referenzcodes basiert auf den in \textbf{Kapitel \ref{subsubsec:fft}} beschriebenen Reduktionen einer 256-Punkt-FFT auf kleinere FFTs des Radix 2 Der Aufbau der Libav-FFT hingegen basiert auf der Reduktion auf Splitradix-FFTs. Beide FFTs basieren auf dem DIT-Prinzip (vgl. \textbf{Kapitel \ref{ph:dit}}).
+Wie im vorherigen Kapitel schon erwähnt, unterscheiden sich der Aufbau von Libav-FFT und die FFT des Referenzcodes stark, was unter anderem eine Komplexitätsreduktion der Butterfly-Berechnung und damit eine geringere Laufzeit mit sich bringt. In diesem Abschnitt wird nun dieser unterschiedliche Aufbau näher erläutert.\\
+Die FFT des Referenzcodes basiert auf den in \textbf{Kapitel \ref{subsubsec:fft}} beschriebenen Reduktionen einer 256-Punkt-FFT auf kleinere FFTs des Radix 2, der Aufbau der Libav-FFT hingegen basiert auf der Reduktion auf Splitradix-FFTs. Beide FFTs basieren auf dem DIT-Prinzip (vgl. \textbf{Kapitel \ref{ph:dit}}).
 
 
 \subsubsection{Einbindung}
-Die Einbindung der Libav-FFT in den bestehenden FFT-Code ist schier einfach. Eigentlich muss nur die Referenzimplementierung der FFT durch den Aufruf der Libav-FFT ersetzt werden. Hinzu kommt eine Umdefinieren des verwendeten Vektors \textit{source}. Dieser wird um einen benutzerdefinierten  erweitert, der sicher stellt, dass die enthaltenen Werte alle mit 16 bit allokiert sind. Die Definition dieses Allokators ist in \cite{libavtemp} zu finden. Nach der Berechnung der FFT muss abschließend noch eine Auftrennung des resultierenden Vektors in Real- und Imaginärteil geschehen, da das Ergebnis der Libav einen Vektor darstellt, der abwechselt den Real- und Imaginärteil der Ergebnisse enthält.
+Die Einbindung der Libav-FFT in den bestehenden FFT-Code ist schier einfach. Eigentlich muss nur die Referenzimplementierung der FFT durch den Aufruf der Libav-FFT ersetzt werden. Hinzu kommt eine Umdefinierung des verwendeten Vektors \textit{source}. Dieser wird um einen benutzerdefinierten Allokator erweitert, der sicher stellt, dass die enthaltenen Werte alle mit 16 bit allokiert sind. Die Definition dieses Allokators ist in \cite{libavtemp} zu finden. Nach der Berechnung der FFT muss abschließend noch eine Auftrennung des resultierenden Vektors in Real- und Imaginärteil geschehen, da das Ergebnis der Libav einen Vektor darstellt, der abwechselt den Real- und Imaginärteil der Ergebnisse enthält.
 
 \subsubsection{Laufzeitmessung nach der FFT-Optimierung mit Libav}
 
@@ -97,7 +97,7 @@ Nach der Optimierung des Bottlenecks FFT wird eine weitere Laufzeitmessung durch
 	\label{fig:postlibav}
 \end{figure} 
 %
-Wie man in \textbf{Abbildung \ref{fig:postlibav}} sieht, ergeben sich nach dieser Optimierung vier Algorithmen die langsamer sind als die neue FFT, hinzu kommt noch ein weiterer Algorithmus aus FeatureSet 3:
+Wie man in der Abbildung sieht, ergeben sich nach dieser Optimierung vier Algorithmen, die langsamer sind als die neue FFT, hinzu kommt noch ein weiterer Algorithmus aus FeatureSet 3:
 
 \begin{itemize}
 \item Octave Spectral Contrast (siehe \textbf{Kapitel \ref{sec:vista}})
@@ -131,7 +131,6 @@ Hierfür müssen als erstes die Codestellen identifiziert werden, die es dem Compi
 	}
 \end{lstlisting}
 Aus den beiden Listings lässt sich erkennen, dass sowohl die Zeile 5 aus \textbf{Listing \ref{code:aosc}} als auch die Division mit der NEON-SIMD-Einheit parallelisiert wurden, was eine kürzere Ausführungszeit bewirkt.
-\newpage
 
 \begin{lstlisting}[caption=Resultierender Assemblercode, label=code:aosasm]
 	add	r2, r7, r1
@@ -203,9 +202,9 @@ Die Optimierung der MFCC erfolgt daher in fünf Schritten:
 \item Aufsummierung der Werte der drei vorherigen Schritte
 \end{enumerate}
 
-\textbf{Listing \ref{code:mfccint}} zeigt die gewählte Lösung und ersetzt die innere Schleife aus \textbf{Listing \ref{code:mfccc}}. In der Variable \textit{mod} wird die Anzahl der nicht durch vier parallele Rechnungen berechenbaren Durchläufe gespeichert, danach werden in den Zeilen 8-15 so viele parallelen vierfach Berechnung durchgeführt wie möglich. Sollte \textit{mod} größer als 1 sein, also noch zwei parallele Berechnungen möglich sein, werden diese in den Zeilen 17-25 durchgeführt. Wenn danach immer noch eine Berechnung fehlen sollte, wird diese in den Zeilen 27-29 durchgeführt. Abschließend wir werden in Zeile 31 die Einzelergebnisse aufsummiert. 
+\textbf{Listing \ref{code:mfccint}} zeigt die gewählte Lösung und ersetzt die innere Schleife aus \textbf{Listing \ref{code:mfccc}}. In der Variable \textit{mod} wird die Anzahl der nicht durch vier parallele Rechnungen berechenbaren Durchläufe gespeichert, danach werden in den Zeilen 8-15 so viele parallelen vierfach Berechnung durchgeführt wie möglich. Sollte \textit{mod} größer als 1 sein, also noch zwei parallele Berechnungen möglich sein, werden diese in den Zeilen 17-25 durchgeführt. Wenn danach immer noch eine Berechnung fehlen sollte, wird diese in den Zeilen 27-29 durchgeführt. Abschließend werden in Zeile 31 die Einzelergebnisse aufsummiert. 
 
-\begin{lstlisting}[caption=Der Akkumulation innerhalb der MFCC-Berechnung mit NEON-Intrinsics, label=code:mfccint]
+\begin{lstlisting}[caption=Akkumulation innerhalb der MFCC-Berechnung mit NEON-Intrinsics, label=code:mfccint]
 	mod = (f_edge_table_bd[m + 1] - f_edge_table_bd[m - 1]+1) % 4;
 
 	memset(&temp[0], 0., temp.size() * sizeof(realv));
@@ -245,11 +244,11 @@ Nach den in den vorherigen Abschnitten durchgeführten Optimierungen wird ein Ver
 \begin{figure}[h]
 	\centering
 		\includegraphics[width=1\textwidth]{../Pictures/endarm.pdf}
-	\caption{Gegenüberstellung der Laufzeiten der optimierten Algorithmen vor und nach der Optimierung}
+	\caption{Gegenüberstellung der Laufzeiten der optimierten Algorithmen vor und nach der Optimierung auf dem ARM}
 	\label{fig:endarm}
 \end{figure} 
 %
-Wie man der Abbildung entnehmen kann, wurde der größte Speedup bei der FFT-Berechnung erreicht. Dieser beträgt, wie schon in \textbf{Kapitel \ref{subsec:optFFT}} erwähnt knapp 19,2. Des weiteren wurden bei Magnitude of Spectrum ein Speedup von 2, bei MFCC ein Speedup von 1,2 und beim Hamming Window von 3,4. Für die gesamte Extraktion des FeatureSets 2 wird ein Speedup von 2,7 erreicht.
+Wie man der Abbildung entnehmen kann, wurde der größte Speedup bei der FFT-Berechnung erreicht. Dieser beträgt, wie schon in \textbf{Kapitel \ref{subsec:optFFT}} erwähnt knapp 19,2. Des weiteren wurden bei Magnitude of Spectrum ein Speedup von 2, bei MFCC ein Speedup von 1,2 und beim Hamming Window von 3,4 erreicht. Für die gesamte Extraktion des FeatureSets 2 wird ein Speedup von 2,7 erreicht.
 
 
 

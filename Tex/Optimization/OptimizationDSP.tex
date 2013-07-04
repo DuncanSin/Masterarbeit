@@ -1,7 +1,7 @@
 
 \section{Optimierung des DSP}
-Nach dem in dem vorherigen Kapitel die Optimierung des Musikklassifikators aufm dem ARM Cortex-A8 beschrieben wurde, behandelt dieses Kapitel die Optimierung der Extraktionsphase auf dem C674x DSP von Texas Instruments.\\
-Als erstes muss der C++-Referenzcode in C-Code übersetzt werden, da der C674x nur diesen ausführen kann. Anschließend werden durch eine Laufzeitmessung die Laufzeitantiele der einzelnen Feature-Berechnungen ermittelt (siehe \textbf{Abbildung \ref{fig:startdsp}}).
+Nachdem im vorherigen Kapitel die Optimierung des Musikklassifikators auf dem ARM Cortex-A8 beschrieben wurde, behandelt dieses Kapitel die Optimierung der Extraktionsphase auf dem C674x DSP von Texas Instruments.\\
+Als erstes muss der C++-Referenzcode in C-Code übersetzt werden, da der C674x nur diesen ausführen kann. Anschließend werden durch eine Laufzeitmessung die Laufzeitantiele der einzelnen Feature-Berechnungen ermittelt (siehe \textbf{Abbildung \ref{fig:startdsp}}).//
 %
 \begin{figure}[h]
 	\centering
@@ -33,7 +33,7 @@ Diese Ersetzung wird Beispielhaft für Magnitude of Spectrum in \textbf{Listing \
 	divsp_v(A, pG, A, G);
 \end{lstlisting}
 
-Die Akkumulation innerhalb der Wurzelberechnung wurde zusätzlich für eine bessere Ausführung durch SPLOOP getrennt.\\
+Die Akkumulation innerhalb der Wurzelberechnung wurde zusätzlich für eine bessere Ausführung durch SPLOOP aufgetrennt.\\
 Eine Optimierung mit MATHLIB wurde bei folgenden Algorithmen durchgeführt:
 
 \begin{itemize}
@@ -52,7 +52,7 @@ Eine Optimierung mit MATHLIB wurde bei folgenden Algorithmen durchgeführt:
 Abschließend wird nach der Optimierung mit MATHLIB eine weitere Laufzeitmessung durchgeführt. Diese soll zwei Dinge zeigen:
 
 \begin{enumerate}
-\item ist Magnitude of Spectrum immer noch der größte Bottleneck oder
+\item Ist Magnitude of Spectrum immer noch der größte Bottleneck oder
 \item haben sich neue Bottlenecks aufgetan
 \end{enumerate}
 %
@@ -63,12 +63,12 @@ Abschließend wird nach der Optimierung mit MATHLIB eine weitere Laufzeitmessung 
 	\label{fig:dsp2}
 \end{figure} 
 %
-\textbf{Abbildung \ref{fig:dsp2}} zeigt die angesprochene Laufzeitmessung. Wie man dort erkennen kann, ist Magnitude of Spectrum nicht mehr der größte Bottleneck, jetzt zeigt sich, dass die FFT-Berechnung zum größten Bottleneck geworden ist, also wird in diese Richtung weiter optimiert.
+\textbf{Abbildung \ref{fig:dsp2}} zeigt die angesprochene Laufzeitmessung. Wie man dort erkennen kann, ist Magnitude of Spectrum nicht mehr der größte Bottleneck. Jetzt zeigt sich, dass die FFT-Berechnung zum größten Bottleneck geworden ist, also wird in diese Richtung weiter optimiert.
 
 \subsection{Optimierung der FFT mit DSPLIB}\label{sec:dsplib}
 Wie ebenfalls in \textbf{Kapitel \ref{subsubsec:optbib}} erwähnt, wird von Texas Instruments auch eine optimierte Bibliothek bereitgestellt, in der eine FFT-Implementierung vorhanden ist. Durch diesen Umstand macht es Sinn diese für die Optimierung der FFT-Berechnung zu verwenden.\\
 Bei der FFT aus der DSPLIB handelt es sich um eine Complex2Complex-Mixedradix-FFT. Diese C2C-FFT lässt sich aber nach der in \cite{rfft} beschriebenen Methode in eine Real2Complex-FFT umwandeln.\\
-Die Einbindung der DSPLIB-FFT geschieht ebenfalls auf die in \cite{rfft} beschriebene Weise. Des weiteren wurde die Übergabe zwischen FFT und MAG geändert, so dass ncith wie vorher je ein Signal für Real- und Imaginärteil übergeben werden, sondern ein einzelnes Signal in dem Real- und zugehöriger Imaginärteil hintereinander stehen. \\
+Die Einbindung der DSPLIB-FFT geschieht ebenfalls auf die in \cite{rfft} beschriebene Weise. Des weiteren wurde die Übergabe zwischen FFT und MAG geändert, so dass nicht wie vorher je ein Signal für Real- und Imaginärteil übergeben wird, sondern ein einzelnes Signal in dem Real- und zugehöriger Imaginärteil hintereinander stehen. \\
 Auch nach der Optimierung der FFT durch die Einbindung der DSPLIB wird wieder eine Laufzeitmessung durchgeführt um eventuell weitere Bottlenecks zu identifizieren.\\
 %
 \begin{figure}[h]
@@ -79,7 +79,7 @@ Auch nach der Optimierung der FFT durch die Einbindung der DSPLIB wird wieder ei
 \end{figure} 
 %
 \textbf{Abbildung \ref{fig:dsp3}} zeigt das Ergebnis der erwähnten Laufzeitmessung, die Features aus FeatureSet 2 wurden um die Zero Crossing Rate aus FeatureSet 3 ergänzt, da diese nach der FFT-Optimierung langsamer als die FFT ist.\\
-Nach dieser Messung ergeben sich zwei neue Bottlenecks, Octave Spectral Contrast und Zero Crossing Rate. Bei OSC nimmt mit 55\% die Sortierung den größten Anteil der Laufzeit ein, auch bei der DSP-Implementierung soll keine Optimierung in diese Richtung vorgenommen werden.
+Nach dieser Messung ergeben sich zwei neue Bottlenecks, Octave Spectral Contrast und Zero Crossing Rate. Bei OSC nimmt mit 55\% die Sortierung den größten Anteil der Laufzeit ein. Auch bei der DSP-Implementierung soll keine Optimierung in diese Richtung vorgenommen werden.
 
 \subsection{Optimierung für SPLOOP}\label{sec:compiler} 
 Ein Blick in den Assemblercode der Zero Crossing Rate zeigt, dass für die Schleife keine SPLOOP-Optimierung vom Compiler durchgeführt wurde. Dieses lässt sich aber durch eine einfache Codeumstellung lösen. \textbf{Listing \ref{code:zcrc}} zeigt den Referenzcode der Zero Crossing Rate und \textbf{Listing \ref{code:zcrs}} den umgestellen Code.
@@ -105,4 +105,13 @@ Ein Blick in den Assemblercode der Zero Crossing Rate zeigt, dass für die Schlei
 \end{lstlisting}
 
 \subsection{Zwischenevaluation der DSP-Optimierung}
-Auch nach der DSP-Optimierung wird ein abschließender Vergleich der Anfangsmessung mit der volloptimierten Messung durchgeführt. Für diesen Vergleich werden die Laufzeiten der einzelnen Features auf die Laufzeit für ein Fenster heruntergerechnet, um diesen Vergleich zwischen den verschiedenen FeatureSets zu ermöglichen.
+Auch nach der DSP-Optimierung wird ein abschließender Vergleich der Anfangsmessung mit der volloptimierten Messung durchgeführt. Für diesen Vergleich werden die Laufzeiten der einzelnen Features auf die Laufzeit für ein Fenster heruntergerechnet, um diesen Vergleich zwischen den verschiedenen FeatureSets zu ermöglichen.\\
+%
+\begin{figure}[h]
+	\centering
+		\includegraphics[width=1\textwidth]{../Pictures/enddsp.pdf}
+	\caption{Vergleich der Laufzeiten von Referenz- und volloptimierter Messung auf dem DSP}
+	\label{fig:enddsp}
+\end{figure} 
+%
+Wie \textbf{Abbildung \ref{fig:enddsp}} zu entnehmen ist, wurde bei der Optimierung auf dem C674x DSP der größte Speedup bei der Magnitude of Spectrum erreicht, dieser beträgt knapp 29. Der geringste Speedup wurde beim Spectral Flux erzielt, dieser liegt nur knapp über 1. Die anderen Algorithmen erzielten einen Speedup zwischen 1,3 (Root Mean Square) und 7,7 (Zero Crossing Rate).   
