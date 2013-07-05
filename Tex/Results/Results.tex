@@ -1,3 +1,91 @@
 \chapter{Evaluation}
 \label{ch:results}
 \rm
+
+\section{Einführung}
+
+\begin{itemize}
+\item Einführen der Bewertungsmetriken:
+\begin{itemize}
+\item Extraktionsrate: $\frac{Fenster}{Zeit}$
+\item Effizienz: $\frac{Geschwindigkeit}{Ennergieverbrauch}$
+\end{itemize}
+\end{itemize}
+
+\section{Evaluation der ARM-Optimierung}
+
+\subsection{Qualität der Optimierung}
+
+\begin{itemize}
+\item Extraktionsraten der FeatureSets
+\item Effizienz der FeatureSets
+\end{itemize}
+
+\subsection{Weitere Optimierungspotenziale}
+
+\begin{itemize}
+\item Sortierung (76\%) bei OSC
+\item DCT (37,6\%) bei MFCC, Logarithmus (38\%) nicht viel machbar
+\item Signum (90\%) bei ZCR nicht viel machbar
+\item MAG von Hand optimieren (Intrinsics oder ASM)
+\item CV nicht viel machbar, da Einordnungsteil zu unvorhersagbar
+\item HW mit ASM, spart eventuell Lade- und Speicherbefehle (Durchgängiger Datenpfad)
+\item andere Eventuell auch parallelisierbar mit NEOn, aber irrelevant, weil zu geringe Laufzeiten
+\end{itemize}
+
+\section{Evaluation der DSP-Optimierung}
+
+\subsection{Qualität der Optimierung}
+\begin{itemize}
+\item Extraktionsraten der FeatureSets
+\item Effizienz der FeatureSets
+\end{itemize}
+
+\subsection{Weitere Optimierungspotenziale}
+
+\begin{itemize}
+\item Sortierung (55,5\%) bei OSC
+\item Akkumulation (73,6\%) mit ASM und DCT (23,6\%) bei MFCC
+\end{itemize}
+
+\section{Evaluation heterogenes System}
+
+\subsection{Einschränkungen}
+
+\begin{itemize}
+\item Taktzahlgrenzen der Prozessoren => Höherer Takt = Höherer Energieverbrauch => evtl. ineffizienter
+\item Kommunikation, bei zu großen Lieder auch iteratives Schreiben in den Shared-Speicher => Kostet Zeit
+\end{itemize}
+
+\subsection{Gegenüberstellung ARM und ARM+DSP}
+
+\begin{itemize}
+\item Laufzeitdiskusion
+\item Leistungsverbrauch
+\item Effizienz
+\end{itemize}
+
+\section{Vorstellung ARM als heterogenes System}
+
+$\;$ \\
+$\;$ \\
+$\;$ \\
+$\;$ \\
+$\;$ \\
+$\;$ \\
+$\;$ \\
+$\;$ \\
+$\;$ \\
+$\;$ \\
+
+\section{Fazit}
+
+\begin{itemize}
+\item ARM+DSP zu ineffizient
+\begin{itemize}
+\item Kommunikationszeit
+\item Erhöhter Energiebedarf durch Zuschalten von DSP
+\item DSP bringt keinen wirklichen Geschwindigkeitszuwachs
+\end{itemize}
+\item ARM+NEON effizienter, nach weiteren Optimierungen evtl. auch schneller
+\end{itemize}
