@@ -1,5 +1,5 @@
 
-\section{Optimierung des DSP}
+\section{Optimierung des DSP}\label{sec:optdsp}
 Nachdem im vorherigen Kapitel die Optimierung des Musikklassifikators auf dem ARM Cortex-A8 beschrieben wurde, behandelt dieses Kapitel die Optimierung der Extraktionsphase auf dem C674x DSP von Texas Instruments.\\
 Als erstes muss der C++-Referenzcode in C-Code übersetzt werden, da der C674x nur diesen ausführen kann. Anschließend werden durch eine Laufzeitmessung die Laufzeitantiele der einzelnen Feature-Berechnungen ermittelt (siehe \textbf{Abbildung \ref{fig:startdsp}}).//
 %
@@ -79,7 +79,7 @@ Auch nach der Optimierung der FFT durch die Einbindung der DSPLIB wird wieder ei
 \end{figure} 
 %
 \textbf{Abbildung \ref{fig:dsp3}} zeigt das Ergebnis der erwähnten Laufzeitmessung, die Features aus FeatureSet 2 wurden um die Zero Crossing Rate aus FeatureSet 3 ergänzt, da diese nach der FFT-Optimierung langsamer als die FFT ist.\\
-Nach dieser Messung ergeben sich zwei neue Bottlenecks, Octave Spectral Contrast und Zero Crossing Rate. Bei OSC nimmt mit 55\% die Sortierung den größten Anteil der Laufzeit ein. Auch bei der DSP-Implementierung soll keine Optimierung in diese Richtung vorgenommen werden.
+Nach dieser Messung ergeben sich zwei neue Bottlenecks, Octave Spectral Contrast und Zero Crossing Rate. Bei OSC nimmt mit 55\% die Sortierung den größten Anteil der Laufzeit ein. Auch bei der DSP-Implementierung soll keine Optimierung in diese Richtung vorgenommen werden (vgl. \textbf{Kapitel \ref{subsec:dspwopt}}).
 
 \subsection{Optimierung für SPLOOP}\label{sec:compiler} 
 Ein Blick in den Assemblercode der Zero Crossing Rate zeigt, dass für die Schleife keine SPLOOP-Optimierung vom Compiler durchgeführt wurde. Dieses lässt sich aber durch eine einfache Codeumstellung lösen. \textbf{Listing \ref{code:zcrc}} zeigt den Referenzcode der Zero Crossing Rate und \textbf{Listing \ref{code:zcrs}} den umgestellen Code.

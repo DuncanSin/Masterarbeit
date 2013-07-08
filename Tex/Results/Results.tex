@@ -1,54 +1,123 @@
 \chapter{Evaluation}
 \label{ch:results}
 \rm
+In diesem Kapitel wird eine abschließende Evaluation zu den im vorherigen Kapitel extrahierten Messwerten geschehen. Diese Evaluation wird in sechs Schritten geschehen:
 
-\section{Einführung}
-
-\begin{itemize}
-\item Einführen der Bewertungsmetriken:
-\begin{itemize}
-\item Extraktionsrate: $\frac{Fenster}{Zeit}$
-\item Effizienz: $\frac{Geschwindigkeit}{Ennergieverbrauch}$
-\end{itemize}
-\end{itemize}
-
-\section{Evaluation der ARM-Optimierung}
-
-\subsection{Qualität der Optimierung}
+\begin{enumerate}
+\item Einführung der verwendeten Metriken (\textbf{\ref{sec:eveinf}})
+\item Evaluation der ARM-Optimierung (\textbf{\ref{sec:evarm}})
+\item Evaluation der DSP-Optimierung (\textbf{\ref{sec:evdsp}})
+\item Betrachtung von ARM und DSP als heterogenes System (\textbf{\ref{sec:evhetsys}})
+\item Vergleich der Systeme ARM und ARM+DSP (\textbf{\ref{sec:evarmdsp}})
+\item Fazit (\textbf{\ref{sec:evfaz}})
+\end{enumerate} 
+\section{Einführung}\label{sec:eveinf}
+Für den Vergleich von der einzelnen Optimierungsstufen (vgl. \textbf{Kapitel \ref{sec:optarm}} und \textbf{\ref{sec:optdsp}}) und der beiden Prozessorkerne werden zwei Metriken verwendet:
 
 \begin{itemize}
-\item Extraktionsraten der FeatureSets
-\item Effizienz der FeatureSets
+\item Extraktionsrate
+\item Energieeffizienz
 \end{itemize}
 
-\subsection{Weitere Optimierungspotenziale}
+Diese beiden Metriken sollen im Folgenden näher erläutert werden.\\
+
+\paragraph*{Extraktionsrate}$\;$ \\
+
+Als Extraktionsrate $R_{ex}$ wird das Verhältnis von der Anzahl extrahierter Fenster $L$ und der dabei vergangenen Zeit $t$ bezeichnet. Genauer gibt die Extraktionsrate an, wie viele Fenster pro Zeiteinheit extrahiert werden können (vgl. \textbf{Formel \ref{eqn:er}})
+
+\begin{equation}
+\label{eqn:er}
+R_{ex}~=~\frac{L}{t}
+\end{equation}
+
+Für diese Arbeit soll die Extraktionsrate als die Anzahl der extrahierten Fenster pro Sekunde definiert sein.
+
+\paragraph*{Energieeffizienz}$\;$ \\
+
+Energieeffizienz wird allgemein als Kosten-Nutzen-Maß verwendet, also als Verhältnis von aufzubringender Leistung, die zum Erreichen eines Ziels benötigt wird. Dieses Lässt sich im Zusammenhang mit dem in dieser Arbeit betrachteten Musikklassifikators als extrahierte Fenster $L$ pro Energie $E$ in Joule definieren. Für die Berechnung dieser Energieeffizienz werden innerhalb dieser Evaluation wird die Energieeffizienz als Extraktionsrate $R_{ex}$ pro Leistungsverbrauch $P$ in Watt verwendet (vgl. \textbf{Formel \ref{eqn:en}}).
+
+\begin{equation}
+\label{eqn:en}
+P~=~\frac{R_{ex}}{P}~=~\frac{\frac{L}{t}}{\frac{E}{t}}~=~\frac{L}{E}
+\end{equation}
+
+
+\section{Evaluation der ARM-Optimierung}\label{sec:evarm}
+
+Zunächst werden die Extraktionsraten der vier in \textbf{Kapitel \ref{sec:fset}} beschriebenen FeatureSets für die folgenden Optimierungsstufen betrachtet:
 
 \begin{itemize}
-\item Sortierung (76\%) bei OSC
-\item DCT (37,6\%) bei MFCC, Logarithmus (38\%) nicht viel machbar
-\item Signum (90\%) bei ZCR nicht viel machbar
-\item MAG von Hand optimieren (Intrinsics oder ASM)
-\item CV nicht viel machbar, da Einordnungsteil zu unvorhersagbar
-\item HW mit ASM, spart eventuell Lade- und Speicherbefehle (Durchgängiger Datenpfad)
-\item andere Eventuell auch parallelisierbar mit NEOn, aber irrelevant, weil zu geringe Laufzeiten
+\item Referenzimplementierung auf dem ARM Cortex-A8 (\textit{ARM})
+\item Compileroptimierte Referenzimplementierung für die NEON-SIMD-Einheit (\textit{ARM+NEON})
+\item Version mit NEON-optimierter FFT (\textit{Libav NEON})
+\item Version mit NEON-optimierter FFT und NEON-handoptimierten Algorithmen (\textit{LibavNEON+Handopt.}) 
 \end{itemize}
 
-\section{Evaluation der DSP-Optimierung}
+Diese vier Optimierungsstufen sind in \textbf{Abbildung \ref{fig:erarm}} wiederzufinden.
+%
+\begin{figure}[htp]
+	\centering
+		\includegraphics[width=1\textwidth]{../Pictures/erarm.pdf}
+	\caption{Extraktionsraten pro FeatureSet in den verschiedenen Optimierungsstufen des ARM Cortex-A8}
+	\label{fig:erarm}
+\end{figure} 
+%
+Aus dieser Abbildung lassen sich zwei Schlüsse ziehen. Erstens mit Zunahme der Optimierung steigt auch die Extraktionsrate und zweitens nach Beseitigung eines Hauptbottlenecks werden weitere Optimierungen aufwendiger, bringen aber weniger Zuwachs der Extraktionsrate.\\
+Eine ähnliche Entwicklung lässt sich auch bei der Energieefizienz beobachten (vgl. \textbf{Abbildung \ref{fig:enarm}}). Dieses erklärt sich aus der \textbf{Formel \ref{eqn:en}}. Da die Extraktionsrate $R_{ex}$ einen nicht unwesentlichen Anteil an der Berechnung der Energieeffizienz besitzt, war ein ähnlicher Verlauf zu erwarten.
+%
+\begin{figure}[htp]
+	\centering
+		\includegraphics[width=1\textwidth]{../Pictures/enarm.pdf}
+	\caption{Energieeffizienz der einzelnen FeatureSets bei den unterschiedlichen Optimierungsstufen auf dem ARM Cortex-A8}
+	\label{fig:enarm}
+\end{figure} 
+%
 
-\subsection{Qualität der Optimierung}
+\subsection{Weitere Optimierungspotenziale}\label{subsec:armwopt}
+
+Um eine weitere Erhöhung der Energieeffizienz zu erreichen müssten weitere Optimierungen durchgeführt werden. Für solche Optimierungen finden sich einige Ansatzpunkte, über die im Folgenden diskutiert wird.\\\\
+Ein relativ großes Optimierungspotenzial liegt bei der Optimierung des \textit{Octave Spectral Contrast}. Dieser war am Ende nach der letzten Optimierungsstufe der größte Bottleneck und auf ihn fallen mit circa 300 ms in etwa 57,7\% der Laufzeit. Ein Dateilprofiling von OSC ergibt, dass 76\% dieser Laufzeit auf die Sortierung fallen, was in etwa 230 ms entspricht. Mit einem NEON-optimierten Sortieralgorithmus wäre also maximal eine Reduzierung der Laufzeit auf knapp 70 ms möglich. Eine solche Reduktion der Laufzeit ist allerdings sehr unwahrscheinlich. Eine Reduktion auf 100 ms wäre realistischer. Eine Entwicklung eines solchen Sortieralgorithmus wäre allerdings mit erheblichem Aufwand verbunden. 
+\\\\
+Auch bei \textit{MFCC} liegt weiteres Optimierungspotenzial. Nach der letzten Optimierungsstufe fallen noch knapp 16\% der Gesamtlaufzeit auf die Berechnung der MFCC. Innerhalb der MFCC-Berechnung verteilen sich die Anteile relativ gleichmäßig auf die drei Teilberechnungen Akkumulation (24,4\%), Logarithmusberechnung (38\%) und DCT (37,6\%). Die Akkumulation wurde bereits für die NEON-SIMD-Einheit optimiert. Eine Optimierung für die NEON-SIMD-Einheit der Logarithmusberechnung erweist sich aufgrund fehlender Befehle im Befehlssatz dieser Einheit als relativ schwierig, wäre aber durch einen entsprechenden Approximierungsalgorithmus möglich. Das einfachste wäre eine Optimierung der DCT. Im Umfang der Libav-Bibliothek wäre eine NEON-Optimierte DCT enthalten. Es müsste nur geprüft werden, ob diese den Ansprüchen der MFCC-Berechnung genügt. Alternativ wäre es auch möglich den Ansatz der Akkumulationsoptimierung auf die DCT anzuwenden, da diese auch nur aus einer Akkumulation besteht. Durch die Verteilung der Laufzeitanteile der MFCC-Berechnung wäre aber maximal eine Reduktion von einem Drittel der Laufzeit möglich, da die optimierte DCT aber immer noch eine Laufzeit besäße, wäre diese sogar noch geringer. Durch den eher geringen Anteil der MFCC an der Gesamtlaufzeit wäre eine solche Optimierung aber nicht nur mit viel Arbeit verbunden, sondern brächte eventuell keine große Verbesserung der Gesamtlaufzeit.\\\\
+Ein weiteres Optimierungspotenzial findet sich bei der \textit{Zero Crossing Rate}. Diese nimmt 86\% an der Gesamtlaufzeit des FeatureSets 3 ein. Innerhalb der ZCR fallen 90\% auf die Signumberechnung. Wie schon im Verlauf dieser Arbeit erwähnt wurde, erweist sich eine Optimierung dieser als relativ schwer, da die Laufzeit stark von den zu verarbeitenden Daten abhängt. Mit großem Aufwand würde sich eventuell eine NEON-basierte Variante dieser Berechnung finden. Im Vergleich zu den anderen Algorithmen, die in dieser Arbeit vorgestellt wurden, liegt ZCR mit seiner Laufzeit aber eher im Mittelfeld, ob daher eine aufwändige Optimierung der Signumberechnung eine relevante Laufzeitverbesserung zur Folge hätte, ist mehr als fraglich.\\\\
+Auch andere hier nicht angesprochene Algorithmen ließen sich sicherlich für die NEON-SIMD-Einheit optimieren, diese haben allerdings so geringe Anteile an der Gesamtlaufzeit, dass ein wirklicher Nutzen solcher Optimierungen eher fraglich wäre.
+
+\section{Evaluation der DSP-Optimierung}\label{sec:evdsp}
+
+Auch für die Evaluation der DSP-Optimierungen wird als erstes die Extraktionszeit für jedes FeatureSet bei den folgenden Optimierungsstufen berechnet (vgl. \textbf{Abbildung \ref{fig:erdsp}}):
+
 \begin{itemize}
-\item Extraktionsraten der FeatureSets
-\item Effizienz der FeatureSets
+\item Referenzimplementierung auf dem C674x DSP (\textit{DSP})
+\item Optimierung mit der MATHLIB-Bibliothek (\textit{MATHLIB})
+\item Optimierung mit MATHLIB- und DSPLIB-Bibliothek (\textit{MATHLIB+DSPLIB})
+\item Optimierung mit MATHLIB- und DSPLIB-Bibliothek und SPLOOP-Optimierung per Hand (\textit{MDS})
 \end{itemize}
-
-\subsection{Weitere Optimierungspotenziale}
+%
+\begin{figure}[htp]
+	\centering
+		\includegraphics[width=1\textwidth]{../Pictures/erdsp.pdf}
+	\caption{Extraktionsraten pro FeatureSet in den verschiedenen Optimierungsstufen des C674x DSP}
+	\label{fig:erdsp}
+\end{figure} 
+%
+Auf dem DSP lässt sich ebenfalls ein Anstieg der Extraktionsrate mit steigender Optimierung beobachten. Des weiteren ist gut ersichtlich, welche Optimierung auf welches FeatureSet abzielte, so ist erkennbar, dass die SPLOOP-Optimierung nur bei FeatureSet 3 Auswirkungen hatte.\\
+Auch hier lässt sich eine ähnlicher Verlauf der Energieeffizienz erwarten (vgl. \textbf{Abbildung \ref{fig:endsp}}).
+%
+\begin{figure}[htp]
+	\centering
+		\includegraphics[width=1\textwidth]{../Pictures/endsp.pdf}
+	\caption{Energieeffizienz der einzelnen FeatureSets bei den unterschiedlichen Optimierungsstufen auf dem C674x DSP}
+	\label{fig:endsp}
+\end{figure} 
+%
+\subsection{Weitere Optimierungspotenziale}\label{subsec:dspwopt}
 
 \begin{itemize}
 \item Sortierung (55,5\%) bei OSC
 \item Akkumulation (73,6\%) mit ASM und DCT (23,6\%) bei MFCC
 \end{itemize}
 
-\section{Evaluation heterogenes System}
+\section{Evaluation heterogenes System}\label{sec:evhetsys}
 
 \subsection{Einschränkungen}
 
@@ -57,7 +126,7 @@
 \item Kommunikation, bei zu großen Lieder auch iteratives Schreiben in den Shared-Speicher => Kostet Zeit
 \end{itemize}
 
-\subsection{Gegenüberstellung ARM und ARM+DSP}
+\section{Gegenüberstellung ARM und ARM+DSP}\label{sec:evarmdsp}
 
 \begin{itemize}
 \item Laufzeitdiskusion
@@ -65,20 +134,7 @@
 \item Effizienz
 \end{itemize}
 
-\section{Vorstellung ARM als heterogenes System}
-
-$\;$ \\
-$\;$ \\
-$\;$ \\
-$\;$ \\
-$\;$ \\
-$\;$ \\
-$\;$ \\
-$\;$ \\
-$\;$ \\
-$\;$ \\
-
-\section{Fazit}
+\section{Fazit}\label{sec:evfaz}
 
 \begin{itemize}
 \item ARM+DSP zu ineffizient

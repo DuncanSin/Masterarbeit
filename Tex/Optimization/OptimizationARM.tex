@@ -1,5 +1,5 @@
 
-\section{Optimierung des ARM}
+\section{Optimierung des ARM}\label{sec:optarm}
 In diesem Kapitel werden die Optimierungen am Code beschrieben, der rein auf dem ARM Cortex-A8 ausgeführt wird. Hierfür werden die in \textbf{Kapitel \ref{subsec:a8}} beschriebenen Hardwareemelemte ausgenutzt.\\
 In \textbf{Abschnitt \ref{subsec:armtime}} wird daher als erstes die Laufzeitmessung des gesamten Programms (Extraktion, Prozessierung und Klassifikation) erläutert, um einen Einstiegspunkt für die Optimierung zu extrahieren. In den darauffolgenden Abschnitten werden daraufhin die durchgeführten Optimierungen beschrieben. 
 
@@ -100,7 +100,7 @@ Nach der Optimierung des Bottlenecks FFT wird eine weitere Laufzeitmessung durch
 Wie man in der Abbildung sieht, ergeben sich nach dieser Optimierung vier Algorithmen, die langsamer sind als die neue FFT, hinzu kommt noch ein weiterer Algorithmus aus FeatureSet 3:
 
 \begin{itemize}
-\item Octave Spectral Contrast (siehe \textbf{Kapitel \ref{sec:vista}})
+\item Octave Spectral Contrast (siehe \textbf{Kapitel \ref{subsec:armwopt}})
 \item Magnitude of Sprectrum (\textbf{\ref{subsec:optAOS}})
 \item MFCC (\textbf{\ref{subsec:optMFCC}})
 \item Hamming Window (\textbf{\ref{subsec:optHAM}})
