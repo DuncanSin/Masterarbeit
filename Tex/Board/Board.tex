@@ -1,18 +1,20 @@
 \chapter{Das EVM8168-Entwicklungsboard}
 \label{ch:board}
 \rm
+In diesem Kapitel wird die zugrundeliegende Hardware beschrieben, auf der die Untersuchungen und Optimierungen der folgenden Kapitel durchgeführt wurden.\\
+Hierfür wird als erstes das EVM8168-Entwicklungsboard der Firma Texas Instruments vorgestellt, auf welchem sich der betrachtete DaVinci\texttrademark-Prozessor befindet. Auf diesen wird danach eingegangen. In einer feineren Betrachtung werden im Anschluss die beiden im DaVinci\texttrademark-Prozessor realisierten Prozessorkerne (ARM Cortex-A8 und C674x DSP) und ihre zur Verfügung gestellten Hardwareoptimierungseinheiten vorgestellt. Als letztes wird auf die verwendete Entwicklungsumgebung, dass sogenannte EZSDK der Firma Texas Instruments eingegangen werden.
 
-Für die in den folgenden Kapiteln beschriebenen Arbeitsschritte zur Optimierung und Analyse des Programmes wurde ein EVM8168-Entwicklungsboard verwendet, welches von der Firma Texas Instruments in Zusammenarbeit mit der Firma Spectrum Digital entwickelt wurde.
-Dieses Board kann mit Hilfe eines DM816x (DaVinci\texttrademark) ARM-Prozessors entweder selber Programme ausführen oder es können auch die beiden ARM-Prozessoren C6A816x (Integra\texttrademark) oder AM389x (Sitara\texttrademark) emuliert werden. 
 
 
 \section{Aufbau des EVM8168} \label{sec:evm816}
-Wie in \cite{spec} beschrieben bietet das EVM816x-Entwicklungsboard eine Standalone-Plattform um Programme für DaVinci\texttrademark, Integra\texttrademark~oder Sitara\texttrademark~Prozessoren der Firma Texas Instruments zu entwickeln und zu debuggen. Hierfür sind neben dem DaVinci\texttrademark~noch weitere On-Board Peripherie auf dem Board aufgebracht, die im folgenden aber nicht näher erläutert werden sollen.
+Für die in den folgenden Kapiteln beschriebenen Arbeitsschritte zur Optimierung und Analyse des Programmes wurde ein EVM8168-Entwicklungsboard verwendet, welches von der Firma Texas Instruments in Zusammenarbeit mit der Firma Spectrum Digital entwickelt wurde.\\
+Dieses Board kann mit Hilfe eines DM816x (DaVinci\texttrademark) ARM-Prozessors entweder selber Programme ausführen (oder es können auch die beiden ARM-Prozessoren C6A816x (Integra\texttrademark) oder AM389x (Sitara\texttrademark) emuliert werden).\\ 
+Wie in \cite{spec} beschrieben bietet das EVM816x-Entwicklungsboard eine Standalone-Plattform um Programme für DaVinci\texttrademark, Integra\texttrademark~oder Sitara\texttrademark~Prozessoren der Firma Texas Instruments zu entwickeln und zu debuggen. Hierfür sind neben dem DaVinci\texttrademark~noch weitere On-Board Peripherie auf dem Board verfügbar.
 Das EVM8168-Board hat unter anderem folgende Komponenten integriert:
 
 \begin{itemize}
 	\item DM816x- (DaVinci\texttrademark-)ARM Prozessor (\textbf{Kapitel~\ref{sec:davinci}}) mit NEON-Coprozessor (\textbf{Kapitel~\ref{subsubsec:neon}}) und DSP (\textbf{Kapitel~\ref{subsec:dsp}})
-	\item 1 GB DDR3-RAM
+	\item 1 GB DDR3-1600 RAM
 	\item AC31061-Audiochip
 	\item Gigabit Ethernet
 	\item HDMI
@@ -33,84 +35,57 @@ Das EVM8168-Board hat unter anderem folgende Komponenten integriert:
 
 
 \section{Der DaVinci\texttrademark}\label{sec:davinci}
-Bei dem auf dem EVM816x verwendeten ARM-Prozessor DM816x handelt es sich um einen eigentlich für die Videoprozessierung optimierten Prozessor der DaVinci\texttrademark-Familie von Texas Instruments.\\
-Der DM816x ist ein heterogener Prozessor, der aus mehreren Subsystemen und Coprozessoren besteht.
-Genauer gibt des folgende Subsysteme:
-
-\begin{itemize}
-\item ARM Subsystem mit einem Cortex-A8 der Firma ARM (\textbf{\ref{subsec:a8}})
-\item DSP Subsystem mit einem C674x VLIW DSP der Firma Texas Instruments (\textbf{\ref{subsec:dsp}})
-\item SGX530 3D Grafik Engine
-\item 512kb On-Chip RAM
-\item High-Definition Video Image Coprozessoren (HDVICP2)
-\item Media Controller
-\item HD Video Processing Subsystem (HDVPSS)
-\item System Control
-\item Peripherie
-\end{itemize} 
-
-All diese Subsysteme und Coprozessoren sind durch eine gemeinsame System Interconnection miteinander verbunden. \textbf{Abbildung \ref{fig:dm8168}} zeigt das funktionale Blockdiagramm des DM816x.\\
+Bei dem auf dem EVM816x verwendeten ARM-Prozessor DM816x handelt es sich um einen für die Videoprozessierung geeigneten Prozessor der DaVinci\texttrademark-Familie von Texas Instruments.\\
+Der DM816x ist ein heterogener Prozessor, der aus mehreren Komponenten besteht.
+\textbf{Abbildung \ref{fig:dm8168}} zeigt das vereinfachte funktionale Blockdiagramm des DM816x.\\
 %
 \begin{figure}[htbp]
 	\centering
 		\includegraphics[scale=0.5]{../Pictures/dm8168.pdf}
-	\caption{Funktionales Blockdiagramm des DM816x\cite{evm8168}}
+	\caption{Vereinfachtes Funktionales Blockdiagramm des DM816x\cite{evm8168}}
 	\label{fig:dm8168}
 \end{figure}
 %
+Neben dem ARM und dem DSP Subsystem, auf die in den folgenden Abschnitten noch näher eingegangen wird, befinden sich noch weitere Komponenten auf dem DM8168. Diese Komponenten werden im Folgenden der Vollständigkeit halber kurz erläutert, haben aber für diese Arbeit keine Relevanz.\\
+Der High-Definition Video Image Coprocessor 2 (HDVICP2) bietet einen Hardwarebeschleuniger zum Kodieren und Dekodieren von Videos mit einer Auflösung von bis zu 1080p. Das High-Definition Video Processing Subsystem (HDVPSS) bietet eine Schnittstelle für die Ein- und Ausgabe externer visueller Peripherie, wie zum Beispiel Video Sensoren oder LCD-Bildschirme. Der Media Controller ist für die Verwaltung dieser beiden Komponenten verantwortlich.\\
+Des weiteren ist eine SGX530 3D Graphics Engine vorhanden, die für die Berechnung von Vektor- oder 3D-Grafiken verwendet werden kann. Unter dem Begriff System Control sind Elemente wie der Watchdog und der Real-Time Timer und der JTAG-Anschluss zusammen gefasst. All diese Komponenten sind durch eine gemeinsame System Interconnection verbunden. Unter System Interconnection ist hierbei nicht ein einzelner Bus zu verstehen, sondern eine Ansammlung von Bussen verschiedener Breiten und Typen, die der Einfachheit halber zusammengefasst wurden. 
 
 \subsection{ARM Cortex-A8}\label{subsec:a8}
 
-Der erste Prozessor aus der heterogenen Prozessorarchitektur des DM8168 der vorgestellt werden soll, ist ein Cortex-A8 der Firma ARM. Hierbei handelt des sich um einen General-Purpose Prozessor im RISC Design. Er besteht im wesentlichen aus 6 Komponenten (vgl. \textbf{Abbildung \ref{fig:a8}}):
-
-\begin{itemize}
-	\item Instruction Fetch
-	\item Instruction Decode
-	\item Instruction Execute
-	\item Load/Store
-	\item L2 Cache
-	\item NEON-Coprozessor (\textbf{\ref{subsubsec:neon}})
-\end{itemize}
+Der erste Prozessor aus der heterogenen Prozessorarchitektur des DM8168 der vorgestellt werden soll, ist ein Cortex-A8 der Firma ARM. Hierbei handelt des sich um einen General-Purpose Prozessor im RISC Design. Er besteht im wesentlichen aus 6 Komponenten (vgl. \textbf{Abbildung \ref{fig:a8}}).
 %
 \begin{figure}[h]
 	\centering
 		\includegraphics[width=1\textwidth]{../Pictures/cortexa8.pdf}
-	\caption{Cortex-A8 Blockdiagramm\cite{cortexa8}}
+	\caption{Vereinfachtes Cortex-A8 Blockdiagramm mit NEON-Coprozessor\cite{cortexa8}}
 	\label{fig:a8}
 \end{figure} 
 %
-Wie in der Abbildung zu sehen ist, besteht der Cortex-A8 aus zwei wesentlichen Teilen:
-\begin{itemize}
-\item ARMv7-A Prozessorkern (\textbf{\ref{subsubsec:armv7}})
-\item NEON-Coprozessor (\textbf{\ref{subsubsec:neon}})
-\end{itemize}
+Die drei Komponenten Instruction fetch, Instruction Decode und Instruction execute sind für das Laden, Dekodieren und Ausführen von Befehlen auf dem ARM Cortex-A8 zuständig und bilden mit der Load/Store-Komponente eine Ausführungseinheit, die auf der ARMv7-A Architektur basiert.\\
+Der ARMv7-A Instruktionssatz besitzt neben Operationen für Sprünge und Ähnlichem nur Operationen für die Berechnung von Integerwerten.\\
+Die wesentlichen Merkmale der L1 und L2-Caches sind in \textbf{Tabelle \ref{tab:cache}} zusammengefasst.
 
-Diese beiden Prozessorkerne teilen sich Instruction Fetch, Instruction Decode, Instruction Execute, Load/Store und L2 Cache.\\
+\begin{table*}[ht]
+	\centering
+		\begin{tabular}{|c|c|c|}
+		\hline
+			& L1-Caches & L2 Cache\\
+		\hline\hline
+			Größe & 32 KB & 256 KB\\
+			Zeilenlänge & 64 Bytes & 64 Bytes\\
+			Cachestruktur & 4-fach assoziativ & 8-fach assoziativ\\
+		\hline
+		\end{tabular}
+	\caption{Wesentliche Merkmale der L1- und L2-Caches\cite{evm8168}}
+	\label{tab:cache}
+\end{table*}
 
-\subsubsection{ARMv7-A Prozessorkern}\label{subsubsec:armv7}
-Der ARMv7-A Prozessorkern besitzt neben Operationen für Sprünge, etc. nur Operationen für die Berechnung von Integerwerten.\\
-Die Caches dieses Prozessorkerns besitztem folgende Eigenschaften:
-\begin{itemize}
-\item separate L1 Instruktions- und Datencaches
-\begin{itemize}
-\item Harvard Architektur
-\item Größe von 32 KB
-\item 64 Bytes Zeilenlänge
-\item vierfach assoziative Cachestruktur
-\end{itemize}
-\item L2 Cache
-\begin{itemize}
-\item Größe von 256KB
-\item 64 Bytes Zeilenlänge
-\item achtfach assoziative Cachestruktur
-\end{itemize}
-\end{itemize}
-Instruktionen werden in einer dreiphasigen Pipeline abgearbeitet, die wiederum in 13 Stufen unterteilt ist.\\
-Die Fetch-Phase besitzt drei Stufen. In ihr werden benötigte Befehle aus dem L1-Instruction-Cache geladen, der sich in der Instruction Fetch-Einheit befinden (vgl. \textbf{Abbildung \ref{fig:a8}}).\\
-Diese Instruktionen werden in einen Buffer geladen, welcher in der Decode-Phase, welche in fünf Stufen unterteilt ist, ausgelesen wird und die Instruktionen decodiert werden. Außerdem wird in der Decode-Phase die Ausführungsreihenfolge der geladenen Befehle festgelegt. Diese Reihenfolge hängt von Datenabhängigkeiten und Ausführungszeiten der einzelnen Operationen ab, die für die Ausführung benötigt werden (eine Übersicht der Instruktionen wird im Anhang gegeben).\\
+Instruktionen werden in einer dreiphasigen Pipeline verarbeitet, die in 13 Stufen unterteilt ist. Hierbei wird jede Phase von der gleichnamigen Einheit aus \textbf{Abbilgund \ref{fig:a8}} bearbeitet.\\
+Die Fetch-Phase besitzt drei Stufen. In ihr werden benötigte Befehle aus dem L1-Instruction-Cache geladen, der sich in der Instruction Fetch-Einheit befindet (vgl. \textbf{Abbildung \ref{fig:a8}}).\\
+Diese Instruktionen werden in einen Buffer geladen, welcher in der fünfstufigen Decode-Phase ausgelesen wird und die Instruktionen decodiert werden. Außerdem wird in der Decode-Phase die Ausführungsreihenfolge der geladenen Befehle festgelegt. Diese Reihenfolge hängt von Datenabhängigkeiten und Ausführungszeiten der einzelnen Operationen ab (eine Übersicht der Instruktionen wird im Anhang gegeben).\\
 In der Execute-Phase werden anschließend die Befehle an die entsprechenden Funktionseinheiten weitergeleitet. Dieses geschieht in sechs Stufen.\\
-Wie schon erwähnt, kann dieser Prozessorkern nur Integeroperationen bearbeiten, wird aber bei der Kompilierung eines Programms für den Cortex-A8 dem Compiler nicht die Benutzung einer Floating Point-Einheit vorgeschrieben (vgl. \textbf{Kapitel \ref{subsubsec:neon}}) werden auch entsprechende Befehle auf den Integeroperationen des ARMv7-A Prozessorkerns emuliert, was zu langen Ausführungszeiten führen kann. Derartige Floating Point Instruktionen sind durch das Präfix \textit{\_\_aeabi\_} im Assembler-Code gekennzeichnet. Dieses bedeutet, dass Floating Point-Operationen nicht auf Hardware-, sondern auf Softwareebene berechnet werden.\\
-Die \textbf{Tabelle \ref{tab:aeabi}} gibt einen Überblick über die in Software hinterlegten Floating Point-Operationen des ARMv7-A Prozessorkerns.\\
+Die Execute-Einheit unterstützt keine Floating Point Instruktionen, diese werden stattdessen emuliert. Derartige Floating Point Instruktionen sind durch das Präfix \textit{\_\_aeabi\_} im Assembler-Code gekennzeichnet. Dies bedeutet, dass Floating Point-Operationen nicht auf Hardware-, sondern auf Softwareebene berechnet werden, was zu langen Ausführungszeiten führt.\\
+Die \textbf{Tabelle \ref{tab:aeabi}} listet wesentliche Bezeichnungen der in Software emulierten Floating Point-Operationen auf.\\
 %
 \begin{table}[h]
 \centering
@@ -134,10 +109,10 @@ int \_\_aeabi\_fcmpgt(float a, float b) & 1, wenn a > b\\
 \label{tab:aeabi}
 \end{table}
 %
-Der Instruktionssatz des ARMv7-A Prozessorkerns besitzt des weiteren Operationen, die für die Kommunikation zwischen ihm und angeschlossenen Coprozessoren benutzt werden können. Diese Funktionen werden mit MCR und MRC bezeichnet und weisen je nach angesprochenem Coprozessor unterschiedliche Ausführungszeiten auf, diese Operationen benötigen aber immer mindestens 60 Takte.
+Der Instruktionssatz besitzt des weiteren Operationen für die Kommunikation mit anderen Coprozessoren. Diese Befehle werden mit MCR und MRC bezeichnet und besitzen Ausführungszeiten, die vom angesprochenen Coprozessor abhängen. Zum Beispiel benötigt eine Kommunikation mit der System Control aus \textbf{Abbildung \ref{fig:dm8168}} 60 Takte.
 
 \subsubsection{Der NEON-Coprozessor}\label{subsubsec:neon}
-Dieser Coprozessor beherbergt zwei Einheiten zur Berechnung von Floating Point-Operationen. Zum Einen ist das die VFPv3-Einheit (\textbf{\ref{ph:vfp}}) und zum Anderen die NEON-SIMD-Einheit (\textbf{\ref{ph:neon}}). 
+Dieser Coprozessor beherbergt zwei Einheiten zur Berechnung von Floating Point-Operationen. Zum einen ist das die VFPv3-Einheit (\textbf{\ref{ph:vfp}}) und zum anderen die NEON-SIMD-Einheit (\textbf{\ref{ph:neon}}). 
 %
 \begin{figure}[h]
 	\centering
