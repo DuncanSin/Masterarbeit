@@ -76,7 +76,7 @@ Die wesentlichen Merkmale der L1 und L2-Caches sind in \textbf{Tabelle \ref{tab:
 			Cachestruktur & 4-fach assoziativ & 8-fach assoziativ\\
 		\hline
 		\end{tabular}
-	\caption{Wesentliche Merkmale der L1- und L2-Caches\cite{evm8168}}
+	\caption{Wesentliche Merkmale der L1- und L2-Caches des Cortex A8\cite{evm8168}}
 	\label{tab:cache}
 \end{table*}
 
@@ -122,22 +122,9 @@ Dieser Coprozessor beherbergt zwei Einheiten zur Berechnung von Floating Point-O
 \end{figure} 
 %
 
-Des weiten sind noch:
-\begin{itemize}
-\item Eine NEON-Registerbank mit 32x64-bit General-purpose Registern,
-\item eine NEON Integer Execute Pipeline (ALU,Shift,MAC),
-\item eine NEON Double- und Single-Precision Floating Point Execute Pipeline (FADD, FMUL)
-\item und eine NEON Load/Store und Permute Pipeline vorhanden.
-\end{itemize}
-Die 32x64-bit Register liegen in einer Registerbank, die unabhängig von der Registerbank des ARMv7 Prozessorkerns ist, \textbf{Abbildung \ref{fig:neonbank}} zeigt die Sicht von der VFPv3- und der NEON-SIMD-Einheit auf dieses Register.\\
-%
-\begin{figure}[h]
-	\centering
-		\includegraphics[scale=0.8]{../Pictures/neonbank.pdf}
-	\caption{Register der NEON-SIMD- und der VFPv3-Einheit\cite{cortexa8}}
-	\label{fig:neonbank}
-\end{figure} 
-%
+Wie in \textbf{Abbildung \ref{fig:neon}} zu sehen ist, besteht der NEON-Coprozessor im Wesentlichen aus aus fünf Komponenten, außerdem besitzt diese zwei Eingangsqueues. In die erste Eingangsqueue werden die vom ARM vorbereiteten NEON-SIMD- oder VPFv3-Befehle geschrieben, diese Queue kann bis zu 16 Einträge halten und wird als \textit{NEON Instruction Queue} bezeichnet. Die zweite Queue ist für das Vorladen von Daten aus dem L1- oder L2-Cache verantwortlich, diese kann 12 Einträge halten und wird als \textit{NEON Data Queue} bezeichnet. Diese Queue wird von der Load/Store-Einheit ausgelesen oder beschrieben.\\
+Die in der NEON Instruction Queue befindlichen Daten werden vor der Ausführung auf dem NEON-Coprozessor nochmal mit einer eigenen Instruction Decode-Einheit dekodiert, hierbei werden auch VFPv3- und NEON-SIMD-Befehle voneinander getrennt und anschließend entweder an die NEON-SIMD-Pipeline oder die VFPv3-Einheit weitergeleitet. Hierbei ist zu Erwähnen, dass immer nur eine dieser beiden Einheiten arbeiten kann, also eine Verarbeitung von NEON-SIMD- und VFPv3-Befehlen nicht parallel möglich ist.\\
+Des weiteren besitzt der NEON-Coprozessor eine physikalische Registerbank, die in 32x64-bit Registerfiles unterteilt ist. Sowohl VFPv3-Einheit als auch die NEON-SIMD-Pipeline haben Zugriff auf diese. Für diese Registerbank sind drei verschiedene Namensgebungen vorhanden, die im Assembler-Code verwendet werden können. Diese Namensgebungen bezeichnen die Wortbreite, mit der Aus den Registern gelesen werden kann. Es ist möglich mit einfacher (S-Namensgebung), doppelter (D-Namensgebung) und vierfacher (Q-Namensgebung) Wortbriete aus diesem Register zu lesen. Bei einfacher Wortbreite ist allerdings nur das halbe Register zugreifbar.\\
 Die Kommunikation zwischen ARM und NEON-Einheit lässt sich in zwei Teile unterteilen:
 \begin{itemize}
 \item Weiterleitung von Befehlen
@@ -147,32 +134,26 @@ Die Kommunikation zwischen ARM und NEON-Einheit lässt sich in zwei Teile unterte
 Die Weiterleitung von Befehlen vom ARM zum NEON-Coprozessor geschieht in folgenden Schritten:
 
 \begin{enumerate}
-\item NEON-SIMD- und VFPv3-Befehle durchlaufen die gesamte ARM-Pipeline und werden am Ende der Execute-Phase in eine NEON Instruction Queue geladen, welche 16 Einträge halten kann. Danach gelten die NEON- und VFPv3-Befehle für den ARM als abgearbeitet und er kann wieder ARM-Befehle ausführen. Eine Ausnahme bildet hier der Fall, dass die NEON Instruction Queue voll ist. Sollte dieses geschehen muss der ARM warten bis wieder Einträge in diese Queue geschrieben werden können.
+\item NEON-SIMD- und VFPv3-Befehle durchlaufen die gesamte ARM-Pipeline und werden am Ende der Execute-Phase in eine NEON Instruction Queue geladen. Danach gelten die NEON-SIMD- und VFPv3-Befehle für den ARM als verarbeitet, so dass dieser weitere Befehle ausführen kann. Eine Ausnahme bildet hier der Fall, dass die NEON Instruction Queue voll ist. In diesem Fall muss der ARM warten bis weitere Befehle in die Instruction Queue geschrieben werden können.
 \item Der NEON-Coprozessor ließt aus dieser Queue und muss die Befehle nochmals Dekodieren und ihre Abarbeitungsreihenfolge festlegen.
 \item Die NEON-SIMD- und VFPv3-Befehle werden auf dem NEON-Coprozessor verarbeitet
-\item Mit dem MRC-Befehl ließt der ARM die Ergebnisse des NEON-Coprozessors aus, dieses dauert mindestens 20 Takte
+\item Mit dem MRC-Befehl ließt der ARM die Ergebnisse des NEON-Coprozessors aus, dies dauert mindestens 20 Takte
 \end{enumerate}
 
 Die Weiterleitung von Daten an den NEON-Coprozessor kann auf zwei Arten geschehen:
 
 \begin{itemize}
-\item Der ARM Prozessor schreibt mit dem MCR-Befehl Daten in die NEON Daten Queue, welche 12 Einträge halten kann
+\item Der ARM Prozessor schreibt mit dem MCR-Befehl Daten aus dem L1-Cache seiner Load/Store-Einheit in die NEON Daten Queue
 \item oder der NEON-Coprozessor ließt direkt aus dem L2 Cache.
 \end{itemize}
 
-Obwohl sich die NEON- und die VFP3-Einheit einige Befehle und die Registerbank teilen, haben sie doch entscheidende Unterschiede, die in den beiden folgenden Kapiteln erläutert werden sollen.
+Obwohl sich die NEON-SIMD-Pipeline und VFPv3-Einheit einige Befehle und die Registerbank teilen, haben sie doch entscheidende Unterschiede, die in den beiden folgenden Kapiteln erläutert werden sollen.
 
 \paragraph{VFPv3-Einheit}\label{ph:vfp}$\;$ \\\\
-Die VFPv3-Einheit stellt einen Coprozessor zur Berechnung von Floating Point-Zahlen zur Verfügung und unterstützt den \textit{ANSI/IEEE Standard 754-1985} in vollem Umfang, welcher auf der \textit{VFPv3-Architektur} basiert.\\
-Hierfür stellt die VFPv3-Einheit Operationen zur Addition, Subtraktion, Multiplikation, Division, Multiply-and-Accumulate und zur Wurzelberechnung zur Verfügung, die sowohl mit Single-Precision als auch Double-Precision berechnet werden können. Des weiteren werden Operationen zur Konvertierung zwischen Floating- und Fix-Point und Floating-Point und Konstanten bereitgestellt.\\
-Die VFPv3-Einheit besitzt keine Pipeline-Struktur und ist nur in der Lage Anweisungen sequenziell abzuarbeiten.\\
-Sie hat auf die in \textbf{Abbildung \ref{fig:neonbank}} abgebildete Registerbank wie folgt Zugriff:
-
-\begin{itemize}
-\item Als 32 32-bit Einzelwortregister, S0-S31, in dieser Sicht ist nur die halbe Registerbank zugreifbar,
-\item Als 32 64-bit Doppelwortregister, D0-D31
-\item und als Kombination dieser 32- und 64-bit Register
-\end{itemize}
+Die VFPv3-Einheit beschleunigt die Berechnung von Floating Point-Zahlen und unterstützt den \textit{ANSI/IEEE Standard 754-1985} in vollem Umfang.\\
+Operationen wie Addition, Subtraktion, Multiplikation, Division, Multiply-and-Accumulate und zur Wurzelberechnung können daher mit Single-Precision und mit Double-Precision berechnet werden. Des weiteren werden Operationen zur Konvertierung zwischen Floating- und Fix-Point und Floating-Point und Konstanten bereitgestellt.\\
+Die VFPv3-Einheit besitzt keine Pipeline-Struktur und verarbeitet Anweisungen sequentiell.\\
+Sie kann auf die in \textbf{Abbildung \ref{fig:neon}} abgebildete Registerbank mit einfacher und doppelter (S- und D-Namensgebung) zugreifen.
 
 In \textbf{Tabelle \ref{tab:vfp}} sind wesentliche Instruktionen aus dem Instruktionssatz der VFPv3-Einheit mit Angabe der Ausführungszeit in Takten angegeben. Hierbei ist zu erwähnen, dass diese Ausführungszeiten datenabhängig sind.
 
@@ -198,19 +179,12 @@ FCPY & 4 & 4\\
 \end{table}
 
 \paragraph{NEON-SIMD-Einheit}\label{ph:neon}$\;$ \\\\
-Die NEON-SIMD-Einheit ist eigentlich für die Ausführung von Integeroperationen konzipiert, kann aber ebenfalls Floating Point-Operationen ausführen.\\
-Diese Einheit basiert auf der \textit{Advanced SIMD Media Processing-Architektur}. SIMD steht hierbei für \textit{Single Input Multiple Data} und heißt, dass ein und der selbe Befehle gleichzeitig auf mehrere Eingangsdaten angewendet werden kann. Der NEON-SIMD-Einheit ist es so möglich pro Operand 128 Bit gleichzeitig einzulesen und zu schreiben, allerdings kann sie nur 64 Bit gleichzeitig verarbeiten, woraus folgt, dass immer zwei Operationen parallel ausgeführt werden können.\\
-Auch die NEON-SIMD-Einheit verwendet die in \textbf{Abbildung \ref{fig:neonbank}} abgebildete Registerbank und kann Operationen auf dieser mit folgenden Ein- und Ausgaberegistern ausführen:
-
-\begin{itemize}
-\item Mit 16 128-bit Quadwortregistern, Q0-Q15,
-\item mit 32 64-bit Doppelwortregistern, D0-D31, die auch von der VFPv3-Einheit sichtbar sind
-\item und mit Kombinationen aus den 128- und 64-bit Registern.
-\end{itemize}
-Die Einheit kann bis zu zwei Advanced SIMD Operationen pro Takt von der Integer Execution Einheit des ARMs empfangen und zusätzlich noch 32-bit MCR oder MRC Daten mit dieser tauschen.\\
-Des weiten werden NEON-SIMD-Befehle in einer 10-stufigen Pipeline abgearbeitet.\\
-Außerdem ist es der NEON-SIMD-Einheit möglich Teile der VFPv3-Befehle in ihrer Pipeline auszuführen um die Abarbeitungszeit zu beschleunigen.\\
-In \textbf{Tabelle \ref{tab:neon}} ist ein Auszug des NEON-SIMD-Befehlssatzes mit Ausführungszeiten in  Takten angegeben. Sigle-Precision-Befehle sind im späteren Assemblercode durch den Zusatz \textit{.f32} hinter dem Befehlsnamen gekennzeichnet.
+Diese Einheit basiert auf der \textit{Advanced SIMD Media Processing-Architektur}. SIMD steht hierbei für \textit{Single Input Multiple Data} und heißt, dass ein und der selbe Befehle gleichzeitig auf mehrere Daten angewendet werden kann. Bei Floating Point Berechnungen kann sie 128 Bit pro Operand lesen und schreiben. Allerdings ist es nur möglich 64 Bit pro Operand gleichzeitig zu verarbeiten, daher werden Operationen auf vierfacher Wortbreite in zwei Schritten abgearbeitet. Im ersten Schritt werden die Least Significant Bits (LSBs) der Operanden gelesen und miteinander verrechnet, im zweiten Schritt die Most Significant Bits (MSBs). Solche Operationen benötigen 2 Takte. daraus folgt, dass es der NEON-SIMD-Einheit möglich ist zwei Operationen parallel auszuführen.
+Auch die NEON-SIMD-Einheit verwendet die in \textbf{Abbildung \ref{fig:neon}} abgebildete Registerbank und kann Operationen auf dieser entweder mit doppelter oder vierfacher Wortbreite (D- oder Q-Namensgebung) verarbeiten.\\
+Die Einheit kann bis zu zwei Advanced SIMD Operationen pro Takt empfangen.\\
+Des weiteren werden NEON-SIMD-Befehle in einer 10-stufigen Pipeline verarbeitet.\\
+Außerdem ist es der NEON-SIMD-Einheit möglich Teile der VFPv3-Befehle in ihrer Pipeline auszuführen um die Verarbeitungszeit zu beschleunigen.\\
+In \textbf{Tabelle \ref{tab:neon}} ist ein Auszug des NEON-SIMD-Befehlssatzes mit Ausführungszeiten in  Takten angegeben. Single-Precision-Befehle werden im Assemblercode durch den Zusatz \textit{.f32} hinter dem Befehlsnamen gekennzeichnet.
 
 \begin{table}[hpt]
 \centering
@@ -234,202 +208,49 @@ VSTR  & 1-2\\
 \label{tab:neon}
 \end{table}
 
-\subsubsection{Ansteuerungsmöglichkeiten}
-Wird bei der Kompilierung nicht spezifiziert, wie Floating Point-Operationen behandelt werden sollen, werden diese immer mit den in \textbf{Tabelle \ref{tab:aeabi}} angegeben Softwarefunktionen emuliert.\\
-Sollen solche Operationen auf der VFPv3-Einheit ausgeführt werden muss lediglich das Flag \textit{\-mfpu=vfp} gesetzt werden.\\
-Die NEON-SIMD-Einheit kann auf den üblichen vier wegen Angesprochen werden:
-\begin{itemize}
-\item Ansteuerung durch den Compiler
-\item Unterstützung des Compilers durch Umstrukturierung des Codes
-\item Einfügen von Intrinsics in den Code
-\item Algorithmen direkt in NEON-Assembler schreiben
-\end{itemize}
-Da diese vier Optionen für die spätere Optimierung verwendet werden, wird zu jeder dieser Varianten auch ein Beispiel gegeben. Wichtig ist, dass bei allen vier Varianten das Compilerflag \textit{-mfpu=neon} gesetzt sein muss.
- 
-\paragraph{Compiler}\label{ph:neoncomp}$\;$ \\\\
-Die erste Variante ist die am leichtesten Umzusetzende. Hierbei wird nur das vorher erwähnte Compilerflag gesetzt und der Compiler fügt während der Kompilierung an ihm sinnvoll erscheinenden Stellen NEON-Assembler-Code ein.\\
-Als Beispiel soll hier ein einfacher Beipielcode verwendet werden der in den \textbf{Listings \ref{code:spfc} - \ref{code:spfneon}} in C, ARM-Assembler und in ARM+NEON-Assembler angegeben wird.
-
-\begin{lstlisting}[caption=1. einfaches Beispiel in C, label=code:spfc]
- int i;
- for (i = 0; i < 200; i++) {
- z[i] = a[i] * b[i];
- }
-\end{lstlisting}
-
-\begin{lstlisting}[caption=ARM-Assembler, label=code:spfarm]
-	PUSH     {r4,r5,lr}
-	MOV      r3,#0
-|L1.8|:
-	ADD      r4,r0,r3,LSL #1
-	ADD      r5,r1,r3,LSL #1
-	LDRH     r4,[r4,#0]		;Laden von a[i];
-	LDRH     r5,[r5,#0]		;Laden von b[i];
-	SMULBB   r4,r4,r5
-	ADD      r5,r2,r3,LSL #1
-	ADD      r3,r3,#1
-	CMP      r3,#0xc8		;200 Iterationen;
-	STRH     r4,[r5,#0]     ;Speichern in z[i];
-	BLT      |L1.8|
-	POP      {r4,r5,pc}
-\end{lstlisting}
-
-\begin{lstlisting}[caption=ARM+NEON-Assembler, label=code:spfneon]
-	MOV      r3,#0x19 		;nur noch 25 Iterationen;
-|L1.4|
-	VLD1.16  {d0,d1},[r0]!	;Laden von a;
-	SUBS     r3,r3,#1
-	VLD1.16  {d2,d3},[r1]!  ;Laden von b;
-	VMUL.I16 q0,q0,q1		;a*b;
-	VST1.16  {d0,d1},[r2]!	;Speichern in z;
-	BNE      |L1.4|
-	BX       lr
-\end{lstlisting}
-
-Hierbei sieht man, dass sowohl die Lade und Speicheroperationen, als auch, dass die Multiplikation an sich parallelisiert wurden.
-
-\paragraph{C-Code}\label{ph:neonc}$\;$ \\\\
-Die zweite Variante erfordert ein Eingreifen in die Code-Struktur. Hierbei geht es darum kritische Stellen im Code zu identifizieren und zu isolieren, die es dem Compiler nicht erlauben eine auf den NEON abbildbare Codestelle zu erkennen. Dieses kommt insbesondere bei verschachtelten Anweisungen und bei unklaren Datenabhänigikeiten vor.
-
-\paragraph{Intrinsics}\label{ph:neonint}$\;$ \\\\
-Eine weitere Variante bietet das Ersetzten von Berechnungen durch Intrinsics, die die entsprechende Berechnung auf Assembler-Ebene darstellen. Eine Liste der vorhandenen Intrinsics ist in \cite{intrinsics} zu finden.\\
-Eine solche Ersetzung von Berechnungen durch Intrinsics soll an einem weiteren einfachen  Beispiel in den \textbf{Listings \ref{code:firstc} - \ref{code:firstneon}} verdeutlicht werden.
-
-\begin{lstlisting}[caption=2. einfaches Beispiel in C, label=code:firstc]
-	int i;
- 	for(i=0;i<200;i++) {
- 	z[i] = x[i] + y[i];
- 	}
-\end{lstlisting}
-
-\begin{lstlisting}[caption=2. einfaches Beipiel mit Intrinsics, label=code:firstcv]
-	int i;
-	uint32x4_t x4,y4; // Hier werden 128 bit Register definiert, die die Operanten halten 
-	uint32x4_t z4;    // Hier wird ein 128 bit Register definiert, dass das Ergebnis hält 
-	uint32_t *ptra = x; //x,y und z sind die Eingangs-, bzw. Ausgangsarrays 
-	uint32_t *ptrb = y; 
-	uint32_t *ptrz = z; 
-
-	for(i=0; i < 200/4; i++)
-	{
-        x4 = vld1q_u32(ptra);  // Intrinsic um x4 mit 4 Werten von x zu laden
-        y4 = vld1q_u32(ptrb);  // Intrinsic um y4 zu laden
-        z4=vaddq_u32(x4,y4);   // Intrinsic um z4=x4+y4 zu addieren
-        vst1q_u32(ptrz, z4);   // Speicher die 4 Ergebnisse in z
-        ptra+=4; // Pointer inkrementieren
-        ptrb+=4;
-        ptrz+=4;
-	}
-\end{lstlisting}
-
-\begin{lstlisting}[caption=ARM+NEON-Assembler, label=code:firstneon]
-        add      r3, r1, #800
-.L2:
-        vld1.32  {d4-d5}, [r1] ;Zeile 10;
-        add      r1, r1, #16
-        vld1.32  {d6-d7}, [r0] ;Zeile 11;
-        cmp      r1, r3
-        vadd.i32 q3, q3, q2    ;Zeile 12;
-        vst1.32  {d6-d7}, [r2] ;Zeile 13;
-        add      r0, r0, #16
-        add      r2, r2, #16
-        bne      .L2
-        bx       lr
-\end{lstlisting}
-
-In \textbf{Listing \ref{code:firstneon}} sind alle Instruktionen wiederzufinden, die in \textbf{Listing \ref{code:firstcv}} definiert wurden.
-\newpage
-\paragraph{Assembler}\label{ph:neonasm}$\;$ \\\\
-Als letzte Variante soll die direkte Umsetzung einer Berechnung in NEON-Assembler vorgestellt werden. Hierbei werden einzelne Methoden oder ganze Programmteile nicht in einer Hochsprache wie C/C++ geschrieben sondern in NEON-Assembler.\\
-Als Beispiel soll hier eine Methode aus der FFT der Libav-Bibliothek angeführt werden. Die Libav-Bibliothek wird im Optimierungskapitel vorgestellt.\\
-Die \textbf{Linstings \ref{code:fft4c}} und \textbf{\ref{code:fft4neon}} zeigen einmal die Methode \textit{FFT4} in C-Code und in NEON-Assembler.
-
-\begin{lstlisting}[caption= FFT4 in C, label=code:fft4c]
-static void fft4(FFTComplex *z)
-{
-#define BF(x, y, a, b) do {                     \
-        x = a - b;                              \
-        y = a + b;                              \
-    } while (0)
-
-    FFTDouble t1, t2, t3, t4, t5, t6, t7, t8;
-
-    BF(t3, t1, z[0].re, z[1].re);
-    BF(t8, t6, z[3].re, z[2].re);
-    BF(z[2].re, z[0].re, t1, t6);
-    BF(t4, t2, z[0].im, z[1].im);
-    BF(t7, t5, z[2].im, z[3].im);
-    BF(z[3].im, z[1].im, t4, t8);
-    BF(z[3].re, z[1].re, t3, t7);
-    BF(z[2].im, z[0].im, t2, t5);
-}
-\end{lstlisting}
-
-\begin{lstlisting}[caption=FFT4 in NEON-Assembler, label=code:fft4neon]
-function fft4_neon
-        vld1.32         {d0-d3}, [r0,:128]
-
-        vext.32         q8,  q1,  q1,  #1       @ i2,r3 d3=i3,r2
-        vsub.f32        d6,  d0,  d1            @ r0-r1,i0-i1
-        vsub.f32        d7,  d16, d17           @ r3-r2,i2-i3
-        vadd.f32        d4,  d0,  d1            @ r0+r1,i0+i1
-        vadd.f32        d5,  d2,  d3            @ i2+i3,r2+r3
-        vadd.f32        d1,  d6,  d7
-        vsub.f32        d3,  d6,  d7
-        vadd.f32        d0,  d4,  d5
-        vsub.f32        d2,  d4,  d5
-
-        vst1.32         {d0-d3}, [r0,:128]
-
-        bx              lr
-endfunc
-\end{lstlisting}
-
-Hierbei werden immer zwei Berechnungen parallel durchgeführt. Jedes BF() in \textbf{Listing \ref{code:fft4c}} besteht aus einer Addition und einer Subtraktion, es werden also insgesamt acht Additionen und 8 Subtraktionen durchgeführt. Im NEON-Assembler-Code aus \textbf{Listing \ref{code:fft4neon}} befinden sich vier VADDs und vier VSUBs, die jeweils für 2 parallele Berechnungen stehen. Also werden auch hier wieder acht Additionen und acht Subtraktionen durchgeführt.
-
 \subsection{Der C674x-DSP-Prozessor}\label{subsec:dsp}
 Der C674x-DSP der Firma Texas Instruments gehört zur C6000-Familie und ist ein VLIW DSP mit Floating Point-Hardware. \textbf{Abbildung \ref{fig:DSPblock}} zeigt das Blockdiagramm des DSPs.
 %
 \begin{figure}[h]
 	\centering
 		\includegraphics[width=1\textwidth]{../Pictures/DSPblock.pdf}
-	\caption{C674x Blockdiagramm\cite{evm8168}}
+	\caption{Vereinfachtes C674x Blockdiagramm\cite{evm8168}}
 	\label{fig:DSPblock}
 \end{figure} 
 %
-\subsubsection{Hardware}
-Aus \textbf{Abbildung \ref{fig:DSPblock}} lassen sich folgende Hardwarekomponenten entnehmen:
-\begin{itemize}
-\item C674x+ CPU
-\item 32kB L1 Programm (L1P) RAM und Cache (bis zu 32kB) mit Error Detection Code (EDC)
-\item 32kB L1 Daten (L1D) RAM und Cache (bis zu 32kB)
-\item 256kB zusammenhängender L2 RAM und Cache mit Error Correction Code (ECC)
-\item External Memory Controller (EMC)
-\item Interleaving Domain Multiple Access (IDMA)
-\end{itemize}
+
+Im Wesentlichen besteht der C674x aus vier Komponenten. Die erste Komponente ist die C674x+ CPU in der Befehle des C674x-Instuktionssatz verarbeitet werden. Neben dieser bestehen getrennte L1-Befehls- (L1P) und Datencaches (L1D) und ein L2-Cache. Dem L1D-Cache ist es bei Bedarf möglich mit 8x32bit-Datenleitungen auf den L1D-RAM zuzugreifen. In \textbf{Tabelle \ref{tab:dspcache}} sind die wesentlichen Merkmale der verwendeten Caches angegeben.
+
+\begin{table*}[ht]
+	\centering
+		\begin{tabular}{|c|c|c|c|}
+		\hline
+			& L1P-Caches & L1D-Cache & L2 Cache\\
+		\hline\hline
+			Größe & 32KB & 32 KB & 256 KB\\
+			Zeilenlänge & 32 Bytes & 64 Bytes & 128 Bytes\\
+			Cachestruktur & Direct-mapped& 2-fach assoziativ & 4-fach assoziativ\\
+		\hline
+		\end{tabular}
+	\caption{Wesentliche Merkmale der L1- und L2-Caches des C674x DSP\cite{sprug82a}}
+	\label{tab:dspcache}
+\end{table*}
+
 
 Die Registerarchitektur innerhalb der C674x+ CPU, ihr Instruktionssatz und die Pipelinestruktur wird im Nachfolgenden näher erläutert.
 
 \paragraph{Registerarchitektur und Instruktionssatz}\label{ph:reginst}$\;$ \\\\
-Wie ebenfalls in \textbf{Abbildung \ref{fig:DSPblock}} zu sehen ist, besitzt die C674x+ CPU zwei parallele Datenpfade, die mit Register File A und B bezeichnet sind. Beide Datenpfade sind mit je mit einer 64 Bit-Leitung an den L1D-Cache angeschlossen, können also parallel 64 Bit lesen oder schreiben.\\
+Wie ebenfalls in \textbf{Abbildung \ref{fig:DSPblock}} zu sehen ist, besitzt die C674x+ CPU zwei parallele Datenpfade, die mit Register File A und B bezeichnet sind. Beide Datenpfade sind mit je mit einer 64 Bit breiten Anbindung an den L1D-Cache angeschlossen, können also parallel 64 Bit lesen oder schreiben.\\
 Innerhalb dieser Datenpfade befinden sich acht Ausführungseinheiten zur Bearbeitung von Befehlen, je vier pro Datenpfad. Jeder Ausführungseinheit ist hierbei ein Teil des Instruktionssatzes zugeordnet.\\
 Daraus folgt, dass im Idealfall acht Befehle parallel pro Takt ausgeführt werden können.\\
-\textbf{Abbildung \ref{fig:Register}} zeigt den Aufbau der beiden Datenpfade Register File A und B, nicht eingezeichnet sind die beiden sogenannten Crosspaths, die es Operationen aus dem Datenpfad A erlauben ein Datum pro Takt aus Register File B zu lesen und umgekehrt. Diese Crosspaths sind im Assembler-Code durch ein X hinter der Ausführungseinheit gekennzeichnet.Insgesamt besitzt der DSP 64 32 Bit-Register, je 32 in A und B.
-Auch wenn einige Befehle auf mehreren Ausführungseinheiten ausgeführt werden können, lassen sich diese wie folgt grob unterteilen: 
+In \textbf{Abbildung \ref{fig:DSPblock}} ist der Aufbau der beiden Datenpfade Register File A und B zusehen, nicht eingezeichnet sind die beiden sogenannten Crosspaths, die es Operationen aus dem Datenpfad A erlauben ein Datum pro Takt aus Register File B zu lesen und umgekehrt. Insgesamt besitzt der DSP 64 32 Bit-Register, je 32 in A und B.
+Auch wenn einige Instruktionen auf mehreren Ausführungseinheiten ausgeführt werden können, lässt sich eine grobe Zuordnung von Instruktionen zu Asuführungseinheiten feststellen: 
 \begin{itemize}
-\item .M führt Multiplikationen aus,
-\item .L und .S sind primär alle anderen arithmetischen Operationen zuständig
-\item und .D ist primär für das Laden und Speichern von Daten verantwortlich. 
+\item .M führt Multiplikationen aus
+\item .L und .S sind für alle anderen arithmetischen Operationen zuständig
+\item .D ist für das Laden und Speichern von Daten verantwortlich. 
 \end{itemize}
-%
-\begin{figure}[h]
-	\centering
-		\includegraphics[scale=0.7]{../Pictures/Register.pdf}
-	\caption{Stuktur der parallelen Datenpfade des C674x\cite{sprabf2}}
-	\label{fig:Register}
-\end{figure} 
-%
-\textbf{Tabelle \ref{tab:c674x}} gibt einen Überlick über die vorhandenen Befehle, in welcher Gruppe sie liegen, wieviele Takte sie benötigen und ihrer  Functional Unit Latency (FUL) und Delayslots, welche fürs Pipelining wichtig sind. Hierbei gibt die Functional Unit Latency die Anzahl an Takten an, die eine Einheit nach Abschluss einer Berechnung benötigt, bis sie eine neue Berechnung annehmen kann. Die Delayslots geben die Takte an, die zwischen Einlesen der Operanden und dem Abschluss der Berechnung vergehen. Der Instruktionssatz besitzt keine Befehle für Divisionen oder Wurzeloperationen. Diese werden nach dem Newton-Raphson-Verfahren in Software emuliert.
+\textbf{Tabelle \ref{tab:c674x}} gibt einen Überlick über wesentliche Befehle mit Angaben über die zugeordneten Ausführungseinheiten, Anzahl erforderlicher Takte zur Ausführungs, sowie der Anzahl an Functional Unit Latency (FUL) und Delayslots, welche fürs Pipelining wichtig sind. Hierbei gibt die Functional Unit Latency die Anzahl an Takten an, die eine Einheit nach Abschluss einer Berechnung benötigt, bis sie eine neue Berechnung annehmen kann. Die Delayslots geben die Takte an, die zwischen Einlesen der Operanden und dem Abschluss der Berechnung vergehen. Die maximale Anzahl an Delayslots beträgt neun. Der Instruktionssatz besitzt keine Befehle für Divisionen oder Wurzeloperationen. Diese werden nach dem Newton-Raphson-Verfahren in Software berechnet. hierfür steht die reziproke Wurzel als Instruktion zur Verfügung, die zur Berechnung der Wurzel erforderlich ist.
 
 \begin{table}[ht]
 \centering
@@ -458,7 +279,7 @@ SUBDP & .L\&.S & 7 & 6 & 2\\
 \end{table}
 
 \paragraph{Pipelining auf dem C674x}\label{ph:dsppipe}$\;$ \\\\
-Generell besitzt die Pipeline des C674x drei Phasen:
+Die Pipeline des C674x lässt sich in drei Phasen unterteilen:
 
 \begin{enumerate}
 \item Fetch
@@ -467,25 +288,9 @@ Generell besitzt die Pipeline des C674x drei Phasen:
 \end{enumerate}
 
 Die Fetch-Phase besitzt vier Stufen, die Decode-Phase zwei Stufen und die Execute-Phase maximal 10 Stufen (vgl. \textbf{Abbildung \ref{fig:dsppipe}}), hierbei ist eine Stufe immer einen Takt lang.
-%
-\begin{figure}[htb]
-	\centering
-		\includegraphics[width=1\textwidth]{../Pictures/dsppipe.pdf}
-	\caption{Pipelinestufen und -phasen des C674x\cite{sprufe8b}}
-	\label{fig:dsppipe}
-\end{figure} 
-% 
+
 \subparagraph{Die Fetch-Phase}\label{subph:fetch}$\;$ \\\\
-In der Fetch-Phase werden Befehle aus dem Instruktionscache geladen. Diese ist, wie bereits erwähnt, in vier Stufen unterteilt:
-
-\begin{enumerate}
-\item PG: Program address generate
-\item PS: Program address send
-\item PW: Program access ready wait
-\item PR: Pregram fetch packet receive
-\end{enumerate}
-
-Zum Laden von Befehlen aus dem Instruktionscache wird ein sogenanntes Fetch Packet (FP) verwendet, welches aus acht Befehlen besteht. In einem Fetch Paket sind neben den acht Befehlen auch noch Informationen darüber enthalten, welche Befehle parallel ausgeführt werden können.
+In der Fetch-Phase werden in vier Stufen Instruktionen aus dem Instruktionscache geladen. Instruktionen werden hierfür zu Fetch Paketen (FP) zusammengefasst, welche aus acht Instruktionen bestehen.
 
 \subparagraph{Die Decode-Phase}$\;$ \\\\
 Die Decode-Phase besteht aus zwei Stufen:
@@ -494,35 +299,19 @@ Die Decode-Phase besteht aus zwei Stufen:
 \item DC: Instruction decode
 \end{enumerate}
 
-In der DP-Phase werden die vorher geladenen Fetch Packets in sogenannte Execute Packets zerlegt. Hierbei stellt ein Execute Packet Befehle dar, die parallel auf den acht vorhandenen Ausführungseinheiten bearbeitet werden, daraus folgt, dass ein Execute Packet immer mindestens aus einem und maximal aus acht Befehlen bestehen kann. Außerdem werden in dieser Phase den einzelnen Befehlen eines Execute Packets die Ausführungseinheiten zugeordnet, die sie bearbeiten werden. Hierbei muss beachtet werden, dass Ausführungseinheiten noch auf Grund von Latenzen belegt sein können (siehe \textbf{\ref{ph:reginst}}). Operationen die parallel bearbeitet werden sind im späteren Assembler-Code mit einem \glqq ||\grqq\  gekennzeichnet.\\
-Während der DC-Phase werden die Quell- und Zielregister und gegebenenfalls zugewiesene Crosspaths dekodiert, welche bei der späteren Ausführung benötigt werden. 
+In der DP-Stufe wird das zuvor geladene Fetch Paket in sogenannte Execute Pakete zerlegt. Ein Execute Paket enthält parallel auszuführende Instruktionen. Ein Execute Paket besteht immer mindestens aus einem und maximal aus acht Instruktionen. Außerdem werden in dieser Stufe jeder Instruktion eines Execute Pakets eine geeignete Ausführungseinheit zugeordnet. Hierbei muss beachtet werden, dass Ausführungseinheiten noch auf Grund von Latenzen belegt sein können (siehe \textbf{\ref{ph:reginst}}). Operationen die parallel bearbeitet werden sind im späteren Assembler-Code mit einem \glqq ||\grqq\  gekennzeichnet.\\
+Während der DC-Stufe werden die Quell- und Zielregister und gegebenenfalls zugewiesene Crosspaths dekodiert, welche bei der späteren Ausführung benötigt werden. 
 
 \subparagraph{Die Execute-Phase}$\;$ \\\\
-In der Execute-Stufe werden die vorher geladenen und decodierten Befehle auf den Hardwareeinheiten ausgeführt. Diese Stufe wird formell in zehn Stufen unterteilt, E1-E10, in denen je nach Befehl Lade- und/oder Schreiboperationen ausgeführt werden. Hierbei kann es allerdings passieren, dass bei manchen Befehlen eine bestimmte Zeit vergeht, bis das Ergebnis am Ausgang anliegt, diese Zeit wird als Delayslots bezeichnet, welche ab der Phase E1 gezählt werden (vgl. \textbf{Tabelle \ref{tab:c674x}}). Die maximale Anzahl an Delayslots im Instruktionssatz des C674x beträgt 9.\\
+In der Execute-Phase werden die vorher geladenen und decodierten Befehle auf den Hardwareeinheiten ausgeführt. Diese Stufe wird  in zehn Stufen unterteilt, E1-E10. Die Anzahl durchzulaufender Stufen ist durch instruktionsbezogene Delayslots spezifiziert.
 
-\subparagraph*{Die Execute-Phase bei Double-Precision}$\;$ \\\\
-Durch die Besonderheit von Double-Precision-Funktionen Operanden und Ergebnisse in zwei Schritten zu lesen, bzw. zu schreiben, ergeben sich Möglichkeiten dieses beim Scheduling solcher Funktionen auszunutzen. Hierbei werden immer erst die LSBs gelesen, bzw. geschrieben und einen Takt später die MSBs.\\
-Soll zum Beispiel erst eine Multiplikation (MPYSP2DP) und danach eine Addition (ADDDP) dieses Ergebnisses mit einem andern Wert geschehen, so kann die Addition bereits in dem Takt mit der Bearbeitung anfangen, in dem das LSB des Ergebnisses der Multiplikation geschrieben wurde.
+%\subparagraph*{Die Execute-Phase bei Double-Precision}$\;$ \\\\
+%Durch die Besonderheit von Double-Precision-Funktionen Operanden und Ergebnisse in zwei Schritten zu lesen, bzw. zu schreiben, ergeben sich Möglichkeiten dieses beim Scheduling solcher Funktionen auszunutzen. Hierbei werden immer erst die LSBs gelesen, bzw. geschrieben und einen Takt später die MSBs.\\
+%Soll zum Beispiel erst eine Multiplikation (MPYSP2DP) und danach eine Addition (ADDDP) dieses Ergebnisses mit einem andern Wert geschehen, so kann die Addition bereits in dem Takt mit der Bearbeitung anfangen, in dem das LSB des Ergebnisses der Multiplikation geschrieben wurde.
 
 \subsubsection{Code Parallelisierung durch Software Pipelined Loop (SPLOOP)}\label{ph:sploop}
-Wenn Schleifen optimiert werden sollen gibt es neben Loop-Unrolling meistens keine andere Möglichkeit. Dieses Unrolling nutzt aber nicht effektiv alle acht Ausführungseinheiten des DSPs aus.
-Hier kommt die Software Piplined Loop ins Spiel.\\ 
-SPLOOP besteht zum einen Teil aus Hardware und zum anderen Teil aus Planungsarbeit, die während der Kompilierung vom Compiler aufgebracht wird.\\
-Hierbei wird eine Möglichkeit geboten, Schleifen, welche im Programm vorkommen, in Form einer Pipeline abzuarbeiten. Hierfür sind Hardwarekomponenten innerhalb des C674x vorhanden:
-
-\begin{itemize}
-\item Loop Buffer
-\item Loop buffer count register (LBC)
-\item Inner loop count register (ILC)
-\item Reload inner loop count register (RILC)
-\item Task state register (TSR)
-\item Interrupt task state register (ITSR)
-\item NMI/Exception task state register (NTSR)
-\end{itemize}
-
-Als erstes wird während der Kompilierung ein Ausführungsplan aufgestellt, wodurch sequentiell kodierte Befehle aus verschiedenen Iterationsschritten parallel verarbeitet werden.\\
-Hierfür wird ein Iterationsschritt in sogenannte Stages unterteilt. Eine Stage bezeichnet hierbei einen Teil des sequentiell auszuführenden Codes eines Interationsschritts, der sich dadurch auszeichnet, dass er eine vorgegebene Ausführungszeit in Takten besitzt. Diese Ausführungszeit wird als Iterationsintervall bezeichnet.\\
-Wenn die Pipeline der SPLOOP vollständig gefüllt ist, werden alle Stages parallel ausgeführt und jede Stage ist einem anderen Iterationsschritt zugeordnet. Dieses wird als Kernel bezeichnet. Die Phase vor dem Kernel wird als Prolog bezeichnet, die nach diesem als Epilog. \textbf{Abbildung \ref{fig:sploop}} soll dieses verdeutlichen.\\
+SPLOOP ist ein Konzept zur parallelen Verarbeitung von Schleifen-Iterationen. hierbei werden Instruktionen der verschiedenen Iterationen gleichzeitig verarbeitet. Dieses Konzept lässt sich vollständig durch eine Unterstürzung des Compilers realisieren. Hierfür wird während der Kompilierung ein Ausführungsplan aufgestellt, wobei ein Iterationsschritt in sogenannte Stages unterteilt wird. Eine Stage bezeichnet einen Teil des sequentiell auszuführenden Codes eines Interationsschritts, der eine vorgegebene Ausführungszeit in Takten besitzt und mit anderen Stages parallel verarbeitet werden kann. Diese Ausführungszeit wird als Iterationsintervall bezeichnet.\\
+Die schematische Verarbeitung der Stages ist in \textbf{Abbildung \ref{fig:sploop}} dargestellt.
 %
 \begin{figure}[htb]
 	\centering
@@ -530,36 +319,20 @@ Wenn die Pipeline der SPLOOP vollständig gefüllt ist, werden alle Stages paralle
 	\caption{Software Pipelined Execution Flow\cite{sprufe8b}}
 	\label{fig:sploop}
 \end{figure} 
-% 
-Um SPLOOP während der Ausführung zu ermöglichen werden, SPLOOP-spezifische Befehle in den Assemblercode eingefügt, die der zugrundeliegenden Hardware ermöglichen, Stages etc. zu erkennen. Diese Befehle lassen sich grob in drei Gruppen unterteilen:
+%
+Die Phase bis alle Stages parallel verarbeitet werden wird als Prolog bezeichnet. Nach dem Prolog folgt der Kernel, der die Phase bezeichnet, in der alle Stages parallel verarbeitet werden. Auf den Kernel folgt der Epilog. Prolog und Epilog sind $\#Stages - 1$ lang.\\ 
+Der C674x besitzt eine hardwareseitige Unterstützung für SPLOOPs. Hierbei werden die Execution Pakete der SPLOOP in einen speziellen Buffer geladen. Durch zusätzliche Logik werden anschließend die Execute Pakete der verschiedenen Stages parallel ausgeführt. Die Hardware-Unterstützung bietet folgende Vorteile:
 
 \begin{itemize}
-\item SPLOOP(D/W): Diese Befehlsgruppe lösen den Loop Buffer Mechanismus aus
-\item SPKERNEL(R): Diese Befehle markieren das Ende einer SPLOOP
-\item SPMASK(R): Mit dieser Befehlsgruppe lassen sich einzelne Operationen auf Ausführungseinheiten innerhalb eines Execute Packets sperren
+\item Execute Pakete können ohne erneutes fetching aus dem SPLOOP-Buffer geladen werden
+\item Die Planung der Verabeitungsreihenfolge wird von der Hardware übernommen
 \end{itemize}
 
-\paragraph{Loop Buffer}$\;$ \\\\
-Im Loop Buffer werden die für die Schleife benötigten Instruktionen, Informationen, ob diese momentan aktiv oder inaktiv sind und Informationen über ihre Abarbeitungsreihenfolge gespeichert. Diese Instruktionen werden in Form von Execute Packets gespeichert. Es können bis zu 14 solcher Pakete hinterlegt werden.\\
-Die Speicherung von Instruktionen im Loop Buffer bietet den Vorteil, dass sie nicht für jede Ausführung neu die Fetch-Stufe durchlaufen müssen, sondern einfach aus dem Loop Buffer geladen werden können.\\
-Aus diesem Buffer ließt die Hardwareeinheit der SPLOOP, die die parallele Abbarbeitung ermöglicht.
+Die Berechnung der Gesammtlaufzeit einer Schleife mit SPLOOP wird nach \textbf{Formel \ref{eqn:sploop}} berechnet.
 
-\paragraph{Loop buffer count register (LBC)}$\;$ \\\\
-Das LBC fungiert als Inhaltsverzeichnis für den Loop Buffer und gibt an, welche Stages ausgeführt werden müssen. Das LBC wird in zwei Fällen auf null zurückgesetzt. Entweder wenn ein Befehl aus der SPLOOP(D/W)-Befehlsgruppe ausgeführt wird oder wenn der Iterationsintervall-Wert erreicht ist, der beim letzten Befehl der eben genannten Gruppe mit übergeben wurde. Sollte der zweite Fall eintreten, wird das ILC um 1 dekrementiert.\\
-Es sind zwei LBCs vorhanden um eine Unterstützung für verschachtelte Schleifen zu gewährleisten.
-
-\paragraph{Inner loop count register (ILC)}$\;$ \\\\
-Im ILC ist die Gesamtzahl der Durchläufe hinterlegt, die für die Ausführung der Schleife erforderlich sind. Erreicht das LBC den Iterationsintervall-Wert, wird das ILC dekrementiert, erreicht das ILC den Wert 0, endet die SPLOOP.
-
-\paragraph{Reload inner loop count register (RILC)}$\;$ \\\\
-Das RILC ist dafür zuständig den ILC für die nächste Ausführung einer verschachtelten Schleife zurückzusetzen.
-
-\paragraph{TSR, ITSR und NTSR}$\;$ \\
-
-Diese drei Register sind für den Status der SPLOOP zuständig.\\
-TSR zeigt an, ob eine SPLOOP momentan ausgeführt wird.\\
-Sollte ein Interrupt kommen, wird der Inhalt des TSR in das ITSR kopiert.\\
-Sollte ein Fehler oder ein nicht maskierbarer Interrupt auftreten, wird der Inhalt von TSR in NTSR kopiert.
+\begin{equation}\label{eqn:sploop}
+Zeit~=~ \left(\overbrace{\#Stages-1}^{Prolog}+\overbrace{\#Durchl"aufe}^{Kernel}+\overbrace{\#Stages-1}^{Epilog}\right) \cdot Iterationsinterval
+\end{equation}
 
 \paragraph{Beispiel des Software-Pipelinings (SPLOOP)}\label{ph:bspsploop}$\;$ \\\\
 Die Funktionsweise von SPLOOP soll nachfolgend am Beispiel der Schleife innerhalb der Berechnung des \textit{Spectral Centroids} erläutert werden. \textbf{Listing \ref{code:scc}} zeigt den C-Code dieser Schleife und \textbf{Listing \ref{code:scasm}} den entsprechenden Assembler-Code.
@@ -603,18 +376,158 @@ $C$L2:    ; PIPED LOOP KERNEL
 $C$L3:    ; PIPED LOOP EPILOG
 ;** --------------------------------------------------------------------------*
 \end{lstlisting}
-In diesem speziellen Beispiel ist der Epilog leer, dieses gilt aber nicht für die Allgemeinheit.\\
-Wie durch den Befehl \textit{SPLOOPD 4} angegeben ist, beträgt die Länge eines Iterationsintervals vier Takte. Des weiteren sind sechs Stages vorhanden (innerhalb des Codes durch Leerzeilen getrennt), die jeweils vier Takte lang sind. Die einzige Ausnahme ist der Befehl \textit{LDW}, dieser wird in fünf Takten ausgeführt, da allerdings nicht direkt nach dem 5. Takt aus A5 gelesen wird, stellt dieses kein Problem dar. Der Befehl \textit{SPKERNEL} markiert das Ende des Kernels, die Argumente dieses Befehls geben an, wie lange nach dem letzten Durchlauf gewartet werden muss, bis wieder Operationen ausgeführt werden können, in diesem Fall muss die Laufzeit einer Stage und 2 Takte gewartet werden, also insgesamt 6 Takte.\\
-Die Konstante \textit{scsize} aus \textbf{Listing \ref{code:scc}} steht für die halbe Breite eines betrachteten Fensters.\\
-Die Berechnung der Gesammtlaufzeit einer Schleife mit SPLOOP wird nach \textbf{Formel \ref{eqn:sploop}} berechnet. Im Fall des \textit{Spectral Centroids} mit einer Fensterbreite von 512, beträgt die Gesamtlaufzeit in Takten 976.
+Ein || am Anfang einer Zeile bedeutet, dass der folgende Befehl parallel zum Befehl der vorherigen Zeile ausgeführt wird. So werden z.B. \textit{INTSP} und \textit{LDW} parallel ausgeführt.\\
+Wie durch den Befehl \textit{SPLOOPD 4} angegeben ist, beträgt die Länge eines Iterationsintervals respektive einer Stage vier Takte. Des weiteren sind sechs Stages vorhanden, welche innerhalb des Codes durch Leerzeilen getrennt sind. Die einzige Ausnahme ist der Befehl \textit{LDW}, dieser wird in fünf Takten ausgeführt, jedoch wird das Ergebnis erst von der übernächsten Stage weiter verarbeitet, so dass keien Daten-Konflikte auftreten. Der Befehl \textit{SPKERNEL} markiert das Ende des Kernels, die Argumente dieses Befehls geben an, wie lange nach dem letzten Durchlauf gewartet werden muss, bis wieder Operationen ausgeführt werden können, in diesem Fall muss die Laufzeit einer Stage und 2 Takte gewartet werden, also insgesamt 6 Takte.\\
+Die Konstante \textit{scsize} aus \textbf{Listing \ref{code:scc}} steht für die Anzahl an Betragsspektren eines Audio-Fensters.\\
+Im Fall des \textit{Spectral Centroids} mit einer Fensterbreite von 512, beträgt die Gesamtlaufzeit 1064 Takte.
 
-\begin{equation}\label{eqn:sploop}
-Zeit~=~ \left[\overbrace{\#Stages}^{Einschwung}+\overbrace{\left(\frac{\#Durchl"aufe - 2 \cdot \#Stages}{\#Stages}\right)}^{Eingeschwungen}+\overbrace{\#Stages}^{Ausschwung}\right] \cdot Iterationsinterval
-\end{equation}
+\subsubsection{Optimierte Bibliotheken für den C674x}\label{subsubsec:optbib}
+Texas Instruments bietet zu den DSPs der C6000-Reihe verschiedene Bibliotheken mit achritekturspezifisch optimierten Algorithmen an. Einige dieser optimierten Bibliotheken sind im Umfang des EZSDK (siehe \textbf{Kapitel \ref{sec:ezsdk}}) enthalten. Im Folgenden werden die DSPLIB  und zum anderen die MATHLIB vorgestellt.
+
+\paragraph{DSPLIB}$\;$ \\\\
+Die DSPLIB beinhaltet Algorithmen aus der Signalverarbeitung. Unter anderem ist auch eine Mixed-Radix FFT vorhanden. Die Algorithmen liegen sowohl in C- als auch in Assembler-Code vor.
+
+\paragraph{MATHLIB}$\;$ \\
+
+Die MATHLIB beinhaltet mathematische Funktionen, die ebenfalls in C- und Assembler-Code vorliegen. Die mathematischen Funktionen sind sowohl für Single- als auch Double-Precision vorhanden und sind für skalare und Vektor-Daten ausgelegt.
+
+\section{Linux EZ Software Development Kit (EZSDK)}\label{sec:ezsdk}
+Das Linux EZ Software Development Kit (EZSDK) ist eine von Texas Instruments zum EVM816x-Board mitgelieferte Sammlung von wichtigen und nützlichen Tools. Das EZSDK (gesprochen: \textit{EasySDK}) teil sich in zwei Bereiche, zum einen in Tools für den ARM Cortex A8 und zum anderen in Tools für den C674x DSP (vgl. \textbf{Abbildung \ref{fig:ezsdk}}).
+%
+\begin{figure}[htb]
+	\centering
+		\includegraphics[width=1\textwidth]{../Pictures/EZSDK.pdf}
+	\caption{Struktureller Aufbau des EZSDK}
+	\label{fig:ezsdk}
+\end{figure} 
+%
+Die Tools für den Cortex A8 beinhalten unter anderem das embedded Linux, welches auf dem Prozessor läuft, in der Version 2.6.37, den Bootloader U-Boot und die Code Sourcey Toolchain mit den ARM-Compilern.\\
+Für den C674x sind unter anderem das Betriebssystem (SYSBIOS), das Kommunikationsframework C6EZRun inklusive des DSP-Compilers,sowie die optimierten Bibliotheken DSPLIB und MATHLIB vorhanden.
+
+Für diese Arbeit wurde die EZSDK-Version 5.02 verwendet.
+
+\subsection{Floating Point Berechnung mit der CodeSourcery-Toolchain}
+
+Die Wahl der Einheit zur Floating Point Berechnung wird während der Kompilierung durch Compiler-Flags getätigt (vgl. \textbf{Tabelle \ref{tab:flags}}).
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{|c|c|}
+\hline
+Konfiguration & Flag\\
+\hline\hline
+ARM & -\\
+VFPv3 & -mpfu=vfp\\
+NEON & -mfpu=neon\\
+\hline
+\end{tabular}
+\caption{Complier-Flags zur Wahl der Floating Point Berechnung}
+\label{tab:flags}
+\end{table}
+ 
+Wird bei der Kompilierung nicht spezifiziert, wie Floating Point-Operationen behandelt werden sollen, werden diese immer mit den in \textbf{Tabelle \ref{tab:aeabi}} angegeben Softwarefunktionen emuliert.\\
+Sollen solche Operationen auf der VFPv3-Einheit ausgeführt werden muss lediglich das Flag \textit{\-mfpu=vfp} gesetzt werden.\\
+Einbindung von NEON-SIMD-Instruktionen in den Programm-Code drei Wegen erfolgen. Es ist dem Compiler möglich selber Stellen des Programm-Codes zu identifizieren, die durch die NEON-SIMD-Einheit beschleunigt werden können. \textbf{Listing \ref{code:spfc}} und \textbf{Listing \ref{code:spfneon}} zeigen ein Beispiel in dem die Multiplikation durch NEON-SIMD-Assembler parallelisiert wird.
+\newpage 
+\begin{lstlisting}[caption=1. einfaches Beispiel in C, label=code:spfc]
+ int i;
+ for (i = 0; i < 200; i++) {
+ z[i] = a[i] * b[i];
+ }
+\end{lstlisting}
+\begin{lstlisting}[caption=ARM+NEON-Assembler, label=code:spfneon]
+	MOV      r3,#0x19 		;nur noch 25 Iterationen;
+|L1.4|
+	VLD1.16  {d0,d1},[r0]!	;Laden von a;
+	SUBS     r3,r3,#1
+	VLD1.16  {d2,d3},[r1]!  ;Laden von b;
+	VMUL.I16 q0,q0,q1		;a*b;
+	VST1.16  {d0,d1},[r2]!	;Speichern in z;
+	BNE      |L1.4|
+	BX       lr
+\end{lstlisting}
+
+Dieses hat den Vorteil, dass keine umständlichen Änderungen am Programm-Code vorgenommen werden müssen. Allerdings ist diese Erkennung von der Struktur des Programm-Codes abhängig. Kommen verschachtelte Schleifen oder Funktionsaufrufe in Schleifen vor, werden diese nicht parallelisiert. In solchen Fällen kann der Compiler mit Umstellung des Programm-Codes unterstützt werden. Wenn die Schleifendurchläufe allerdings variable sind, hat der Compiler damit immer noch Schwierigkeiten.\\
+In diesem Fall gibt es die Möglichkeit NEON-Intrinsics im Programm-Code zu verwenden. Hierbei werden Berechnungen durch entsprechende NEON-Intrinsics ersetzt.\textbf{Listing \ref{code:firstc}} - \textbf{\ref{code:firstneon}} zeigen ein Beispiel in dem die Addition innerhalb der Schleife durch NEON-Intrinsics für vier parallele Addtitionen ersetzt wurden.
+\begin{lstlisting}[caption=2. einfaches Beispiel in C, label=code:firstc]
+	int i;
+ 	for(i=0;i<200;i++) {
+ 	z[i] = x[i] + y[i];
+ 	}
+\end{lstlisting}
+
+\begin{lstlisting}[caption=2. einfaches Beipiel mit Intrinsics, label=code:firstcv]
+	int i;
+	uint32x4_t x4,y4; // Hier werden 128 bit Register definiert, die die Operanten halten 
+	uint32x4_t z4;    // Hier wird ein 128 bit Register definiert, dass das Ergebnis hält 
+	uint32_t *ptra = x; //x,y und z sind die Eingangs-, bzw. Ausgangsarrays 
+	uint32_t *ptrb = y; 
+	uint32_t *ptrz = z; 
+
+	for(i=0; i < 200/4; i++)
+	{
+        x4 = vld1q_u32(ptra);  // Intrinsic um x4 mit 4 Werten von x zu laden
+        y4 = vld1q_u32(ptrb);  // Intrinsic um y4 zu laden
+        z4=vaddq_u32(x4,y4);   // Intrinsic um z4=x4+y4 zu addieren
+        vst1q_u32(ptrz, z4);   // Speicher die 4 Ergebnisse in z
+        ptra+=4; // Pointer inkrementieren
+        ptrb+=4;
+        ptrz+=4;
+	}
+\end{lstlisting}
+\newpage
+\begin{lstlisting}[caption=ARM+NEON-Assembler, label=code:firstneon]
+        add      r3, r1, #800
+.L2:
+        vld1.32  {d4-d5}, [r1] ;Zeile 10;
+        add      r1, r1, #16
+        vld1.32  {d6-d7}, [r0] ;Zeile 11;
+        cmp      r1, r3
+        vadd.i32 q3, q3, q2    ;Zeile 12;
+        vst1.32  {d6-d7}, [r2] ;Zeile 13;
+        add      r0, r0, #16
+        add      r2, r2, #16
+        bne      .L2
+        bx       lr
+\end{lstlisting}
+
+Dieses bieten den Vorteil, dass durch relativ geringen Aufwand Schleifen parallelisiert werden können und der Datenfluss definiert werden kann. Allerdings wird ein Overhead durch Lade und Speicheroperationen erzeugt.\\
+Um diesen Overhead zu vermeiden gibt es noch die Möglichkeit den NEON-SIMD-Assembler per Hand zu schreiben. Hierbei werden sowohl Parallelisierung als auch Datenfluss per Hand bestimmt und Lade-, bzw. Speicheroperationen minimiert, allerdings besitzt diese Variante auch den größten Aufwand.\\
+Für jede dieser Varianten muss das NEON-Compilerflag aus \textbf{Tabelle \ref{tab:flags}} gesetzt sein.
+
+\section{C6EZRun}\label{sec:c6run}
+
+C6EZRun ist ein Framework zur Kommunikation zwischen ARM und DSP.
+Hierbei werden zwei unterschiedliche Versionen zur Kommunikation zwischen ARM und DSP angeboten:
+
+\begin{itemize}
+\item C6Runlib
+\item C6Runapp
+\end{itemize}
+
+Außerdem stellt C6EZRun Compiler für diese beiden Versionen bereit.\\
+Bei C6Runlib werden Programm-Codes auf dem als Funktionen durch den ARM aufgerufen. Dies bedeutet, dass der ARM erst nach Ende der DSP-Programm-Code Ausführung mit der eigenen Ausführung fortfahren kann. \textbf{Abbildung \ref{fig:c6lib}} verdeutlicht dieses Prinzip.\\
+%
+\begin{figure}[htb]
+	\centering
+		\includegraphics[scale=1]{../Pictures/c6lib.pdf}
+	\caption{Prinzip von C6Runlib\cite{c6run}}
+	\label{fig:c6lib}
+\end{figure} 
+%
+C6Runapp ermöglicht hingegen die Ausführung von ganzen Programmen auf dem DSP. Hierbei werden DSP-Programme von der Linux-Console des ARMs aufgerufen, als ob sie auf diesem ausgeführt würden. Der ARM fungiert hierbei als Initiator, außerdem ist es dem DSP so möglich Ausgaben auf der Console des ARM zu tätigen. Eine gleichzeitige Ausführung eines zweiten Programms auf dem ARM ist möglich, allerdings sind keine Protokolle zur Kommunikation dieser beiden Programme definiert und müssen gegebenenfalls geschrieben werden. \textbf{Abbildung \ref{fig:c6app}} verdeutlicht dieses Prinzip.\\ 
+%
+\begin{figure}[htb]
+	\centering
+		\includegraphics[scale=1]{../Pictures/c6app.pdf}
+	\caption{Prinzip von C6Runapp\cite{c6run}}
+	\label{fig:c6app}
+\end{figure} 
+% 
+Die in dieser Arbeit verwendete Version von C6EZRun ist 0.98.
 
 \subsubsection{Compileroptimierungsstufen}
-In diesem Kapitel sollen die Optimierungsstufen des DSP-Compilers aus dem C6EZRun-Framework (siehe \textbf{Kapitel \ref{sec:c6run}}) erläutert werden.\\
-Da dieser Compiler auf dem C6000-DSP-Compiler aufsetzt, können auch die Compileroptimierungen des C6000-Compilers verwendet werden, Diese Optimierungsstufen optimieren auf Geschwindigkeit.\\
+Da die beiden Compiler aus dem C6EZRun-Framework auf dem C6000-DSP-Compiler aufsetzt, können auch die Compileroptimierungen des C6000-Compilers verwendet werden, Diese Optimierungsstufen optimieren auf Geschwindigkeit.\\
 
 \paragraph{Optimierungsstufe \-O0}$\;$ \\\\
 In der niedrigsten Optimierungsstufe, welche entweder durch das Compilerflag \textit{\-opt\_level=0} oder \textit{\-O0} aufgerufen wird, werden nur einfache Optimierungen des Codes durchgeführt:
@@ -663,117 +576,3 @@ Die letzte Optimierungsstufe wird mit \textit{\-opt\_level=3} oder \textit{\-O3}
 \item Propagierung von Argumenten in den Funktionskörper, wenn alle Aufrufe den selben Wert an der selben Position besitzen
 \item Identifizierung von File-Level Charakteristiken von Variablen
 \end{itemize}
-
-\paragraph{Beispiel der Compileroptimierung}\label{ph:bspcomp}$\;$ \\\\
-Anhand des \textit{Root Mean Square} soll hier die Optimierung O3 des C6EZRun-Compilers verdeutlicht werden. Hierfür soll neben den Optimierungen aus \textbf{Kapitel \ref{ph:o3}} auch die Pipeline aus \textbf{Kapitel \ref{ph:dsppipe}} gezeigt werden.\\
-\textbf{Listing \ref{code:rmsc}} zeigt den C-Code des \textit{Root Mean Square} und \textbf{Listing \ref{code:rmsasm}} den daraus Kompilierten Assembler-Code.
-
-\begin{lstlisting}[caption=C-Code des Root Mean Square, label=code:rmsc]
-	for (n = 0; n < rmsinfo.N; ++n) {
-		mean += ((realv) signal[n] / (realv) rmsinfo.N)
-		* (realv) signal[n];
-
-	}
-
-	rms[run] = sqrt(mean);
-\end{lstlisting}
-
-\begin{lstlisting}[caption=Assembler-Code des Root Mean Square, label=code:rmsasm]
-           CMPGT   .L1     A3,0,A0           ; |1| 
-||         INTSP   .L2X    A3,B10
-||         MV      .S1     A3,A10            ; |2| 
-   [!A0]   BNOP    .S1     $C$L2,5           ; |1| 
-|| [ A0]   LDW     .D1T1   *A13++,A15        ; |2| 
-	   CALL    .S1     __c6xabi_divf     ; |2| 
-           MV      .L2     B10,B4            ; |2| 
-           MV      .L1     A15,A4            ; |2| 
-           NOP             2
-           MPYSP   .M1     A15,A4,A3         ; |2| 
-||         SUB     .L1     A10,1,A0          ; |1| 
-   [ A0]   LDW     .D1T1   *A13++,A15        ; |2| 
-|| [ A0]   B       .S1     $C$L1             ; |1| 
-   [ A0]   CALL    .S1     __c6xabi_divf     ; |2| 
-   [ A0]   MV      .L2     B10,B4            ; |2| 
-           ADDSP   .L1     A3,A14,A14        ; |1| 
-           SUB     .L1     A10,1,A10         ; |1| 
-   [ A0]   MV      .L1     A15,A4            ; |2|  
-	   CALLP   .S2     sqrt,B3
-||         SPDP    .S1     A14,A5:A4         ; |7|   
-           DPSP    .L1     A5:A4,A3          ; |7| 
-           NOP             1
-           STW     .D1T1   A3,*+A12[A11]     ; |7| 
-\end{lstlisting}
-
-Zur Erläuterung der Leseweise des Assembler-Codes, sei gesagt, dass ein || am Anfang einer Zeile bedeutet, dass der folgende Befehl parallel zum Befehl der vorherigen Zeile ausgeführt wird. Die vierte Spalte gibt den Datenpfad und die entsprechende Ausführungseinheit an, so wird zum Beispiel das \textit{SUB} aus Zeile 11 im Datenpfad 1 auf der L-Einheit ausgeführt, |n| steht für die Entsprechende Zeile aus dem C-Code in \textbf{Listing \ref{code:rmsc}} (Zeile 2 und 3 werden als Zeile 2 gewertet).\\
-Wie in \textbf{Kapitel \ref{subph:fetch}} bereits erwähnt, werden immer acht Befehle zu einem Fetch Packet zusammen gefasst, so das die 23 Befehle zu drei solchen Paketen zusammen gefasst werden können (vgl. \textbf{Tabelle \ref{tab:fetch}}).
-
-\begin{table}[ht]
-\centering
-\begin{tabular}{|c|c|c|c|c|c|c|c|c|}
-\hline
-FP Nummer & Slot 1 & Slot 2 & Slot 3 & Slot 4 & Slot 5 & Slot 6 & Slot 7 & Slot 8\\
-\hline\hline
-1 & cmpgt & intsp & mv & bnop & ldw & call & mv & mv\\
-2 & nop & mpysp & sub & ldw & b &call& mv &addsp\\
-3 & sub & mv & callp & spdp & dpsp & nop &stw &nop\\
-\hline
-\end{tabular}
-\caption{Fetch Pakets des Root Mean Square Assembler-Codes}
-\label{tab:fetch}
-\end{table}
-
-Während der Decode-Stufe werden danach Zuordnungen zu Execute Pakets durchgeführt, wo zum Beispiel für Fetch Paket 1 festgestellt wurde, dass es in fünf solcher Execute Pakets gesplittet werden kann. Diese Execute Pakets wurden danach den Ausführungseinheiten zugeordnet und in der Execute-Stufe ausgeführt.\\
-An Optimierungen lassen sich hierzum Beispiel nennen: 
-\begin{itemize}
-\item Die Inline Calls zu \textit{sqrt} und \textit{\_\_c6xabi\_sqrt}
-\item Die Konvertierung von Array-Aufrufen in Pointerarithmetiken, z.B. in Zeile 5.
-\item Die Propagation von Konstanten in Register, z.B. rmsinfo.N in A0
-\end{itemize} 
-
-\subsubsection{Optimierte Bibliotheken für den C674x}\label{subsubsec:optbib}
-Texas Instruments bietet zu seinen DSPs der C6000-Reihe auch noch eine Reihe Bibliotheken an, diese enthalten Algorithmen die speziell für DSPs dieser Baureihe optimiert wurden. Einige dieser optimierten Bibliotheken sind im Umfang des EZSDK (siehe \textbf{Kapitel \ref{sec:ezsdk}}) enthalten. Im Folgenden werden zwei dieser Bibliotheken näher vorgestellt, zum einen die DSPLIB mit Algorithmen aus der Signalverarbeitung und zum anderen die MATHLIB mit optimierten mathematischen Funktionen.
-
-\paragraph{DSPLIB}$\;$ \\\\
-Wie schon erwähnt ist die DSPLIB-Bibliothek eine Zusammenfassung von Algorithmen aus der Signalverarbeitung, die für den Gebrauch auf DSPs der C6000-Reihe optimiert wurde und direkt von Texas Instruments stammt. Diese liegen innerhalb dieser Bibliothek sowohl als C- als auch als Assembler-Code vor. Unter anderem enhält sie auch optimierte FFTs.
-
-\paragraph{MATHLIB}$\;$ \\
-
-Die MATHLIB-Bibliothek ist ebenfalls für die Verwendung auf DSPs der C6000-Reihe optimiert. Auch diese Bibliothek stammt von Texas Instruments. Für diese Bibliothek liegen der Quellcode ebenfalls sowohl als C- als auch als Assembler-Code vor.\\
-Die mathematischen Funktionen sind sowohl für Double-Precision als auch für Single-Precision vorhanden und bieten neben der Option einzelne Aufrufe auszuführen, auch die Möglichkeit Operationen auf Arrays auszuführen. Werden diesen Arrayoperationen zum Beispiel die Array a und b übergeben, wird immer das n-te Element von a mit dem n-ten Element von b verrechnet.
-
-\section{Linux EZ Software Development Kit (EZSDK)}\label{sec:ezsdk}
-Das Linux EZ Software Development Kit (EZSDK) ist eine von Texas Instruments zum EVM816x-Board mitgelieferte Sammlung von wichtigen und nützlichen Tools. Das EZSDK (gesprochen: \textit{EasySDK}) lässt sich grob in vier Softwaregruppen unterteilen:
-
-\begin{itemize}
-\item Board Support
-\begin{itemize}
-\item Kernel für embedded Linux Version 2.6.37
-\item U-Boot (Bootloader)
-\item Sammlung von Tools auf System-on-Chip-Ebene
-\end{itemize}
-\item Component Sources
-\begin{itemize}
-\item Optimierte Bibliotheken für den DSP
-\item Kommunikationsframeworks zwischen ARM und DSP
-\item DSP-Betriebssystem
-\item weitere Tools
-\end{itemize}
-\item DSP Development Kit (DSP-Toolchain)
-\item Linux Development Kit (Linux-Toolchain)
-\end{itemize}
-
-Für diese Arbeit wurde die EZSDK-Version 5.02 verwendet.
-
-\section{C6EZRun}\label{sec:c6run}
-
-C6EZRun ist ein Framework, welches für die Kommunikation zwischen ARM und DSP entwickelt wurde. Dieses Framework nimmt dem Programmierer wesentliche Aspekte der Kommunikation zwischen diesen beiden Prozessoren ab, zum Beispiel Kommunikationswege, Latenzzeiten, Speicherverwaltung, Pointerkonvertierungen, etc.\\
-Hierbei sind zwei unterschiedliche Möglichkeiten zur Kommunikation zwischen ARM und DSP vorhanden:
-
-\begin{itemize}
-\item C6Runlib
-\item C6Runapp
-\end{itemize}
-
-C6runlib bietet die Möglichkeit Teile des Programmcodes auf den DSP auszulagern. Hierbei werden die entsprechenden Programmteile in C-Code geschrieben und mit dem C6Runlib-Compiler zu einer Bibliothek compiliert. Diese Bibliothek kann anschließend in das bestehende Projekt eingefügt und die in ihr enthaltenen Funktionen so aufgerufen werden, als wenn sie auf dem ARM laufen würden.\\
-C6Runapp hingegen bietet die Möglichkeit ein komplettes Programm auf dem DSP auszuführen, dieses aber über die Konsole des ARM aufzurufen. Hierfür wird der Programm-Code ebenfalls in C-Code beschrieben und mit dem C6Runapp-Compiler kompiliert.\\
-Die in dieser Arbeit verwendete Version von C6EZRun ist 0.98.
