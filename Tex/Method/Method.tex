@@ -2,47 +2,19 @@
 \label{ch:opt}
 \rm
 
-\section{Optimierungsstrategie}
-In diesem Kapitel soll die Methodik beschrieben werden, mit der die Untersuchungen in den folgenden Kapiteln durchgeführt wurden.\\
-Sowohl die Untersuchungen auf dem ARM Cortex\texttrademark-A8, als auch die auf dem DSP wurden in drei Schritten durchgeführt:
+In diesem Kapitel werden die Implementierung und die Optimierung des Referenz-Programm-Codes auf dem ARM Cortex A8 und dem C674x DSPs beschrieben.\\
+Hierfür wir in \textbf{Abschnitt \ref{sec:str}} als erstes die Optimierungsstrategie vorgestellt nach der die Optimierungen in den folgenden Abschnitten durchgeführt werden. Anschließend werden in \textbf{Abschnitt \ref{sec:optarm}} die Implementierung und Optimierung des Referenz-Programm-Codes auf dem ARM Cortex A8 und in \textbf{Abschnitt \ref{sec:optdsp}} die auf dem C674x DSP vorgestellt.
+
+\section{Optimierungsstrategie}\label{sec:str}
+Das Ziel der in den folgenden Abschnitten vorgestellten Optimierungen ist die Verbesserung der Laufzeit des Musikklassifikator. Hierfür wird angestrebt, die von den Prozessoren zur Verfügung gestellten Rechenressourcen effizient auszunutzen.\\
+Für die Berechnung dieser Effizienz sind mehrere Gütemaße vorhanden, unter anderem Werte für \textit{Instruktionen pro Takt} (engl. Instruction per Cycle oder kurz IPC), \textit{Takte pro Instruktion} (engl. Cycles per Instruktion oder kurz CPI), die Messung von \textit{Cache Hits und Misses} und die \textit{Laufzeit} des Programms. Auf Grund der von Texas Instrument zur Verfügung gestellten Werkzeuge ist eine Messung von IPC/CPI-Werten oder Cache Hits/Misses nicht ohne weiteres Möglich, so dass sich in dieser Arbeit auf die Messung der Laufzeit für die Bewertung der Effizienz beschränkt werden soll.\\
+Als nächstes muss entschieden werden, wie Optimierungspotenziale identifiziert werden sollen. Die Herausforderung hierbei liegt darin, dass eine Vielzahl von Algorithmen vorhanden sind. Es wäre möglich diese nach einer zu wählenden Reihenfolge sukzessiv zu Optimieren. Dieses würde aber viel Zeit in Anspruch nehmen und es würde eventuell mehr Zeit in Optimierungen investiert die keinen großen Anteil an der Gesamtlaufzeit besitzen. Daher wird sich die Optimierung innerhalb dieser Arbeit auf die Optimierung von zeitkritischen Stellen beschränken. Hierfür wird als erstes der Schritt der Musikklassifikation identifiziert werden, der den größten Anteil an der Gesamtlaufzeit besitzt. Nach dieser Identifizierung wird die Optimierung innerhalb dieses Schritts ebenfalls auf jene Algorithmen beschränkt, die ihrerseits den größten Anteil an der Laufzeit dieser Phase besitzen. Auf diese Weise wird versucht mit der Optimierung von einzelnen Algorithmen große Verbesserungen an der Gesamtlaufzeit des Musikklassifikators zu erreichen.\\
+Sowohl die Untersuchungen auf dem ARM Cortex A8, als auch die auf dem C674x DSP werden hierfür in drei Schritten durchgeführt:
 
 \begin{enumerate}
-	\item Laufzeitanalyse des Programms zur Identifikation von Bottlenecks (\textbf{\ref{sec:prof}})
-	\item Optimierung der gefundenen Bottlenecks (\textbf{\ref{sec:opt}})
-	\item Bewertung der durchgeführten Optimierung
+\item Laufzeitanalyse des Programmteils zur Identifikation zeitkritischer Algorithmen oder Codesegmente
+\item Optimierung der gefundenen Algorithmen oder Codesegmente
+\item Bewertung der durchgeführten Optimierungen
 \end{enumerate}
 
-Hierbei handelt es sich um einen iterativen Prozess, da in den meisten Fällen entweder eine Optimierung nicht zur vollständigen Beseitigung eines Bottlenecks führt oder nach der Optimierung weitere Bottlenecks auftauchen.\\
-Im Folgenden sollen die Begriffe der einzelnen Schritte näher erklärt werden.
-
-\subsection{Profiling}\label{sec:prof}
-Der Begriff Profiling beschreibt Methoden, mit denen das Verhalten von Applikationen auf Systemebene analysiert werden können, hierzu zählen Analysen der Laufzeit, der Schreib- und Lesezugriffe und auch die Verhältnisse von Instruktionen und Takten zueinander. Im Folgenden werden nun Beispielhaft die Profilingmethoden der Laufzeitmessung, der richtigen Vorhersagen des Vorladens in den Cache (sog. Cache Hits), sowie die Betrachtungen des Verhältnisses von Takt und Instruktionen (Instructions per Cycle (IPC) und Cycle per Instruction (CPI) vorgestellt.
-
-\subsubsection{Laufzeitanalyse}\label{subsec:time}
-
-Bei der Laufzeitanalyse wird die reale Ausführungszeit eines Programmes oder Teilen eines Programmes auf einem gegebenen System betrachtet. Dieses geschieht entweder durch eine externe Uhr, z.B. eine Armbanduhr oder durch eine in dem System integrierte Uhr durch das Auslesen der entsprechenden Register. Sollte eine interne Uhr verwendet werden, muss beachtet werden, dass in den entsprechenden Registern der momentane Takt gespeichert ist, also für eine Zeitangabe noch durch die Taktrate des Systems geteilt werden muss. Sollte die zumessende Laufzeit sehr gering sein, empfiehlt sich die Nutzung einer internen Uhr.\\
-Es ist leicht ersichtlich, dass der gemessene Wert zwischen 0 und $\infty$ liegt und dass das Ergebnis umso besser ist, desto näher es an der 0 liegt.
-
-\subsubsection{Cache Hits und Cache Misses}\label{subsec:cache}
-
-Beim Laden von Daten, sei es ein gespeichertes Datum aus dem Hauptspeicher oder eine Instruktion aus dem Instruktionsspeicher versucht der Prozessor zuerst das jeweilige Datum aus dem dafür  zuständigen Cache zu laden. Wird dieses Datum dort nicht gefunden, muss es vor der Verarbeitung erst aus dem zugehörigen Speicher in den Cache geladen werden. Dieses Nachladen von Daten in die Caches benötigt Zeit.\\
-Als Cache Hit wird in diesem Zusammenhang das Ereignis bezeichnet, dass ein zu ladendes Datum im zugehörigen Cache gefunden wurde und kein Nachladen nötig war. Ein Cache Miss bezeichnet genau das Gegenteil, also ein Ladeversuch, bei dem das Datum nicht im Cache gefunden wurde und aus dem Speicher nachgeladen werden musste.\\
-Die Anzahl von Cache Hits oder Cache Misses erlaubt eine Aussage über die Güte der verwendeten Speicherverwaltung. Überwiegt die Anzahl der Cache Hits, so kann man daraus schließen, dass eine gute Speichernutzung vorliegt und in den wenigsten Fällen ein Nachladen von benötigen Daten benötigt wurde. Am Besten ist der Fall, dass keine Cache Misses auftreten. Dieses bedeutet, dass die benötigten Daten im Hauptspeicher sehr nah aneinander liegen und mit einem Ladevorgang viele nacheinander benötige Daten in die Caches geladen werden.
-
-\subsubsection{IPC und CPI}\label{subsec:ipccpi}
-
-Bei \textit{Instructions per Cycle} (IPC) und \textit{Cycles per Instruction} (CPI) werden die ausgeführten Instruktionen mit den benötigen Takten ins Verhältnis gesetzt um damit eine Aussage über die Effizienz des Codes zu geben.\\
-Für die Berechnung des IPC wird die Anzahl der für die Ausführung benötigen Instruktionen durch die Anzahl der benötigen Takte geteilt. Da eine Instruktion mindestens einen Takt und maximal n Takte benötigt ergibt sich aus diesem Verhältnis ein Wert zwischen 0 und 1. Umso näher der resultierende Wert bei 1 liegt, desto effizienter ist der Code, ein Wert von 1 würde bedeuten, dass in jedem Takt eine Instruktion ausgeführt wird.\\
-Die Berechnung des CPI ist etwas komplexer. Hierbei werden die Anzahl von Instruktionstypen im Code (IIC), deren benötigte Takte (CCI) und die Gesammtzahl der benötigen Instruktionen (IC) miteinander ins Verhältnis gesetzt (vgl. \textbf{Formel \ref{eqn:cpi}}).
-
-\begin{equation}\label{eqn:cpi}
- CPI~=~\frac{\sum\left(IIC \cdot CCI\right)}{IC}
-\end{equation}
-
-Hierbei spielt neben der benötigen Takte pro Instruktionstyp auch noch die vorliegende Pipelinetiefe eine Rolle. Nimmt man an man hätte eine 5 Stufen Pipeline und einen Instruktionstyp der 5 Takte benötigt, wäre es so trotzdem möglich pro Takt eine Instruktion dieses Typs auszuführen und somit einen CPI-Wert von 1 zu erreichen. Daraus ergibt sich, dass der CPI-Wert zwischen 0 und $\infty$ liegt, wobei ein Code effizienter ist, umso näher der CPI-Wert an 0 liegt.
-
-\subsection{Optimierung}\label{sec:opt}
-
-Unter Optimierung versteht man die Verbesserung einer Sache hinsichtlich auf ein zu erreichendes Ziel.\\
-In der Softwareentwicklung sind solche Ziele in Normalfall Laufzeit oder Speicherbedarf. Nimmt man noch die Hardwareentwicklung hinzu, ergeben sich als weitere Ziele noch der Platzbedarf, den ein zu entwickelndes System, in den meißten Fällen ein Chip, nach der Fertigung benötig, sowie der Leistungsverbrauch, den das dieses System aufweist.\\
-In dieser Arbeit sollen Optimierungen primär hinsichtlich der Laufzeit stattfinden. Als zweiter Aspekt soll aber auch der Leistungsverbrauch der einzelnen Optimierungsstufen betrachtet werden, da eine Betrachtung hinsichtlich der Einsetzbarkeit auf mobilen Endgeräten angestrebt wird.
+Hierbei handelt es sich um einen iterativen Prozess, das heißt, dass nach einer durchgeführten Optimierung eine weitere Laufzeitmessung durchgeführt wird. Dieses geschieht zum einen für die Bewertung einer durchgeführten Optimierung und zum anderen um eventuell neue zeitkritische Algorithmen zu identifizieren.

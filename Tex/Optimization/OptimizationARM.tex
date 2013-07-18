@@ -1,103 +1,68 @@
 
-\section{Optimierung des ARM}\label{sec:optarm}
-In diesem Kapitel werden die Optimierungen am Code beschrieben, der rein auf dem ARM Cortex-A8 ausgeführt wird. Hierfür werden die in \textbf{Kapitel \ref{subsec:a8}} beschriebenen Hardwareemelemte ausgenutzt.\\
-In \textbf{Abschnitt \ref{subsec:armtime}} wird daher als erstes die Laufzeitmessung des gesamten Programms (Extraktion, Prozessierung und Klassifikation) erläutert, um einen Einstiegspunkt für die Optimierung zu extrahieren. In den darauffolgenden Abschnitten werden daraufhin die durchgeführten Optimierungen beschrieben. 
+\section{ARM-spezifische Implementierung und Optimierung des Referenz-Programm-Codes}\label{sec:optarm}
+In diesem Abschnitt wird zunächst der Referenz-Programm-Code auf den ARM Cortex A8 portiert. Diese Portierung ist ohne Änderungen möglich und soll daher nicht weiter beschrieben werden.\\
+Als nächstes wird eine Laufzeitmessung der gesamten Signalverarbeitung durchgeführt. Hierbei wird der Programmcode ohne beschleunigte Fließpunkt-Berechnungen, mit VFP-Unterstützung, sowie für die Verwendung von SIMD-Instruktionen kompliliert. Auf diese Weise kann der Vorteil der Fließpunkt-Hardware quantitativ bewertet werden. Im Anschluss daran wird der rechenintensivste Schritt, die Merkmalsextraktion, auf Basis der definierten Optimierungsstrategie schrittweise beschleunigt.
 
-\subsection{Laufzeitmessung des Gesamtprogramms}\label{subsec:armtime}
-Für die erste Laufzeitmessung des gesamten Programms (Extraktion, Prozessierung und Klassifikation) wurde dieses mit den in \textbf{Kapitel \ref{ph:neoncomp}} beschriebenen Compileroptionen zur automatischen Generierung von NEON-Code kompiliert. Die dabei resultierten Laufzeiten sind in \textbf{Abbildung \ref{fig:mclneon}} abzulesen.
+
+
+\subsection{Laufzeitmessung des portierten Referenz-Programm-Codes}\label{subsec:armtime}
+\textbf{Abbildung \ref{fig:MCLAVN}} zeigt die zuvor beschriebene Laufzeitmessung.
+%
+\begin{figure}[htp]
+	\centering
+		\includegraphics[scale=0.5]{../Pictures/MCLAVN.pdf}
+	\caption{Laufzeiten in ms des Musikklassifikators mit ohne und mit beschleunigter Fließpunkt-Berechnung}
+	\label{fig:MCLAVN}
+\end{figure} 
+%
+Aus der Abbildung lässt sich entnehmen, dass ARM+VFP und ARM+NEON die schnelleren Varianten sind. Diese erzielen bereits einen Speedup zwischen 2,1 (MCL3) und 3,1 (MCL4) für die Verwendung der VFP-Einheit und 2,6 (MCL3) und 3,3 (MCL4) für die Verwendung der NEON-SIMD-Einheit gegenüber der Variante ohne beschleunigte Fließpunktberechnung. Das größte Optimierungspotenzial bietet hierbei die ARM+NEON-Variante, da bei der ARM+VFP-Variante aufgrund der zugrundeliegenden Hardwareeinheit (vgl. \textbf{Kapitel \ref{ph:vfp}}) keine großen Verbesserungen der Laufzeit mehr zu erwarten sind. Die nahezu gleichen Ausführungszeiten sind damit begründet, dass der Compiler fast keine SIMD-Instruktionen beim ARM+NEON verwendet. Stattdessen werden die skalaren VFP-Instruktionen über die SIMD-Pipeline verarbeitet. Aus \cite{tineon} lässt sich des weiteren entnehmen, dass der Instruktionendurchsatz der NEON-SIMD-Einheit gegenüber der VFP-Einheit deutlich höher ist.\\
 %
 \begin{figure}[htp]
 	\centering
 		\includegraphics[width=1\textwidth]{../Pictures/mclneon.pdf}
-	\caption{Laufzeiten in ms des Musikklassifikators}
+	\caption{Laufzeitmessung in ms der einzelnen Schritte der Musikklassifikation für ARM+NEON}
 	\label{fig:mclneon}
 \end{figure} 
 %
-Wie man aus der Abbildung entnehmen kann, fällt der größte Anteil an der Gesamtlaufzeit in allen vier Messungen (\textit{MCL1 - MCL4}) auf die Extraktionsphase. Hierbei stellt sich jetzt allerdings die Frage, ob das nur an der Kombination aus ARM und NEON liegt oder ob dieses eine generelle Tendenz ist. Darum muss die Laufzeitmessung der genannten Kombination noch mit den Laufzeitmessungen von einer reinen ARM-Implementation und der Kombination aus ARM und VFP-Einheit (vgl. \textbf{Kapitel \ref{ph:vfp}}) verglichen werden. Die Ergebnisse dieser sind in \textbf{Abbildung \ref{fig:armtime}} abzulesen. Diese und alle weiteren Messungen werden am Beispiel des in \textbf{Kapitel \ref{subsec:fset2}} beschriebenen FeatureSets durchgeführt, die Diagramme für die anderen drei FeatureSets sind für den interessierten Leser im Anhang zu finden, aber für diese sind die beschriebenen Tatsachen äquivalent.
+In \textbf{Abbildung \ref{fig:mclneon}} sind die Laufzeiten der einzelnen Schritte innerhalb der Musikklassifikation für die Variante mit beschleunigter Fließpunkt-Berechnung durch SIMD-Instruktionen zu sehen. Aus der Abbildung sind zwei Erkenntnisse zu ziehen. Erstens nimmt der Schritt der Merkmalsextraktion den größten Anteil an der Laufzeit der Musikklassifikation ein und zweitens benötigt die die Musikklassifikation mit MCL2 die längste Zeit. Daher wird eine Optimierung der Merkmalsextraktion durchgeführt und diese wird auf Basis der Musikklassifikationsmethode 2 geschehen. Messergebnisse der anderen Methoden befinden sich im Anhang.\\
 %
-\begin{figure}[h]
-	\centering
-		\includegraphics[width=1\textwidth]{../Pictures/fset2AVN.pdf}
-	\caption{Laufzeiten in ms des Musikklassifikators für ARM, ARM+VFP und ARM+NEON am Beispiel des FeatureSets 2}
-	\label{fig:armtime}
-\end{figure} 
-%
-Aus \textbf{Abbildung \ref{fig:armtime}} lassen sich drei wesentliche Schlüsse ziehen:
-
-\begin{enumerate}
-\item Die Extraktionsphase hat in allen drei Fällen den größten Anteil an der Laufzeit
-\item Die reine ARM-Implementation hat die schlechteste Laufzeit
-\item ARM+VFP und ARM+NEON scheinen gleichwertig zu sein
-\end{enumerate}
-
-Die Punkte 1 und 2 kann man so stehen lassen, da diese zu den erwarteten Ergebnissen zählen, aber Punkt 3 verwundert einen doch sehr. Wie kann es sein, dass trotz der in \textbf{Kapitel \ref{subsubsec:neon}} beschriebenen Vorteile der NEON-SIMD-Einheit gegen über der VFP-Einheit, beide Einheiten doch gleichwertig erscheinen? Es soll nochmals erwähnt werden, dass beide Implementationen mit einer Compileroption für die jeweilige Floating Point-Einheit optimiert wurden. Ein Blick in den entstandenen Assemblercode der beiden Implementierungen gibt die Antwort auf die gestellte Frage. Hier finden sich in beiden Fällen nahezu gleiche Codes, das heißt auch die NEON-SIMD-Einheit führt nur die rein skalaren Operationen des VFP aus. Dieses erklärt einerseits, warum sich die Laufzeiten der beiden Implementationen nicht wesentlich voneinander unterscheiden und zeigt andererseits, dass es dem Compiler scheinbar nicht möglich ist effektiv für die NEON-SIMD-Einheit optimierten Code zu generieren.\\\\
-Da die Extraktionsphase sich als am zeitintensivsten herausgestellt hat, soll diese jetzt näher analysiert werden.\\ 
-Wie aus \textbf{Abbildung \ref{fig:1fset2}} zu entnehmen ist, fallt der größte Anteil der Laufzeit der Extraktionsphase mit knapp 60\% auf die Berechnung der FFT.
-%
-\begin{figure}[h]
+\begin{figure}[htp]
 	\centering
 		\includegraphics[width=1\textwidth]{../Pictures/1fset2.pdf}
-	\caption{Detailliertere Laufzeitmessung der Extraktionsphase}
-	\label{fig:1fset2}
+	\caption{Laufzeitanteile der Merksmalsextraktion für FSet2}
+	\label{fig:fset2AVN}
 \end{figure} 
 %
-Nachdem die FFT als größter Bottleneck identifiziert wurde, stellt sich die Frage welcher Teil der Berechnung die meiste Zeit einnimmt. Wie in \textbf{Kapitel \ref{subsubsec:fft}} beschrieben, besteht die FFT-Berechnung aus drei Teilen:
-
-\begin{itemize}
-\item Bit Reverse
-\item Butterfly
-\item Nachverarbeitung
-\end{itemize}  
-
-Eine Analyse dieser drei Teilberechnungen ergibt, dass der größte Anteil an der Laufzeit der Butterfly-Berechnung zufällt, in Zahlen liegt dieser bei knapp 72\%.
+\textbf{Abbildung \ref{fig:fset2AVN}} zeigt eine nähere Analyse des Extraktionsschritts. Hierbei stellt die Durchführung der FFT mit 58,6\% bei FSet2, sowie knapp 50\% bei FSet1 und FSet4, den zeitkritischsten Schritt der Extraktion dar. Zu 72\% sind die Laufzeiten durch die Butterfly-Operationen verursacht. Daher wird eine Optimierung der FFTs durch Verwendung von SIMD-Instruktionen für die Butterfly-Operationen verfolgt.
 
 \subsection{Libav als Optimierung der FFT}\label{subsec:optFFT}
 
-Im vorherigen Kapitel haben sich folgende Ergebnisse gezeigt:
+Zur Beschleunigung der FFT durch SIMD-Instruktionen wird auf die Libav-Bibliothek (kurz Libav) zurückgegriffen, welche für NEON-SIMD-Instruktionen optimiert ist und in vielen Software-Produkten Verwendung findet.\\
+Libav ist eine opensource Bibliothek zur Audio- und Videoverarbeitung, die eine Vielzahl von Audio- und Videocodecs, Prozessierungsalgorithmen und Werkzeuge zur Audio- und Videoverarbeitung  besitzt.\\
+Im Gegensatz zur FFT des Referenz-Programms basiert die Libav-FFT auf einer Split-Radix-Struktur. Die Beschleunigung der Libav-FFT resultiert somit aus einer Reduktion der Rechenkomplexität und aus der Verwendung von SIMD-Instruktionen. Um die Beschleunigung durch SIMD-Instruktionen bewerten zu können, muss also auch der Anteil der Laufzeitreduktion aufgrund der unterschiedlichen Rechenkomplexität bekannt sein. Diese beiden Anteile werden nachfolgend mit $S_{comp}$ für den Komplexitätsanteil und $S_{SIMD}$ für den SIMD-Anteil bezeichnet. Das Datenformat der Libav-FFT weicht von der Referenz-FFT ab und macht daher eine Konvertierung nach \cite{libavtemp} erforderlich. Diese Konvertierung wird allerdings in einem Schritt durchgeführt, der für die Referenz-FFT ebenfalls benötigt wird und hat daher keinen Einfluss auf die Berechnung von $S_{comp}$ und $S_{SIMD}$.
 
-\begin{enumerate}
-\item ARM+NEON ist die schnellste Kombination
-\item Die Extraktionsphase nimmt den größten Anteil der Gesamtlaufzeit ein
-\item Die FFT nimmt den größten Anteil an der Laufzeit der Extraktionsphase ein
-\item Innerhalb der FFT nimmt die Butterfly-Berechnung den größten Anteil ein
-\end{enumerate}
 
-Daraus folgt, dass eine erste Optimierung in Richtung der FFT und der NEON-SIMD-Einheit erfolgen sollte.\\
-Bibliotheken, die NEON optimierte FFT-Versionen bieten, sind im Internet reichlich vertreten. Für diese Arbeit wurde sich dafür entschieden die weitverbreiteste Bibliothek \textit{Libav} einzusetzen.\\
-Libav ist eine opensource Bibliothek zur Audio- und Videoverarbeitung, die neben einer Vielzahl von Audio- und Videocodecs, Prozessierungsalgorithmen für diese und Tools zur Audio- und Videoverarbeitung auch wie schon erwähnt eine NEON optimierte FFT besitzt.
- 
-\subsubsection{Laufzeitmessung}
-Da der Aufbau der FFT-Berechnung (siehe \textbf{Kapitel \ref{subsubsec:libavfft}}) der Libav-Bibliothek an anderer ist, als der der Referenzimplementierung, wäre ein direkter Laufzeitvergleich zwischen Libav-FFT und Referenz-FFT unfair. Hier für wurden die Messungen der drei Kombinationen aus \textbf{Abbildung \ref{fig:armtime}} für die Libav-FFT wiederholt (vgl. \textbf{Abbildung \ref{fig:libavtime}}).
-%
+\subsubsection{Bestimmung von $S_{comp}$ und $S_{SIMD}$}
+
 \begin{figure}[h]
 	\centering
 		\includegraphics[width=1\textwidth]{../Pictures/libavtime.pdf}
-	\caption{Laufzeitmessung der Libav-FFT für ARM, ARM+VFP und ARM+NEON}
+	\caption{Laufzeitmessungen von Refezenz-FFT und Libav-FFT für ARM, ARM+VFP und ARM+NEON}
 	\label{fig:libavtime}
 \end{figure} 
 %
-Auch hierbei lässt sich erkennen, dass eine reine ARM-Implementation die langsamste Variante ist. Allerdings lässt sich ebenfalls erkennen, dass der Unterschied von der VFP-Implementierung und der NEON-Implementierung sehr deutlich ist, so wie es zu erwarten war. Dass dieser Unterschied hier so deutlich ist, liegt vor allem daran, dass die NEON-Version nicht wie bei der FFT des Referenzcodes mit der Compileroption für NEON-Code erstellt wurde, sondern wie in \textbf{Kapitel \ref{ph:neonasm}} beschrieben per Hand in NEON-Assembler geschrieben wurde.\\Im Vergleich zur Referenzimplementierung lässt sich für die reine ARM-Implementierung ein Speedup von knapp 1,4, für die VFP-Implementierung von 2,2 und für die NEON-Implementierung sogar von 19,2 erkennen. Bei der ARM-Implementierung ist dieses aus der geringeren Komplexität der Libav-FFT erklären, bei den andern Beiden kommt noch eine bessere Ausnutzung der Architektur hinzu.
+\textbf{Abbildung \ref{fig:libavtime}} zeigt den Laufzeitvergleich von Referenz-FFT und Libav-FFT. Aus den Messungen ohne Fließpunkt-Beschleunigung lässt sich $S_{comp}$ mit einem Wert 1,33 von berechnen, da hier keine Beschleunigung durch Hardwareeinheiten besteht. Der $S_{SIMD}$ lässt sich aus \textbf{Formel \ref{eqn:speed}} berechnen.
 
-\subsubsection{Aufbau der FFT}\label{subsubsec:libavfft}
-Wie im vorherigen Kapitel schon erwähnt, unterscheiden sich der Aufbau von Libav-FFT und die FFT des Referenzcodes stark, was unter anderem eine Komplexitätsreduktion der Butterfly-Berechnung und damit eine geringere Laufzeit mit sich bringt. In diesem Abschnitt wird nun dieser unterschiedliche Aufbau näher erläutert.\\
-Die FFT des Referenzcodes basiert auf den in \textbf{Kapitel \ref{subsubsec:fft}} beschriebenen Reduktionen einer 256-Punkt-FFT auf kleinere FFTs des Radix 2, der Aufbau der Libav-FFT hingegen basiert auf der Reduktion auf Splitradix-FFTs. Beide FFTs basieren auf dem DIT-Prinzip (vgl. \textbf{Kapitel \ref{ph:dit}}).
+\begin{equation}
+\label{eqn:speed}
+S_{all}=S_{comp} \cdot S_{SIMD}
+\end{equation}
 
+$S_{all}$ aus den beiden Messungen für ARM+NEON hat einen Wert von 20,1, somit kommt $S_{SIMD}$ auf einen Wert von 15,1. Insgesammt werden durch die Verwendung der Libav wird Fset2 um einen Faktor von 5,3 beschleunigt, FSet 1 und 4 sogar um 12,3, bzw. 14.
 
-\subsubsection{Einbindung}
-Die Einbindung der Libav-FFT in den bestehenden FFT-Code ist schier einfach. Eigentlich muss nur die Referenzimplementierung der FFT durch den Aufruf der Libav-FFT ersetzt werden. Hinzu kommt eine Umdefinierung des verwendeten Vektors \textit{source}. Dieser wird um einen benutzerdefinierten Allokator erweitert, der sicher stellt, dass die enthaltenen Werte alle mit 16 bit allokiert sind. Die Definition dieses Allokators ist in \cite{libavtemp} zu finden. Nach der Berechnung der FFT muss abschließend noch eine Auftrennung des resultierenden Vektors in Real- und Imaginärteil geschehen, da das Ergebnis der Libav einen Vektor darstellt, der abwechselt den Real- und Imaginärteil der Ergebnisse enthält.
+\subsection{Laufzeitmessung nach der FFT-Optimierung mit Libav}
 
-\subsubsection{Laufzeitmessung nach der FFT-Optimierung mit Libav}
-
-Nach der Optimierung des Bottlenecks FFT wird eine weitere Laufzeitmessung durchgeführt, um nachzuvollziehen, ob dieser Bottleneck verwunden und eventuell neue Bottlenecks aufgetaucht sind. Diese Messung ist in \textbf{Abbildung \ref{fig:postlibav}} zu finden.
-%
-\begin{figure}[h]
-	\centering
-		\includegraphics[width=1\textwidth]{../Pictures/postlibav.pdf}
-	\caption{Laufzeitmessung nach der FFT-Optimierung}
-	\label{fig:postlibav}
-\end{figure} 
-%
-Wie man in der Abbildung sieht, ergeben sich nach dieser Optimierung vier Algorithmen, die langsamer sind als die neue FFT, hinzu kommt noch ein weiterer Algorithmus aus FeatureSet 3:
+Aufgrund der Laufzeit werden folgende Features hinsichtlich einer Optimierung untersucht:
 
 \begin{itemize}
 \item Octave Spectral Contrast (siehe \textbf{Kapitel \ref{subsec:armwopt}})
@@ -107,14 +72,21 @@ Wie man in der Abbildung sieht, ergeben sich nach dieser Optimierung vier Algori
 \item Zero Crossing Rate (siehe \textbf{Kapitel \ref{sec:vista}})
 \end{itemize}
 
-Auf die Optimierung von OSC wird im Rahmen dieser Arbeit verzichtet, da 76\% der Laufzeit dieses Features auf die Sortierung fallen. Eine NEON-SIMD-Umsetzung dieser Sortierung würde den Rahmen dieser Arbeit sprengen.\\
-Des weiteren wurde auf die Optimierung von ZCR verzichtet. Bei diesem Feature fallen über 90\% auf die Signum-Berechnung, diese ließe sich zwar durch geschicktes Anordnen der drei IF-Bedingungen optimieren, dieses kann sich aber von Musikstück zu Musikstück ändern und wäre rein datenabhängig.
+Die Optimierung von OSC erweist sich als sehr komplex. 76\% der Laufzeit dieses Merkmals fallen auf das verwendete Sortierverfahren. Eine Optimierung gängiger Sortierverfahren wie MergeSort oder QuickSort durch die Verwendung von SIMD-Instruktionen ist auf Grund der Sortierstrukturen und rekursiven Aufrufe nicht ohne weiteres möglich. Im schlimmster Fall wäre die Entwicklung eines eigenen Sortieralgorithmus auf Basis von SIMD-Instruktionen nötig, was den Rahmen dieser Arbeit aber übersteigen würden. Daher wird auf eine Optimierung der Berechnung des OSC-Merkmals verziechtet.
+Auch das ZCR-Merkmal ist nicht ohne weiteres mit SIMD-Instruktionen möglich, da über 90\% der Laufzeit auf die Signum-Berechnung fallen, welche nur schwer oder garnicht auf SIMD-Instruktionen abbildbar ist. Eine Optimierung der Signum-Berechnung ohne SIMD-Instruktionen ließe sich durch geschicktes Anordnen der Vergleiche erreichen. Diese wäre jedoch aufgrund der Datenabhängigkeit von Musikstück zu Musikstück unterschiedlich.
 
 
 \subsection{Optimierung der Magnitude of Spectrum}\label{subsec:optAOS}
 
-Für die Optimierung der Magnitude of Spectrum wird auf die in \textbf{Kapitel \ref{ph:neonc}} beschriebene Taktik der Codeanpassung zurückgegriffen. Diese Codeanpassung soll es dem Compiler erleichtern stellen zu erkennen, die mit der NEON-SIMD-Einheit parallel berechnet werden können.\\
-Hierfür müssen als erstes die Codestellen identifiziert werden, die es dem Compiler nicht ermöglichen eine Einbindmöglichkeit der NEON-SIMD-Einheit festzustellen. Ein Blick in den Instruktionssatz der NEON-SIMD-Einheit ermöglicht es die Wurzelberechnung als eine solche Problemstelle zu identifizieren. Dieses begründet sich auf die Tatsache, dass die NEON-SIMD-Einheit keine Befehle für die Berechnung einer Wurzel besitzt. Da sich die Division beschleunigen ließe, diese aber erst nach der Wurzelberechnung angewandt wird (vgl. \textbf{Formel \ref{eqn:aos}}), wird diese auf mathematischem Weg in die Wurzel gezogen. \textbf{Listing \ref{code:aosc}} zeigt den geänderten C-Code und \textbf{Listing \ref{code:aosasm}} den daraus resultierenden Assemblercode.
+\begin{figure}[h]
+	\centering
+		\includegraphics[scale=0.5]{../Pictures/mag.pdf}
+	\caption{Laufzeitmessung von Magnitude of Spectrum für ARM, ARM+VFP und ARM+NEON}
+	\label{fig:mag}
+\end{figure} 
+%
+\textbf{Abbildung \ref{fig:mag}} zeigt die Laufzeit von MAG bei den drei Fließpunkt-Berechnungsmethoden. Es lässt sich erkennen, dass durch die Verwendung der Fließpunkt-Hardware eine Beschleunigung vom Faktor 13,6 erreichen lässt. Ein Blick in den Assembler-Code zeigt aber, dass keine NEON-SIMD-Instruktionen verwendet wurden. Der Grund hierfür besteht darin, dass im Instruktionssatz der NEON-SIMD-Einheit keine Operationen zur Wurzelberechnung existieren und der Compiler diese daher nicht auf SIMD-Instruktionen abbilden kann.\\
+Die einfachste Möglichkeit dieses zu lösen, besteht darin die Wurzelberechnung aus der Schleife zu entfernen und in einer gesonderten Schleife zu platzieren. Die parallelisierbare Division befindet sich aber nach der Wurzelberechnung. Die Lösung hierfür besteht darin, die Division auf mathematischen Weg in die Wurzel zu ziehen. \textbf{Listing \ref{code:aosc}} zeig den auf diese Weise geänderten Quellcode und \textbf{Listing \ref{code:aosasm}} den daraus resultierten Assemblercode. 
 
 \begin{lstlisting}[caption=Codeanpassung der Magnitude of Spectrum, label=code:aosc]
 	realv tmp, size2;
@@ -149,6 +121,9 @@ Aus den beiden Listings lässt sich erkennen, dass sowohl die Zeile 5 aus \textbf
 	cmp	r5, sl
 	mov	r1, sl
 \end{lstlisting}
+
+Auf diese Weise lässt sich die Laufzeit von MAG gegenüber der Laufzeit von ARM+NEON aus \textbf{Abbildung \ref{fig:mag}} um den Faktor 2,1 beschleunigen, so dass insgesamt eine Beschleunigung von 27,9 gegenüber der Laufzeitmessung von ARM erreicht wird.\\
+Die Gesamtlaufzeiten von FSet 1, 2 und 4 wurden damit im Vergleich zur complieroptimierten SIMD-Version um einen Faktor von knapp 1,2 beschleunigt.
 
 \subsection{Optimierung von Hamming Window}\label{subsec:optHAM}
 Für die Optimierung des Hamming Windows wird eine Optimierung durch den in \textbf{Kapitel \ref{ph:neonint}} beschriebenen Einsatz von Intrinsics gewählt. Hierbei wurden immer vier Multiplikationen der Eingangsdaten mit dem entsprechenden Hamming Window parallelisiert. \textbf{Listing \ref{code:hamc}} zeigt den Referenzcode und \textbf{Listing \ref{code:hamint}} den entsprechenden Code mit NEON-Intrinsics. Die Variable \textit{table[i]} hält hierbei den entsprechenden Wert für $w_{HW}(i)$, wie diese in \textbf{Kapitel \ref{subsubsec:hw}} beschrieben sind.

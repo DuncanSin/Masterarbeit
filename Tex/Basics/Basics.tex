@@ -542,11 +542,73 @@ zur Vereinfachung wird angenommen, dass die Vektoren nur zwei Elemente besitzen 
 %
 Der SVM-Klassifikator sucht in der Trainingsphase nach einer Hyperebene, die die Vektoren unterschiedlicher Klassen mit maximalem Abstand voneinander trennt. Hierbei kann eine geeignete Ebene mehr Dimensionen aufweisen als der Merkmalsraum (vgl. \textbf{Abbildung \ref{fig:svm}}). Die gefundene Ebene wird schließlich anhand der Vektoren beschrieben, die am nächsten zur Ebene liegen. Diese werden als Support Vektoren bezeichnet. Danach kann ein zu klassifizierendes Objekt (grünes Dreieck) anhand seiner Lage zur aufgespannten Hyperebene eindeutig einer der beiden Klassen zugeordnet werden.
 
+\subsection{Klassifikationsgüte}
 
+Für die Bewertung eines Klassifikators wird eine Bewertungsmetrik benötigt. Als so eine Metrik wird die Klassifikationsgüte verwendet. Diese Güte gibt die Genauigkeit einer Klassifikation an und wird als Verhältnis von richtig klassifizierten Objekten zur Gesamtzahl aller klassifizierten Objekte berechnet (vgl. \textbf{Formel \ref{eqn:class}}).
+
+\begin{equation}
+\label{eqn:class}
+Klassifikationsg\ddot{u}te~=~\frac{\#(richtig~klassifizierter~Objekte)}{\#(zu~klassifizierender~Objekte)}
+\end{equation}
+
+Aus der Formel ist leicht zu erkennen, dass die Klassifikationsgüte einen Wert zwischen 0 und 1 besitzt, umso näher dieser Wert an 1 liegt, desto mehr Objekte wurden richtig klassifiziert.
+
+\subsection{Kreuzvalidierung}
+
+Kreuzvalidierung wird für die Überprüfung eines Klassifikationsmodells herangezogen. Hierbei wird eine bereits vorklassifizierte Menge in möglichst gleichgroße Teilmengen geteilt. Anschließend wird ein Klassifikator mit N-1 dieser N Teilmengen trainiert und die N. Teilmenge klassifiziert. Dieses wird so oft wiederholt, bis jede der N Teilmengen einmal klassifiziert wurde. Die Klassifikationsgüten werden abschließend miteinander verglichen. Umso besser das aufgestellte Klassifikationsmodell ist, dest weniger weichen diese Güten voneinander ab. Außerdem weist die gemittelte Klassifikationsgüten dieser einzelnen Güten weniger Ausreißer auf.\\\\
+Für die im folgenden Abschnitt angegebenen Klassifikationsgüten wurde die GTZAN Datenbank\cite{gtzan} als Grundlage verwendet. Diese beinhaltet 1000 Musikstücke (á 30 s bei 22050 Hz, 16 bit Sample, mono), die sich gleich auf die 10 enthaltenen Klassen \textit{blues, classical, country, disco, jazz, metal, pop, punk, reggae} und \textit{rock} verteilen.\\
+Für die Kreuzvalidierung wurden diese 1000 Lieder in 10 Teilmengen unterteilt, so dass je 10 Lieder pro Klasse in einer Teilmenge vorhanden sind, und kein Lied doppelt vorkommt (vgl. \textbf{Tabelle \ref{tab:gtzan}}).
+
+\begin{table}[ht]
+	\centering
+		\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|}
+		\hline
+			Klasse&1&2&3&4&5&6&7&8&9&10\\
+		\hline
+		\hline
+			blues&10&10&10&10&10&10&10&10&10&10\\
+		\hline
+			$\vdots$&$\vdots$&$\vdots$&$\vdots$&$\vdots$&$\vdots$&$\vdots$&$\vdots$&$\vdots$&$\vdots$&$\vdots$\\
+		\hline
+			reggae&10&10&10&10&10&10&10&10&10&10\\
+		\hline
+		\end{tabular}
+	\caption{Schema der Teilmengenbildung von GTZAN}
+	\label{tab:gtzan}
+\end{table}
 
 
 \section{Musikklassifikationsmethoden}\label{sec:fset}
 
-Für die Laufzeitanalysen sind vier verschiedene Methoden zur Musikklassifikation vorgegeben, die sich im wesentlichen durch die Mermalssätze unterscheiden. Alle Methoden verwenden einen SVM-Klassifikator\cite{libsvm} und entweder die RMD-, MSA- oder eine Kombination aus beiden Prozessierungsmethoden. Die Merkmalssätze und Prozessierungsmethoden der jeweiligen angewandten Musikklassifikationsmethode sind der \textbf{Tabelle \ref{tab:meth}} zu entnehmen. Die mit diesen Methoden erreichten Klassifikationsgüten sind mit der GTZAN Datenbank\cite{gtzan} gemessen.
+Für die Laufzeitanalysen sind vier verschiedene Methoden zur Musikklassifikation vorgegeben, die sich im wesentlichen durch die Merkmalssätze unterscheiden. Alle Methoden verwenden einen SVM-Klassifikator\cite{libsvm} und entweder die RMD-, MSA- oder eine Kombination aus beiden Prozessierungsmethoden. Die Merkmalssätze und Prozessierungsmethoden der jeweiligen angewandten Musikklassifikationsmethode sind der \textbf{Tabelle \ref{tab:meth}} zu entnehmen. Die mit diesen Methoden erreichten Klassifikationsgüten sind mit der GTZAN Datenbank\cite{gtzan} gemessen.
+
+\begin{table}[ht]
+	\centering
+		\begin{tabular}{|c c|c|c|c|c|}
+		\hline
+		Mermalssatz & & Prozessierungsmethode & Klassifikator & Name & Güte\\
+		\hline\hline
+		SPC & \multirow{4}{*}{FSet1}&\multirow{4}{*}{RMD}&\multirow{4}{*}{SVM}&\multirow{4}{*}{MCL1}&\multirow{4}{*}{73,4\%}\\
+		SR&&&&&\\
+		SF&&&&&\\
+		MFCC&&&&&\\
+		\hline
+		HAM & \multirow{4}{*}{FSet2}&\multirow{4}{*}{MSA}&\multirow{4}{*}{SVM}&\multirow{4}{*}{MCL2}&\multirow{4}{*}{78,6\%}\\
+		NASE&&&&&\\
+		OSC&&&&&\\
+		MFCC&&&&&\\
+		\hline
+		LE & \multirow{3}{*}{FSet3}&\multirow{3}{*}{MSA \& RMD}&\multirow{3}{*}{SVM}&\multirow{3}{*}{MCL3}&\multirow{3}{*}{57,7\%}\\
+		RMS&&&&&\\
+		ZCR&&&&&\\
+		\hline
+		AOMIC& \multirow{3}{*}{FSet4}&\multirow{3}{*}{MSA \& RMD}&\multirow{3}{*}{SVM}&\multirow{3}{*}{MCL4}&\multirow{3}{*}{68,1\%}\\
+		SCF&&&&&\\
+		SBER&&&&&\\
+		\hline
+		\end{tabular}
+	\caption{Übersicht der Musikklassifikationsmethoden}
+	\label{tab:meth}
+\end{table}
 
 
