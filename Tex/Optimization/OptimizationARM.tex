@@ -47,7 +47,7 @@ Im Gegensatz zur FFT des Referenz-Programms basiert die Libav-FFT auf einer Spli
 \begin{figure}[h]
 	\centering
 		\includegraphics[width=1\textwidth]{../Pictures/libavtime.pdf}
-	\caption{Laufzeitmessungen von Refezenz-FFT und Libav-FFT für ARM, ARM+VFP und ARM+NEON}
+	\caption{Laufzeitmessungen von Refezenz-FFT und Libav-FFT für ARM, ARM+VFP und ARM+NEON für FSet2}
 	\label{fig:libavtime}
 \end{figure} 
 %
@@ -81,7 +81,7 @@ Auch das ZCR-Merkmal ist nicht ohne weiteres mit SIMD-Instruktionen möglich, da 
 \begin{figure}[h]
 	\centering
 		\includegraphics[scale=0.5]{../Pictures/mag.pdf}
-	\caption{Laufzeitmessung von Magnitude of Spectrum für ARM, ARM+VFP und ARM+NEON}
+	\caption{Laufzeitmessung von Magnitude of Spectrum für ARM, ARM+VFP und ARM+NEON für FSet2}
 	\label{fig:mag}
 \end{figure} 
 %
@@ -126,7 +126,9 @@ Auf diese Weise lässt sich die Laufzeit von MAG gegenüber der Laufzeit von ARM+N
 Die Gesamtlaufzeiten von FSet 1, 2 und 4 wurden damit im Vergleich zur complieroptimierten SIMD-Version um einen Faktor von knapp 1,2 beschleunigt.
 
 \subsection{Optimierung von Hamming Window}\label{subsec:optHAM}
-Für die Optimierung des Hamming Windows wird eine Optimierung durch den in \textbf{Kapitel \ref{ph:neonint}} beschriebenen Einsatz von Intrinsics gewählt. Hierbei wurden immer vier Multiplikationen der Eingangsdaten mit dem entsprechenden Hamming Window parallelisiert. \textbf{Listing \ref{code:hamc}} zeigt den Referenzcode und \textbf{Listing \ref{code:hamint}} den entsprechenden Code mit NEON-Intrinsics. Die Variable \textit{table[i]} hält hierbei den entsprechenden Wert für $w_{HW}(i)$, wie diese in \textbf{Kapitel \ref{subsubsec:hw}} beschrieben sind.
+
+Da die Berechnung des Hamming Windows nur aus einer Multiplikation von zwei Single Precision Werten besteht, lässt sich diese auch mit SIMD-Instruktionen realisieren. Zu diesem Zweck wird diese Berechnung durch eine äquivalente Berechnung mit NEON-Intrinsics realisiert. \textbf{Listing \ref{code:hamc}} zeigt den Referenz-Code der Hamming Window-Berechnung und \textbf{Listing \ref{code:hamint}} die äquivalente Berechnung mit NEON-Intrinsics.
+
 
 \begin{lstlisting}[caption=Referenzcode von Hamming Window, label=code:hamc]
 	for (unsigned int i = 0; i < size; i++) {
@@ -143,18 +145,11 @@ Für die Optimierung des Hamming Windows wird eine Optimierung durch den in \text
 	}
 \end{lstlisting}
 
-In die Variablen \textit{s4} und \textit{t4} werden jeweils vier Werte vom Eingangssignal, bzw. den Hammingwerten geladen und danach parallel mit dem Intrinsic \textit{vmulg\_f32} Multipliziert. Abschließend wird das Ergebnis dieser Multiplikationen (\textit{r4}) in den Ausgangsvektor geschrieben.
+In die Variablen \textit{s4} und \textit{t4} werden jeweils vier Werte vom Eingangssignal, bzw. den Hammingwerten geladen und danach parallel mit dem Intrinsic \textit{vmulg\_f32} Multipliziert. Abschließend wird das Ergebnis dieser Multiplikationen (\textit{r4}) in den Ausgangsvektor geschrieben.\\
+Auf diese Weise kann die Berechnung des Hamming Windows im Vergleich zur Berechnung ohne beschleunigte Fließpunkt-Berechnung um den Faktor 2,6 beschleunigt werden. Insgesamt wird hierdurch die Berechnung des FSet2 zusätzlich um den Faktor 1,2 beschleunigt.
 
 \subsection{Optimierung von MFCC}\label{subsec:optMFCC}
-Wie in \textbf{Kapitel \ref{subsubsec:mfcc}} beschrieben, besteht die Berechnung des MFCC aus drei Teilen:
-
-\begin{itemize}
-\item Einer Akkumulation,
-\item einer Logarithmusberechnung
-\item und einer anschließenden DCT
-\end{itemize}
-
-Zur Optimierung dieses Features muss als erstes der Bottleneck innerhalb dieser Feature-Berechnung identifiziert werden. Ein Detailprofiling dieser Berechnung zeigt, dass der größte Anteil mit knapp 44\% auf die Akkumulation fällt, die übrigen 56\% verteilen sich relativ gleichmäßig auf Logarithmus und DCT.\\
+Zur Optimierung der MFCC-Extraktion werden die Laufzeiten der drei wesentlichen Extraktionsschritte (siehe \textbf{Abschnitt \ref{subsubsec:mfcc}}) gemessen. Hierbei lässt sich feststellen, dass der größte Anteil mit knapp 44\% auf die Anwendung der Filterbank fällt, während jeweils 29\% durch die Logerithmierung und die DCT verursacht sind. Daher wird im Folgenden eine Optimierung der Filterbank-Anwendung angestrebt.\\
 \textbf{Listing \ref{code:mfccc}} zeigt den Referenzcode der Akkumulation innerhalb der MFCC-Berechnung.
 
 \begin{lstlisting}[caption=Referenzcode der Akkumulation innerhalb der MFCC-Berechnung, label=code:mfccc]
@@ -166,19 +161,9 @@ for (unsigned int m = 1; m <= M; m++) {
 }
 \end{lstlisting}
 
-Aus diesem Code-Schnipsel lässt sich entnehmen, dass die in den zwei Schleifen enthaltene Akkumulation nicht für jeden Durchlauf gleich oft ausgeführt werden muss. Diese Tatsache führt bei der angestrebten Optimierung mit NEON-Intrinsics zu einem Problem. Im Gegensatz zur vorher beschriebenen Optimierung von Hamming Window kann also nicht einfach der Schleifendurchlauf durch vier geteilt werden.\\
-Die Optimierung der MFCC erfolgt daher in fünf Schritten:
-
-\begin{enumerate}
-\item Feststellen der benötigten Durchläufe
-\item Vier parallele Berechnungen sooft wie möglich
-\item Gegebenenfalls noch eine Berechnung von zwei werten parallel
-\item Gegebenenfalls noch eine einzelne Berechnung
-\item Aufsummierung der Werte der drei vorherigen Schritte
-\end{enumerate}
-
+Aus diesem Code-Ausschnitt lässt sich entnehmen, dass die in den zwei Schleifen enthaltene Akkumulation nicht für jeden Durchlauf gleich oft ausgeführt wird. Dies führt dazu, dass die Anzahl der Schleifendurchläufe durch einen gemeinsamen Vielfachen beschrieben werden kann. Maximal können mit SIMD-Instruktionen vier Berechnungen quasi gleichzeitig ausgeführt werden (vgl. \textbf{Abschnitt \ref{ph:neon}}), daher muss als erstes die Anzahl der Schleifendurchläufe berechnet werden, in denen eine parallele Verarbeitung von vier Berechnungen möglich ist. Außerdem wird hierbei berechnet, wie viele Operationen danach noch ausgeführt werden müssen (maximal 3). Als nächstes wird geprüft, ob von den verbleibenden Operationen noch zwei parallel verarbeitet können. Am Schluss bleibt höchstens noch eine Operation übrig, die einzeln berechnet werden muss. Nachfolgend müssen die Einzelergebnisse der jeweiligen Parallelisierungsstufen zu einem Endergebnis aufsummiert werden.\\
 \textbf{Listing \ref{code:mfccint}} zeigt die gewählte Lösung und ersetzt die innere Schleife aus \textbf{Listing \ref{code:mfccc}}. In der Variable \textit{mod} wird die Anzahl der nicht durch vier parallele Rechnungen berechenbaren Durchläufe gespeichert, danach werden in den Zeilen 8-15 so viele parallelen vierfach Berechnung durchgeführt wie möglich. Sollte \textit{mod} größer als 1 sein, also noch zwei parallele Berechnungen möglich sein, werden diese in den Zeilen 17-25 durchgeführt. Wenn danach immer noch eine Berechnung fehlen sollte, wird diese in den Zeilen 27-29 durchgeführt. Abschließend werden in Zeile 31 die Einzelergebnisse aufsummiert. 
-
+\newpage
 \begin{lstlisting}[caption=Akkumulation innerhalb der MFCC-Berechnung mit NEON-Intrinsics, label=code:mfccint]
 	mod = (f_edge_table_bd[m + 1] - f_edge_table_bd[m - 1]+1) % 4;
 
@@ -213,17 +198,8 @@ Die Optimierung der MFCC erfolgt daher in fünf Schritten:
 	log_M[m - 1] += temp[0] + temp[1] + temp[2] + temp[3]+1;
 \end{lstlisting}
 
-\subsection{Zwischenevaluation der ARM-Optimierung}
-Nach den in den vorherigen Abschnitten durchgeführten Optimierungen wird ein Vergleich der optimierten Algorithmen durchgeführt. In \textbf{Abbildung \ref{fig:endarm}} werden die Laufzeiten in ms/Fenster vor und nach der Optimierung gegenübergestellt.
-%
-\begin{figure}[h]
-	\centering
-		\includegraphics[width=1\textwidth]{../Pictures/endarm.pdf}
-	\caption{Gegenüberstellung der Laufzeiten der optimierten Algorithmen vor und nach der Optimierung auf dem ARM}
-	\label{fig:endarm}
-\end{figure} 
-%
-Wie man der Abbildung entnehmen kann, wurde der größte Speedup bei der FFT-Berechnung erreicht. Dieser beträgt, wie schon in \textbf{Kapitel \ref{subsec:optFFT}} erwähnt knapp 19,2. Des weiteren wurden bei Magnitude of Spectrum ein Speedup von 2, bei MFCC ein Speedup von 1,2 und beim Hamming Window von 3,4 erreicht. Für die gesamte Extraktion des FeatureSets 2 wird ein Speedup von 2,7 erreicht.
+Mit dieser Lösung kann die MFCC-Berechnung um den Faktor 1,9 für FSet 1 und 2 im Vergleich zur Realisierung ohne beschleunigte Fließpunkt-Berechnung beschleunigt werden. Insgesamt werden FSet1 und FSet2 nochmals um den Faktor 1,2 beschleunigt.
+
 
 
 

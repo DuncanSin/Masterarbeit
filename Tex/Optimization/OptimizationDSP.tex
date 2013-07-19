@@ -1,7 +1,7 @@
 
-\section{Optimierung des DSP}\label{sec:optdsp}
-Nachdem im vorherigen Kapitel die Optimierung des Musikklassifikators auf dem ARM Cortex-A8 beschrieben wurde, behandelt dieses Kapitel die Optimierung der Extraktionsphase auf dem C674x DSP von Texas Instruments.\\
-Als erstes muss der C++-Referenzcode in C-Code übersetzt werden, da der C674x nur diesen ausführen kann. Anschließend werden durch eine Laufzeitmessung die Laufzeitantiele der einzelnen Feature-Berechnungen ermittelt (siehe \textbf{Abbildung \ref{fig:startdsp}}).//
+\section{DSP-spezifische Optimierung der portierten Merkmalsextraktion}\label{sec:optdsp}
+Für die Merkmalsextraktion auf dem C674x DSP wurde eine C-Version der C++-Referenz-Klasse geschrieben. da der Compiler C++ nur in geringem Umfang unterstützt. Außerdem wurde für die Einbindung der Merkmalsextraktion in den ARM-Code C6Runlib gewählt, da für C6Runapp keine Komunikationsprotokolle definiert sind.\\
+Die Laufzeiten zur Extraaktion der Merkmale und zur Durchführung erforderlicher Algorithmen sin in \textbf{Abbildung \ref{fig:startdsp}}zu sehen.\\
 %
 \begin{figure}[h]
 	\centering
@@ -10,13 +10,12 @@ Als erstes muss der C++-Referenzcode in C-Code übersetzt werden, da der C674x nu
 	\label{fig:startdsp}
 \end{figure} 
 %
-Wie man der Abbildung entnehmen kann fällt der größte Anteil mit über 60\% der Magnitude of Spectrum zu, aber auch FFT und Octave Spectral Contrast mit je 14\% sind nicht zu vernachlässigen.\\
-Ein Detailprofiling der Magnitude of Spectrum ergibt, dass Division und Wurzelberechnung zusammen knapp 98\% der Laufzeit ausmachen, das heißt, dass eine Optimierung in Richtung der Rechenfunktionen geschehen sollte.
+Wie der Abbildung entnommen werden kann, fällt der größte Anteil der Ausführungszeit mit über 60\% der MAG-Berechnung zu.\\
 
 \subsection{Optimierung der Rechenfunktionen mit MATHLIB}\label{sec:mathlib}
-Da wie bereits erwähnt, die Rechenfunktionen bei zum Beispiel der Magnitude of Spectrum als Bottlenecks identifiziert wurden und wie in \textbf{Kapitel \ref{subsubsec:optbib}} erwähnt eine Bibliothek (MATHLIB) existiert, in der genau diese Rechenoperationen optimiert wurden, werden alle problematischen Funktionen durch ihre optimierten Varianten ersetzt. Wie ebenfalls in dem Kapitel erwähnt, existieren für alle in MATHLIB implementierten Operationen auch Varianten, die auf Vektoren von Eingangswerten arbeiten können. Daher wird als erstes versucht, soweit es möglich ist, Operationen wie zum Beispiel Divisionen, Wurzelberechnungen oder Logarithmusfunktionen durch diese Vektoroperationen zu ersetzten. Sollte eine Ersetzung durch Vektoroperationen nicht möglich sein, werden Einzelaufrufe durch die optimierten Varianten der MATHLIB ersetzt.\\
-Diese Ersetzung wird Beispielhaft für Magnitude of Spectrum in \textbf{Listing \ref{code:aoscc}} und \textbf{Listing \ref{code:aoscm}} gezeigt.
-\newpage
+Eine genaue Analyse der Laufzeit der MAG-Berechnung zeigt, dass 98\% der Verarbeitungszeit auf die Berechnung der Division und Wurzelberechnung fallen, die mehrfach ausgeführt werden. Zur Beschleunigung dieser Operationen eignen sich die MATHLIB-Funktionen für vektorielle Eingabewerte.\\
+\textbf{Listing \ref{code:aoscc}} zeigt den Referenz-Code der MAG-Berechnung und \textbf{Listing \ref{code:aoscm}} durch MATHLIB optimierten Code.
+
 \begin{lstlisting}[caption=Referenzcode von Magnitude of Spectrum, label=code:aoscc]
 	A[k] = sqrt(X[k] * X[k] + Y[k] * Y[k]) / G;
 \end{lstlisting}
@@ -33,11 +32,11 @@ Diese Ersetzung wird Beispielhaft für Magnitude of Spectrum in \textbf{Listing \
 	divsp_v(A, pG, A, G);
 \end{lstlisting}
 
-Die Akkumulation innerhalb der Wurzelberechnung wurde zusätzlich für eine bessere Ausführung durch SPLOOP aufgetrennt.\\
-Eine Optimierung mit MATHLIB wurde bei folgenden Algorithmen durchgeführt:
+Hierbei ist zu erwähnen, dass die Addition innerhalb der Wurzelberechnung wird zusätzlich für eine bessere Ausführung durch SPLOOP aufgetrennt wird.\\
+Mit dieser Optimierung wird für FSet 1 und 4 eine Beschleunigung um den Faktor 45,5 und bei FSet2 um 45,2 erreicht.\\
+Die MATHLIB wird außerdem für die Optimierung folgender Algorithmen eingesetzt:
 
 \begin{itemize}
-\item Magnitude of Spectrum
 \item MFCC
 \item Low Energy
 \item Normalized Audio Spectrum Envelope
@@ -49,13 +48,23 @@ Eine Optimierung mit MATHLIB wurde bei folgenden Algorithmen durchgeführt:
 \item Sub-band Energy Ratio
 \end{itemize}
 
-Abschließend wird nach der Optimierung mit MATHLIB eine weitere Laufzeitmessung durchgeführt. Diese soll zwei Dinge zeigen:
+Die Beschleunigungen dieser Merkmale ist in \textbf{Tabelle \ref{tab:math}} angegeben.
 
-\begin{enumerate}
-\item Ist Magnitude of Spectrum immer noch der größte Bottleneck oder
-\item haben sich neue Bottlenecks aufgetan
-\end{enumerate}
-%
+\begin{table*}[ht]
+	\centering
+		\begin{tabular}{c|c|c|c|c|c|c|c|c|c}
+		
+		& MFCC & LE & NASE & OSC & RMS & SC & SCF & SF & SBER\\
+		\hline
+		Faktor & 3 & 2,4 & 2,2 & 2,2 & 1,3 & 1,4 & 2,2 & 1,05 & 1,8\\
+					
+		\end{tabular}
+	\caption{Tabelle der verwendeten Ausdrücke und Variablen}
+	\label{tab:note}
+\end{table*}
+
+Insgesamt werden durch die Einbindung von MATHLIB die FSets 1, 2, 3 und 4 um die Faktoren 4.6, 4.1, 1.1 und 4.7 beschleunigt.
+
 \begin{figure}[h]
 	\centering
 		\includegraphics[width=1\textwidth]{../Pictures/dsp2.pdf}
@@ -63,23 +72,13 @@ Abschließend wird nach der Optimierung mit MATHLIB eine weitere Laufzeitmessung 
 	\label{fig:dsp2}
 \end{figure} 
 %
-\textbf{Abbildung \ref{fig:dsp2}} zeigt die angesprochene Laufzeitmessung. Wie man dort erkennen kann, ist Magnitude of Spectrum nicht mehr der größte Bottleneck. Jetzt zeigt sich, dass die FFT-Berechnung zum größten Bottleneck geworden ist, also wird in diese Richtung weiter optimiert.
+\textbf{Abbildung \ref{fig:dsp2}} veranschaulicht die Laufzeit-Verbesserungen der Merkmale durch die MATHLIB.\\
+Des weiteren fällt auf, dass die FFT-Berechnung nun die längste Laufzeit aufweist.
 
 \subsection{Optimierung der FFT mit DSPLIB}\label{sec:dsplib}
-Wie ebenfalls in \textbf{Kapitel \ref{subsubsec:optbib}} erwähnt, wird von Texas Instruments auch eine optimierte Bibliothek bereitgestellt, in der eine FFT-Implementierung vorhanden ist. Durch diesen Umstand macht es Sinn diese für die Optimierung der FFT-Berechnung zu verwenden.\\
-Bei der FFT aus der DSPLIB handelt es sich um eine Complex2Complex-Mixedradix-FFT. Diese C2C-FFT lässt sich aber nach der in \cite{rfft} beschriebenen Methode in eine Real2Complex-FFT umwandeln.\\
-Die Einbindung der DSPLIB-FFT geschieht ebenfalls auf die in \cite{rfft} beschriebene Weise. Des weiteren wurde die Übergabe zwischen FFT und MAG geändert, so dass nicht wie vorher je ein Signal für Real- und Imaginärteil übergeben wird, sondern ein einzelnes Signal in dem Real- und zugehöriger Imaginärteil hintereinander stehen. \\
-Auch nach der Optimierung der FFT durch die Einbindung der DSPLIB wird wieder eine Laufzeitmessung durchgeführt um eventuell weitere Bottlenecks zu identifizieren.\\
-%
-\begin{figure}[h]
-	\centering
-		\includegraphics[width=1\textwidth]{../Pictures/dsp3.pdf}
-	\caption{Laufzeitmessung nach der Optimierung durch MATHLIB und DSPLIB}
-	\label{fig:dsp3}
-\end{figure} 
-%
-\textbf{Abbildung \ref{fig:dsp3}} zeigt das Ergebnis der erwähnten Laufzeitmessung, die Features aus FeatureSet 2 wurden um die Zero Crossing Rate aus FeatureSet 3 ergänzt, da diese nach der FFT-Optimierung langsamer als die FFT ist.\\
-Nach dieser Messung ergeben sich zwei neue Bottlenecks, Octave Spectral Contrast und Zero Crossing Rate. Bei OSC nimmt mit 55\% die Sortierung den größten Anteil der Laufzeit ein. Auch bei der DSP-Implementierung soll keine Optimierung in diese Richtung vorgenommen werden (vgl. \textbf{Kapitel \ref{subsec:dspwopt}}).
+Die Beschleunigung der FFT wird mit Hilfe der DSPLIB-Implementierung realisiert. Hierbei wird der Programm-Code der MAG aufgrund des geänderten Datenformats angepasst.\\
+Dieses beschleunigt die FFT-Berechnung für FSet 1, 2 und 4 je um den Faktor 3,8. Insgesamt werden die FSets 1, 2 und 4 zusätzlich um die Faktoren 2, 1,6 und 2,2 beschleunigt.\\
+Nach der Optimierung mit der DSPLIB sind die Berechnungen der Merkmale OSC und ZCR langsamer als die Berechnung der FFT.
 
 \subsection{Optimierung für SPLOOP}\label{sec:compiler} 
 Ein Blick in den Assemblercode der Zero Crossing Rate zeigt, dass für die Schleife keine SPLOOP-Optimierung vom Compiler durchgeführt wurde. Dieses lässt sich aber durch eine einfache Codeumstellung lösen. \textbf{Listing \ref{code:zcrc}} zeigt den Referenzcode der Zero Crossing Rate und \textbf{Listing \ref{code:zcrs}} den umgestellen Code.
@@ -104,14 +103,4 @@ Ein Blick in den Assemblercode der Zero Crossing Rate zeigt, dass für die Schlei
 	}
 \end{lstlisting}
 
-\subsection{Zwischenevaluation der DSP-Optimierung}
-Auch nach der DSP-Optimierung wird ein abschließender Vergleich der Anfangsmessung mit der volloptimierten Messung durchgeführt. Für diesen Vergleich werden die Laufzeiten der einzelnen Features auf die Laufzeit für ein Fenster heruntergerechnet, um diesen Vergleich zwischen den verschiedenen FeatureSets zu ermöglichen.\\
-%
-\begin{figure}[h]
-	\centering
-		\includegraphics[width=1\textwidth]{../Pictures/enddsp.pdf}
-	\caption{Vergleich der Laufzeiten von Referenz- und volloptimierter Messung auf dem DSP}
-	\label{fig:enddsp}
-\end{figure} 
-%
-Wie \textbf{Abbildung \ref{fig:enddsp}} zu entnehmen ist, wurde bei der Optimierung auf dem C674x DSP der größte Speedup bei der Magnitude of Spectrum erreicht, dieser beträgt knapp 29. Der geringste Speedup wurde beim Spectral Flux erzielt, dieser liegt nur knapp über 1. Die anderen Algorithmen erzielten einen Speedup zwischen 1,3 (Root Mean Square) und 7,7 (Zero Crossing Rate).   
+Die Code-Umstellung beschleunigt die ZCR-Berechnung um einen Faktor von 7,7, so dass die Berechnung von FSet3 um den Faktor 3,9 beschleunigt wird.
