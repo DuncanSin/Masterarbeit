@@ -60,7 +60,7 @@ Die Beschleunigungen dieser Merkmale ist in \textbf{Tabelle \ref{tab:math}} ange
 					
 		\end{tabular}
 	\caption{Tabelle der verwendeten Ausdrücke und Variablen}
-	\label{tab:note}
+	\label{tab:math}
 \end{table*}
 
 Insgesamt werden durch die Einbindung von MATHLIB die FSets 1, 2, 3 und 4 um die Faktoren 4.6, 4.1, 1.1 und 4.7 beschleunigt.
@@ -79,6 +79,11 @@ Des weiteren fällt auf, dass die FFT-Berechnung nun die längste Laufzeit aufweis
 Die Beschleunigung der FFT wird mit Hilfe der DSPLIB-Implementierung realisiert. Hierbei wird der Programm-Code der MAG aufgrund des geänderten Datenformats angepasst.\\
 Dieses beschleunigt die FFT-Berechnung für FSet 1, 2 und 4 je um den Faktor 3,8. Insgesamt werden die FSets 1, 2 und 4 zusätzlich um die Faktoren 2, 1,6 und 2,2 beschleunigt.\\
 Nach der Optimierung mit der DSPLIB sind die Berechnungen der Merkmale OSC und ZCR langsamer als die Berechnung der FFT.
+
+\subsection{Optimierung des Sortierverfahrens der Octave Spectral Contrast-Berechnung}\label{subsec:optosc}
+Eine genauere Analyse der Berechnung des OSC-Merkmals zeigt, dass 54\% der Rechenzeit dieses Merkmals auf die Sortierung fallen. Also wird eine Optimierung des Sortierverfahrens angestrebt.\\
+Bei dem im Referenz-Code verwendeten Sortierverfahren handelt es sich um einen Algorithmus, der auf dem Quick Sort-Verfahren basiert. Nach Angaben von Texas Instruments\cite{sort} werden Merge Sort-Algorithmen auf dem C674x DSP laufezeiteffektiver ausgeführt, als Quick Sort-Algorithmen, obwohl beide in die  Komplexitätsklasse $O(n \, log(n))$ fallen. In dem selben Dokument wird ebenfalls ein optimierter Algorithmus auf dem Merge Sort-Verfahren basierend präsentiert. Dieser für Integer konzipierte Algorithmus wird für die Verwendung mit Fließpunktzahlen und die Sortierung in absteigender Reihenfolge umgeschrieben und in die OSC-Berechnung integriert.\\
+Die Ersetzung des Quick Sort-Verfahrens durch das in \cite{sort} vorgeschlagene Merge Sort-Verfahren beschleunigt die Berechnung des OSC-Merkmals um den Faktor ... . Insgesamt wird hierdurch die Berechnung von FSet2 um den Faktor ... beschleunigt.
 
 \subsection{Optimierung für SPLOOP}\label{sec:compiler} 
 Ein Blick in den Assemblercode der Zero Crossing Rate zeigt, dass für die Schleife keine SPLOOP-Optimierung vom Compiler durchgeführt wurde. Dieses lässt sich aber durch eine einfache Codeumstellung lösen. \textbf{Listing \ref{code:zcrc}} zeigt den Referenzcode der Zero Crossing Rate und \textbf{Listing \ref{code:zcrs}} den umgestellen Code.
