@@ -33,7 +33,7 @@ In dieser Arbeit ist die Energie-Effizienz als verarbeitete Fenster $L$ pro Ener
 E_{eff}~=~\frac{R_{ex}}{P}~=~\frac{\frac{L}{t}}{\frac{E}{t}}~=~\frac{L}{E}
 \end{equation}
 
-Der Leistungsverbrauch der beiden Prozessorkerne wird aus \cite{power} entnommen. Der ARM Cortex A8 kommt dabei auf einen Leistungsverbrauch von 169 mW und der C674x auf einen zusätzlichen Leistungsverbrauch von 141 mW.
+Der Leistungsverbrauch der beiden Prozessorkerne wird aus \cite{power} entnommen. Der ARM Cortex A8 kommt dabei auf einen Leistungsverbrauch von 169 mW und der C674x auf einen zusätzlichen Leistungsverbrauch von 141 mW, so dass das heterogene System auf einen Leistungsverbrauch von 310 mW kommt.
 
 \section{Evaluation der ARM-Optimierung}\label{sec:evarm}
 
@@ -125,18 +125,12 @@ Die Laufzeitunterschiede zwischen der Verwendung dem DSP-Referenz-Programm-Code 
 \section{Gegenüberstellung ARM und ARM+DSP}\label{sec:evarmdsp}
 \textbf{Abbildung \ref{fig:hete+arm}} zeigt den Laufzeitunterschied zwischen Referenz-Programm-Code und optimierter Version auf dem ARM und dem unoptimierten und optimierten heterogenen System.\\
 Aus der Abbildung wird ersichtlich, dass in den Vergleichen zwischen ARM und ARM+DSP der heterogene Ansatz für jede Musikklassifikationsmethode trotz Kommunikationszeit die geringeren Laufzeiten aufweist. Dieses ist auch in den Extraktionsraten zu erkennen (vgl. \textbf{Abbildung \ref{fig:erhete}}.\\
-Bei der Betrachtung der Energie-Effizienz beider Ansätze erkennt man, dass hier die ... Version die besseren Ergebnisse liefert (vgl. \textbf{Abbildung \ref{fig:enhete}}).
+Bei der Betrachtung der Energie-Effizienz beider Ansätze erkennt man, dass hier der ARM Cortex A8 die besseren Ergebnisse liefert (vgl. \textbf{Abbildung \ref{fig:enhete}}).
 
 
 
 \section{Fazit}\label{sec:evfaz}
 
-\begin{itemize}
-\item ARM+DSP zu ineffizient
-\begin{itemize}
-\item Kommunikationszeit
-\item Erhöhter Energiebedarf durch Zuschalten von DSP
-\item DSP bringt keinen wirklichen Geschwindigkeitszuwachs
-\end{itemize}
-\item ARM+NEON effizienter, nach weiteren Optimierungen evtl. auch schneller
-\end{itemize}
+Es wird erkenntlich, dass beide betrachteten Architekturen ihre Vor- und Nachteile haben. Außerdem wird ersichtlich, dass die beiden Ziele Laufzeit und Energie-Effizienz nicht gemeinsam erreichbar sind.\\
+Soll ein System mit möglichst geringer Laufzeit erstellt werden, ist der heterogene Ansatz vorzuziehen. Nach den im vorherigen Kapitel durchgeführten Optimierungen auf ARM und DSP wird eine Musikklassifikation auf dem heterogenen System um \% schneller ausgeführt als auf dem ARM Cortex A8.\\
+Wird allerdings ein Energie-effizientes System verlangt, so ist der ARM Cortex A8 vorzuziehen. Die Energie-Effiziens ist um \% höher als die des heterogenen Systems.
