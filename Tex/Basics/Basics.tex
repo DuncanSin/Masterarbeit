@@ -19,7 +19,18 @@ Im ersten Schritt werden aus den betrachteten Musikstücken in der Extraktionspha
 
 
 \section{Extraktion}\label{subsec:ext}
-Zur Extraktion von Merkmalen wird eine zuvor festgelegte Zusammenstellung von Merkmalen (engl. Feature Sets) verwendet. hierbei kann zwischen Merkmalen aus der Zeit-Domäne und Merkmalen aus der Frequenz-Domäne unterscheiden werden. Das Audio-Signal wird in gleichgroße Fenster eingeteilt, die sich überlappen können. Außerdem wird nur ein Audio-Kanal verwendet. Bei Stereo-Signalen muss daher entweder ein Kanal selektriert oder beide Kanäle gemischt werden. \textbf{Abbildung \ref{fig:signal}} stellt die wesentlichen Parameter der Extraktionsphase heraus.
+
+
+Zur Extraktion von Merkmalen wird eine zuvor festgelegte Zusammenstellung von Merkmalen (engl. Feature Sets) verwendet. hierbei kann zwischen Merkmalen aus der Zeit-Domäne und Merkmalen aus der Frequenz-Domäne unterscheiden werden. Das Audio-Signal wird in gleichgroße Fenster eingeteilt, die sich überlappen können. Außerdem wird nur ein Audio-Kanal verwendet. Bei Stereo-Signalen muss daher entweder ein Kanal selektriert oder beide Kanäle gemischt werden. \textbf{Abbildung \ref{fig:signal}} stellt die wesentlichen Parameter der Extraktionsphase heraus, zur Hilfe sind die ersten drei Fenster farblich markiert.
+
+%
+\begin{figure}[h]
+	\centering
+		\includegraphics[width=1\textwidth]{../Pictures/signal.pdf}
+	\caption{Signalverlauf mit Extraktionsparametern}
+	\label{fig:signal}
+\end{figure}
+%
 
 Die Größe eines Fensters wird in Anzahl an Audio-Samples angegeben. Eine Fenstergröße von $N=512$ entspricht dabei einer Sampling-Rate von 22050 Hz, also zirka 23 ms. Die Fensterüberlappung wird ebenfalls mit der Sampling-anzahl angegeben. Typische Werte sind $Nhop=0$ oder $Nhop=\frac{N}{2}$.
 
@@ -586,7 +597,7 @@ Für die Laufzeitanalysen sind vier verschiedene Methoden zur Musikklassifikation
 	\centering
 		\begin{tabular}{|c c|c|c|c|c|}
 		\hline
-		Mermalssatz & & Prozessierungsmethode & Klassifikator & Name & Güte\\
+		Mermalssatz &  & Prozessierungsmethode & Klassifikator & Name & Güte\\
 		\hline\hline
 		SPC & \multirow{4}{*}{FSet1}&\multirow{4}{*}{RMD}&\multirow{4}{*}{SVM}&\multirow{4}{*}{MCL1}&\multirow{4}{*}{73,4\%}\\
 		SR&&&&&\\
