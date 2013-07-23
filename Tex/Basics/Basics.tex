@@ -1,8 +1,8 @@
 \chapter{Grundlagen}
 \label{ch:grund}
 \rm
-In diesem Kapitel werden die Grundlagen wiederholt, die für das Verständnis der Arbeit benötigt werden.\\
-Hierfür wird das Prinzip der Musikklassifikation von Musikstücken erklärt. Dabei wird ein Exkurs über Merkmale und Prozessierungen während der Musikklassifikation gegeben. Abschließend werden die vier verwendeten Musikklassifikationsmethoden erläutert.
+In diesem Kapitel werden die Grundlagen  der Audio-Signalklassifikation respektive der Muskklassifikation eingeführt.\\
+Dabei werden verschiedene Audio-Merkmale und für diese Arbeit relevante Algorithmen zur Prozessierung und Klassifikation vorgestellt. Abschließend werden die vier verwendeten Musikklassifikationsmethoden erläutert.
 \section{Musikklassifikation}\label{sec:mcl}
 
 Musikklassifikation findet im Wesentlichen in drei Schritten statt (vgl. \textbf{Abbildung \ref{fig:mcl}}).
@@ -10,7 +10,7 @@ Musikklassifikation findet im Wesentlichen in drei Schritten statt (vgl. \textbf
 \begin{figure}[htp]
 	\centering
 		\includegraphics[width=1\textwidth]{../Pictures/MCL.pdf}
-	\caption{Ablaufdiagramm der Musikklassifikation}
+	\caption{Flussdiagramm der Musikklassifikation}
 	\label{fig:mcl}
 \end{figure}
 %
@@ -21,7 +21,7 @@ Im ersten Schritt werden aus den betrachteten Musikstücken in der Extraktionspha
 \section{Extraktion}\label{subsec:ext}
 
 
-Zur Extraktion von Merkmalen wird eine zuvor festgelegte Zusammenstellung von Merkmalen (engl. Feature Sets) verwendet. hierbei kann zwischen Merkmalen aus der Zeit-Domäne und Merkmalen aus der Frequenz-Domäne unterscheiden werden. Das Audio-Signal wird in gleichgroße Fenster eingeteilt, die sich überlappen können. Außerdem wird nur ein Audio-Kanal verwendet. Bei Stereo-Signalen muss daher entweder ein Kanal selektriert oder beide Kanäle gemischt werden. \textbf{Abbildung \ref{fig:signal}} stellt die wesentlichen Parameter der Extraktionsphase heraus, zur Hilfe sind die ersten drei Fenster farblich markiert.
+Zur Extraktion von Merkmalen wird eine zuvor festgelegte Zusammenstellung von Merkmalen (engl. Feature Sets) verwendet. Hierbei kann zwischen Merkmalen aus der Zeit-Domäne und Merkmalen aus der Frequenz-Domäne unterscheiden werden. Das Audio-Signal wird in gleichgroße Fenster eingeteilt, die sich überlappen können. Anschließend werden die zu betrachtenden Merkmale aus diesen Fenstern nacheinander extrahiert, so dass pro Fenster ein Merkmalsergebnis vorliegt. Diese Reihe der einzelnen Ergebnisse wird nachfolgend als Wertereihe bezeichnet. Außerdem wird nur ein Audio-Kanal verwendet. Bei Stereo-Signalen muss daher entweder ein Kanal selektiert oder beide Kanäle gemischt werden. \textbf{Abbildung \ref{fig:signal}} stellt die wesentlichen Parameter der Extraktionsphase heraus, zur Hilfe sind die ersten drei Fenster farblich markiert.
 
 %
 \begin{figure}[h]
@@ -32,12 +32,11 @@ Zur Extraktion von Merkmalen wird eine zuvor festgelegte Zusammenstellung von Me
 \end{figure}
 %
 
-Die Größe eines Fensters wird in Anzahl an Audio-Samples angegeben. Eine Fenstergröße von $N=512$ entspricht dabei einer Sampling-Rate von 22050 Hz, also zirka 23 ms. Die Fensterüberlappung wird ebenfalls mit der Sampling-anzahl angegeben. Typische Werte sind $Nhop=0$ oder $Nhop=\frac{N}{2}$.
+Die Größe eines Fensters wird in Anzahl an Audio-Samples angegeben. Eine Fenstergröße von $N=512$ entspricht dabei einer Sampling-Rate von 22050 Hz, also zirka 23 ms. Die Fensterüberlappung wird ebenfalls mit der Sampling-Anzahl angegeben. Typische Werte sind $Nhop=0$ oder $Nhop=\frac{N}{2}$.
 
-Im Folgenden werden die in dieser Arbeit betrachteten Merkmale näher vorgestellt. 
  
 \subsection{Merkmale}\label{sec:alg}
-Merkmale können in zwei Bereiche unterteilt werden. Einmal Merkmale, die aus dem Zeitbereich stammen (\textbf{Abschnitt \ref{subsec:zeit}}) und Merkmale die aus dem Frequenzbereich stammen (\textbf{Abschnitt \ref{subsec:freq}}).\\
+Merkmale können in zwei Bereiche unterteilt werden. Zum einen in Merkmale, die aus dem Zeitbereich stammen (\textbf{Abschnitt \ref{subsec:zeit}}) und zum anderen in Merkmale, die aus dem Frequenzbereich stammen (\textbf{Abschnitt \ref{subsec:freq}}).\\
 Für die nachfolgend vorgestellten Merkmale wird die Notation aus \textbf{Tabelle \ref{tab:note}} verwendet. Ausführliche Definitionen der präsentierten Mermale sind in \cite{haller2008} und \cite{Theimer2008} zu finden.
 
 \begin{table*}[ht]
@@ -521,28 +520,28 @@ Die Sub-Band Energy Ratio gibt die Verteilung der Spektralenergie auf die Freque
 \end{equation}
 
 \section{Prozessierung}\label{subsec:proc}
-Klassifikationsalgorithmen setzen eine festgelegte Anzahl von Variablen voraus, mit welchen Musikstücke dargestellt werden. Da Mustikstücke unterschiedliche aufweisen, ist auch die Anzahl extrahierter Merkmale verschieden. Daher ist die Erstellung von Merkmalsvektoren erforderlich, die die Merkmale nach zum Beispiel statistischen Eigenschaften zusammenfasst. Hierdurch wird außerdem die zu speichernde Datenmenge pro Musikstück reduziert, welche bei mobilen Endgeräten einen nicht zu unterschätzenden Faktor darstellt.\\
+Klassifikationsalgorithmen setzen eine festgelegte Anzahl von Variablen voraus, mit welchen Musikstücke dargestellt werden. Da Mustikstücke z.B. unterschiedliche Laufzeiten aufweisen, ist auch die Anzahl extrahierter Merkmale verschieden. Daher ist die Erstellung von Merkmalsvektoren erforderlich, die die Merkmale nach zum Beispiel statistischen Eigenschaften zusammenfasst. Hierdurch wird außerdem die zu speichernde Datenmenge pro Musikstück reduziert.\\
 Zwei in dieser Arbeit eingesetzte Methoden werden im Folgenden vorgestellt.
 
-\subsection{Running Mean and Runnind Deviant (RMD)}
+\subsection{Running Mean and Runnind Deviation (RMD)}
 
-Bei dieser Prozessierungsmethode werden für jedes Merkmal anstatt den genauen Werten nur der Mittelwert und die Abweichung gespeichert. Diese Datenreduktion geschieht in zwei Schritten.\\
-Im erste Schritt wird die Wertereihe eines Merkmals in gleichgroße Fenster unterteilt. Danach wird für jedes Fenster Mittelwert und Abweichung berechnet, so dass zwei gleich lange Wertereihen pro Merkmal-Element entstehen, die den Mittelwerten und Abweichungen über den Zeitverlauf entsprechen.\\
+Diese Prozessierungsmethode basiert auf der Berechnung von Mittelwert und Abweichung für jedes Merkmalelement. Diese Datenreduktion geschieht in zwei Schritten.\\
+Im erste Schritt wird die Wertereihe eines Merkmals in gleichgroße Fenster der Länge L unterteilt. Danach wird für jedes Fenster Mittelwert und Abweichung berechnet, so dass zwei gleich lange Wertereihen pro Merkmal-Element entstehen, die den Mittelwerten und Abweichungen über den Zeitverlauf entsprechen.\\
 Im zweiten Schritt werden von diesen Wertereihen ebenfalls Mittelwert und Abweichung bestimmt, so dass am Ende jedes Merkmal durch vier statistische Werte repräsentiert wird.
 
 \subsection{Modulation Spectral Analysis (MDA)}
-Diese Prozessierungsmethode basiert auf der Ermittlung von statistischen Daten aus der spektralen Dynamik eines Merkmals. Diese Methode funktioniert nur auf Merkmalen, deren Wertereihen in vektorieller Form vorliegen. Hierbei wird von D Elementen pro Vektor ausgegangen. Die Prozessierung wird in vier Schritten durchgeführt.\\
-Im ersten Schritt wird jedes Elementreihe eines Merkmals in k gleichgroße Fenster unterteilt, die sich um 50\% überlappen. Anschließend mit Hilfe einer FFT in den Frequenzbereich transformiert.\\
-Der zweite Schritt werden aus diesen $D\cdot k$ Fourier-Spektren Betragsspektren berechnet und diese für jedes Merkmalselement gemittelt.\\
+Diese Prozessierungsmethode basiert auf der Ermittlung von statistischen Daten aus der spektralen Dynamik eines Merkmals. Hierbei wird von D Elementen pro Vektor ausgegangen. Die Prozessierung wird in vier Schritten durchgeführt.\\
+Im ersten Schritt wird jede Elementreihe eines Merkmals in k gleichgroße Fenster der Länge L unterteilt, die sich um 50\% überlappen. Anschließend werden diese mit Hilfe einer FFT in den Frequenzbereich transformiert.\\
+Im zweiten Schritt werden aus diesen $D\cdot k$ Fourier-Spektren Betragsspektren berechnet und diese für jedes Merkmalselement gemittelt.\\
 Die gemittelten Betragsspektren werden anschließend logarithmisch in acht Subbänder unterteilt. Aus dieser Unterteilung wird eine Dx8-Matrix erstellt in der für jedes Element der kleinste im Subband vorkommende Betrag (\glqq Valley\grqq) und die Differenz vom größten und kleinsten Betrag (\glqq Contrast\grqq) gespeichert wird.\\
-Im vierten Schritt werden von allen Valley- und Contrast-Werten Mittelwert und Abweichung berechnet. Hierbei erfolgt die Berechnung sowohl zeilen- als auch spaltenweise, so dass jedes Merkmal durch vier statistische Werte repräsentiert wird.
+Im vierten Schritt werden von allen Valley- und Contrast-Werten Mittelwert und Abweichung berechnet. Hierbei erfolgt die Berechnung sowohl zeilen- als auch spaltenweise.
 
 
 \section{Klassifikation}\label{subsec:cla}
-Während der Klassifikation weist ein Klassifikator einem Merkmalsvektor respektive dem dazu gehörigen Musikstück eine Musikkategorie zu. hierfür ist ein Klassifikationsmodell erforderlich, das in einer sogenannten Trainingsphase zu erstellen ist. Die Trainingsphase setzt bereits vorklassifizierte Merkmalsvektoren voraus, so dass die Anzahl und Bezeichnungen der Kategorien, bzw. Klassen festgelegt wird und der Klassifikator lernen kann, wie er zwischen Klassen anhand der Vektoren unterscheiden kann.\\
+Während der Klassifikation weist ein Klassifikator einem Merkmalsvektor respektive dem dazu gehörigen Musikstück eine Musikkategorie zu. Hierfür ist ein Klassifikationsmodell erforderlich, das in einer sogenannten Trainingsphase zu erstellen ist. Die Trainingsphase setzt bereits vorklassifizierte Merkmalsvektoren voraus, so dass die Anzahl und Bezeichnungen der Kategorien bzw. Klassen festgelegt wird und der Klassifikator lernen kann, wie er zwischen Klassen anhand der Vektoren unterscheiden kann.\\
 Das Prinzip soll anhand der Support Vector Maschine (SVM) erklärt werden.
 \\\\
-zur Vereinfachung wird angenommen, dass die Vektoren nur zwei Elemente besitzen und nur zwischen zwei Kategorien zu unterscheiden ist. Die Vektoren lassen sich im Merkmalsraum darstellen, der aufgrund der Elementanzahl ebenfalls zweidimensional ist.
+Zur Vereinfachung wird angenommen, dass die Vektoren nur zwei Elemente besitzen und nur zwischen zwei Kategorien zu unterscheiden ist. Die Vektoren lassen sich in einem Merkmalsraum darstellen, der aufgrund der Elementanzahl ebenfalls zweidimensional ist.
 %
 \begin{figure}[htp]
 	\centering
@@ -551,24 +550,23 @@ zur Vereinfachung wird angenommen, dass die Vektoren nur zwei Elemente besitzen 
 	\label{fig:svm}
 \end{figure}
 %
-Der SVM-Klassifikator sucht in der Trainingsphase nach einer Hyperebene, die die Vektoren unterschiedlicher Klassen mit maximalem Abstand voneinander trennt. Hierbei kann eine geeignete Ebene mehr Dimensionen aufweisen als der Merkmalsraum (vgl. \textbf{Abbildung \ref{fig:svm}}). Die gefundene Ebene wird schließlich anhand der Vektoren beschrieben, die am nächsten zur Ebene liegen. Diese werden als Support Vektoren bezeichnet. Danach kann ein zu klassifizierendes Objekt (grünes Dreieck) anhand seiner Lage zur aufgespannten Hyperebene eindeutig einer der beiden Klassen zugeordnet werden.
+Der SVM-Klassifikator sucht in der Trainingsphase nach einer Hyperebene, die die Vektoren unterschiedlicher Klassen mit maximalem Abstand voneinander trennt. Hierbei kann eine geeignete Ebene mehr Dimensionen aufweisen als der Merkmalsraum (vgl. \textbf{Abbildung \ref{fig:svm}}). Die gefundene Ebene wird anhand der Vektoren beschrieben, die am nächsten zur Ebene liegen. Diese werden als Support Vektoren bezeichnet. Danach kann ein zu klassifizierendes Objekt (grünes Dreieck) anhand seiner Lage zur aufgespannten Hyperebene eindeutig einer der beiden Klassen zugeordnet werden.
 
 \subsection{Klassifikationsgüte}
 
-Für die Bewertung eines Klassifikators wird eine Bewertungsmetrik benötigt. Als so eine Metrik wird die Klassifikationsgüte verwendet. Diese Güte gibt die Genauigkeit einer Klassifikation an und wird als Verhältnis von richtig klassifizierten Objekten zur Gesamtzahl aller klassifizierten Objekte berechnet (vgl. \textbf{Formel \ref{eqn:class}}).
+Für die Bewertung eines Klassifikators wird eine Bewertungsmetrik benötigt. Als Metrik wird in dieser Arbeit die Klassifikationsgüte verwendet. Die Güte gibt die Genauigkeit einer Klassifikation an und wird als Verhältnis von richtig klassifizierten Objekten zur Gesamtzahl aller klassifizierten Objekte berechnet (vgl. \textbf{Formel \ref{eqn:class}}).
 
 \begin{equation}
 \label{eqn:class}
-Klassifikationsg\ddot{u}te~=~\frac{\#(richtig~klassifizierter~Objekte)}{\#(zu~klassifizierender~Objekte)}
+Klassifikationsg\ddot{u}te~=~\frac{\#(richtig~klassifizierter~Objekte)}{\#(zu~klassifizierender~Objekte)}\cdot 100\%
 \end{equation}
 
-Aus der Formel ist leicht zu erkennen, dass die Klassifikationsgüte einen Wert zwischen 0 und 1 besitzt, umso näher dieser Wert an 1 liegt, desto mehr Objekte wurden richtig klassifiziert.
 
 \subsection{Kreuzvalidierung}
 
-Kreuzvalidierung wird für die Überprüfung eines Klassifikationsmodells herangezogen. Hierbei wird eine bereits vorklassifizierte Menge in möglichst gleichgroße Teilmengen geteilt. Anschließend wird ein Klassifikator mit N-1 dieser N Teilmengen trainiert und die N. Teilmenge klassifiziert. Dieses wird so oft wiederholt, bis jede der N Teilmengen einmal klassifiziert wurde. Die Klassifikationsgüten werden abschließend miteinander verglichen. Umso besser das aufgestellte Klassifikationsmodell ist, dest weniger weichen diese Güten voneinander ab. Außerdem weist die gemittelte Klassifikationsgüten dieser einzelnen Güten weniger Ausreißer auf.\\\\
-Für die im folgenden Abschnitt angegebenen Klassifikationsgüten wurde die GTZAN Datenbank\cite{gtzan} als Grundlage verwendet. Diese beinhaltet 1000 Musikstücke (á 30 s bei 22050 Hz, 16 bit Sample, mono), die sich gleich auf die 10 enthaltenen Klassen \textit{blues, classical, country, disco, jazz, metal, pop, punk, reggae} und \textit{rock} verteilen.\\
-Für die Kreuzvalidierung wurden diese 1000 Lieder in 10 Teilmengen unterteilt, so dass je 10 Lieder pro Klasse in einer Teilmenge vorhanden sind, und kein Lied doppelt vorkommt (vgl. \textbf{Tabelle \ref{tab:gtzan}}).
+Kreuzvalidierung ist eine Methode zur Klassifikation einer Datenbank und zur Bewertung einer Klassifikationsmethode. Hierbei wird eine bereits vorklassifizierte Menge in möglichst gleichgroße Teilmengen geteilt. Anschließend wird ein Klassifikator mit N-1 dieser N Teilmengen trainiert und eine Nte Teilmenge klassifiziert. Dieses wird so oft wiederholt, bis jede der N Teilmengen einmal klassifiziert wurde. Die Anzahlen der richtig klassifizierten Objekte werden anschließend addiert und durch die Gesamtzahl an Musikstücken der Datenbank geteilt.\\\\
+Für die im folgenden Abschnitt angegebenen Klassifikationsgüten wurde die GTZAN Datenbank\cite{gtzan} als Grundlage verwendet. Diese beinhaltet 1000 Musikstücke (á 30 s bei 22050 Hz, 16 bit Sample, mono), die sich zu gleichen Teilen auf die 10 enthaltenen Klassen \textit{blues, classical, country, disco, jazz, metal, pop, punk, reggae} und \textit{rock} verteilen.\\
+Für die Kreuzvalidierung werden diese 1000 Lieder in 10 Teilmengen unterteilt, so dass je 10 Lieder pro Klasse in einer Teilmenge vorhanden sind (vgl. \textbf{Tabelle \ref{tab:gtzan}}).
 
 \begin{table}[ht]
 	\centering
@@ -591,35 +589,36 @@ Für die Kreuzvalidierung wurden diese 1000 Lieder in 10 Teilmengen unterteilt, s
 
 \section{Musikklassifikationsmethoden}\label{sec:fset}
 
-Für die Laufzeitanalysen sind vier verschiedene Methoden zur Musikklassifikation vorgegeben, die sich im wesentlichen durch die Merkmalssätze unterscheiden. Alle Methoden verwenden einen SVM-Klassifikator\cite{libsvm} und entweder die RMD-, MSA- oder eine Kombination aus beiden Prozessierungsmethoden. Die Merkmalssätze und Prozessierungsmethoden der jeweiligen angewandten Musikklassifikationsmethode sind der \textbf{Tabelle \ref{tab:meth}} zu entnehmen. Die mit diesen Methoden erreichten Klassifikationsgüten sind mit der GTZAN Datenbank\cite{gtzan} gemessen.
+Für die Laufzeitanalysen sind vier verschiedene Methoden zur Musikklassifikation vorgegeben, die sich im Wesentlichen durch die Merkmalssätze unterscheiden. Alle Methoden verwenden einen SVM-Klassifikator\cite{libsvm} und entweder die RMD-, MSA- oder eine Kombination aus beiden Prozessierungsmethoden. Die Merkmalssätze und Prozessierungsmethoden der jeweils angewandten Musikklassifikationsmethode sind der \textbf{Tabelle \ref{tab:meth}} zu entnehmen. Die mit diesen Methoden erreichten Klassifikationsgüten sind mit der GTZAN Datenbank\cite{gtzan} gemessen.
 
 \begin{table}[ht]
 	\centering
-		\begin{tabular}{|c c|c|c|c|c|}
+		\begin{tabular}{|c|c c|c|c|c|}
 		\hline
-		Mermalssatz &  & Prozessierungsmethode & Klassifikator & Name & Güte\\
+		Name & Mermalssatz &  & Prozessierungsmethode & Klassifikator & Güte\\
 		\hline\hline
-		SPC & \multirow{4}{*}{FSet1}&\multirow{4}{*}{RMD}&\multirow{4}{*}{SVM}&\multirow{4}{*}{MCL1}&\multirow{4}{*}{73,4\%}\\
-		SR&&&&&\\
-		SF&&&&&\\
-		MFCC&&&&&\\
+		\multirow{4}{*}{MCL1}&SPC & \multirow{4}{*}{FSet1}&\multirow{4}{*}{RMD}&\multirow{4}{*}{SVM}&\multirow{4}{*}{73,4\%}\\
+		&SR&&&&\\
+		&SF&&&&\\
+		&MFCC&&&&\\
 		\hline
-		HAM & \multirow{4}{*}{FSet2}&\multirow{4}{*}{MSA}&\multirow{4}{*}{SVM}&\multirow{4}{*}{MCL2}&\multirow{4}{*}{78,6\%}\\
-		NASE&&&&&\\
-		OSC&&&&&\\
-		MFCC&&&&&\\
+		\multirow{3}{*}{MCL2}&NASE & \multirow{3}{*}{FSet2}&\multirow{3}{*}{MSA}&\multirow{3}{*}{SVM}&\multirow{4}{*}{78,6\%}\\
+		&OSC&&&&\\
+		&MFCC&&&&\\
 		\hline
-		LE & \multirow{3}{*}{FSet3}&\multirow{3}{*}{MSA \& RMD}&\multirow{3}{*}{SVM}&\multirow{3}{*}{MCL3}&\multirow{3}{*}{57,7\%}\\
-		RMS&&&&&\\
-		ZCR&&&&&\\
+		\multirow{3}{*}{MCL3}&LE & \multirow{3}{*}{FSet3}&\multirow{3}{*}{MSA \& RMD}&\multirow{3}{*}{SVM}&\multirow{3}{*}{57,7\%}\\
+		&RMS&&&&\\
+		&ZCR&&&&\\
 		\hline
-		AOMIC& \multirow{3}{*}{FSet4}&\multirow{3}{*}{MSA \& RMD}&\multirow{3}{*}{SVM}&\multirow{3}{*}{MCL4}&\multirow{3}{*}{68,1\%}\\
-		SCF&&&&&\\
-		SBER&&&&&\\
+		\multirow{3}{*}{MCL4}&AOMIC& \multirow{3}{*}{FSet4}&\multirow{3}{*}{MSA \& RMD}&\multirow{3}{*}{SVM}&\multirow{3}{*}{68,1\%}\\
+		&SCF&&&&\\
+		&SBER&&&&\\
 		\hline
 		\end{tabular}
 	\caption{Übersicht der Musikklassifikationsmethoden}
 	\label{tab:meth}
 \end{table}
+
+Während die Musikklassifikationsmethoden 1, 3 und 4 mit den Parametern $N=512$ und $Nhop=0$ verarbeitet werden, weist MCL2 zwei Abweichungen auf. Erstens besteht bei MCL2 eine Fensterüberlappung von 50\% was zu $Nhop=256$ führt und zweitens findet bei dieser Musikklassifikationsmethode eine Fensterung nach dem Hamming-Prinzip statt.
 
 

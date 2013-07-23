@@ -35,7 +35,7 @@ In \textbf{Abbildung \ref{fig:mclneon}} sind die Laufzeiten der einzelnen Schrit
 %
 \textbf{Abbildung \ref{fig:fset2AVN}} zeigt eine nähere Analyse des Extraktionsschritts. Hierbei stellt die Durchführung der FFT mit 58,6\% bei FSet2, sowie knapp 50\% bei FSet1 und FSet4, den zeitkritischsten Schritt der Extraktion dar. Zu 72\% sind die Laufzeiten durch die Butterfly-Operationen verursacht. Daher wird eine Optimierung der FFTs durch Verwendung von SIMD-Instruktionen für die Butterfly-Operationen verfolgt.
 
-\subsection{Libav als Optimierung der FFT}\label{subsec:optFFT}
+\subsection{Libav zur Beschleunigung der FFT}\label{subsec:optFFT}
 
 Zur Beschleunigung der FFT durch SIMD-Instruktionen wird auf die Libav-Bibliothek (kurz Libav) zurückgegriffen, welche für NEON-SIMD-Instruktionen optimiert ist und in vielen Software-Produkten Verwendung findet.\\
 Libav ist eine opensource Bibliothek zur Audio- und Videoverarbeitung, die eine Vielzahl von Audio- und Videocodecs, Prozessierungsalgorithmen und Werkzeuge zur Audio- und Videoverarbeitung  besitzt.\\

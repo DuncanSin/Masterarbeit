@@ -1,8 +1,8 @@
 \chapter{Das EVM8168-Entwicklungsboard}
 \label{ch:board}
 \rm
-In diesem Kapitel wird die zugrundeliegende Hardware beschrieben, auf der die Untersuchungen und Optimierungen der folgenden Kapitel durchgeführt wurden.\\
-Hierfür wird als erstes das EVM8168-Entwicklungsboard der Firma Texas Instruments vorgestellt, auf welchem sich der betrachtete DaVinci\texttrademark-Prozessor befindet. Auf diesen wird danach eingegangen. In einer feineren Betrachtung werden im Anschluss die beiden im DaVinci\texttrademark-Prozessor realisierten Prozessorkerne (ARM Cortex-A8 und C674x DSP) und ihre zur Verfügung gestellten Hardwareoptimierungseinheiten vorgestellt. Als letztes wird auf die verwendete Entwicklungsumgebung, dass sogenannte EZSDK der Firma Texas Instruments eingegangen werden.
+In diesem Kapitel wird die zugrundeliegende Hardware beschrieben, auf der die Untersuchungen und Optimierungen der folgenden Kapitel durchgeführt werden.\\
+Hierfür wird als erstes das EVM8168-Entwicklungsboard der Firma Texas Instruments vorgestellt, auf welchem sich der betrachtete DaVinci\texttrademark-Prozessor befindet. Danach wird der DaVinci\texttrademark-Prozessor näher erläutert. In einer detaillierten Betrachtung werden im Anschluss die beiden im DaVinci\texttrademark-Prozessor integrierten Prozessorkerne (ARM Cortex-A8 und C674x DSP) und ihre zur Verfügung gestellten Hardware-Einheiten vorgestellt. Als letztes wird auf die verwendete Entwicklungsumgebung, dass sogenannte EZSDK der Firma Texas Instruments eingegangen.
 
 
 
@@ -381,16 +381,6 @@ Wie durch den Befehl \textit{SPLOOPD 4} angegeben ist, beträgt die Länge eines I
 Die Konstante \textit{scsize} aus \textbf{Listing \ref{code:scc}} steht für die Anzahl an Betragsspektren eines Audio-Fensters.\\
 Im Fall des \textit{Spectral Centroids} mit einer Fensterbreite von 512, beträgt die Gesamtlaufzeit 1064 Takte.
 
-\subsubsection{Optimierte Bibliotheken für den C674x}\label{subsubsec:optbib}
-Texas Instruments bietet zu den DSPs der C6000-Reihe verschiedene Bibliotheken mit achritekturspezifisch optimierten Algorithmen an. Einige dieser optimierten Bibliotheken sind im Umfang des EZSDK (siehe \textbf{Kapitel \ref{sec:ezsdk}}) enthalten. Im Folgenden werden die DSPLIB  und zum anderen die MATHLIB vorgestellt.
-
-\paragraph{DSPLIB}$\;$ \\\\
-Die DSPLIB beinhaltet Algorithmen aus der Signalverarbeitung. Unter anderem ist auch eine Mixed-Radix FFT vorhanden. Die Algorithmen liegen sowohl in C- als auch in Assembler-Code vor.
-
-\paragraph{MATHLIB}$\;$ \\
-
-Die MATHLIB beinhaltet mathematische Funktionen, die ebenfalls in C- und Assembler-Code vorliegen. Die mathematischen Funktionen sind sowohl für Single- als auch Double-Precision vorhanden und sind für skalare und Vektor-Daten ausgelegt.
-
 \section{Linux EZ Software Development Kit (EZSDK)}\label{sec:ezsdk}
 Das Linux EZ Software Development Kit (EZSDK) ist eine von Texas Instruments zum EVM816x-Board mitgelieferte Sammlung von wichtigen und nützlichen Tools. Das EZSDK (gesprochen: \textit{EasySDK}) teil sich in zwei Bereiche, zum einen in Tools für den ARM Cortex A8 und zum anderen in Tools für den C674x DSP (vgl. \textbf{Abbildung \ref{fig:ezsdk}}).
 %
@@ -404,7 +394,17 @@ Das Linux EZ Software Development Kit (EZSDK) ist eine von Texas Instruments zum
 Die Tools für den Cortex A8 beinhalten unter anderem das embedded Linux, welches auf dem Prozessor läuft, in der Version 2.6.37, den Bootloader U-Boot und die Code Sourcey Toolchain mit den ARM-Compilern.\\
 Für den C674x sind unter anderem das Betriebssystem (SYSBIOS), das Kommunikationsframework C6EZRun inklusive des DSP-Compilers,sowie die optimierten Bibliotheken DSPLIB und MATHLIB vorhanden.
 
-Für diese Arbeit wurde die EZSDK-Version 5.02 verwendet.
+Für diese Arbeit wird die EZSDK-Version 5.02 verwendet.
+
+\subsection{Optimierte Bibliotheken für den C674x}\label{subsubsec:optbib}
+Texas Instruments bietet zu den DSPs der C6000-Reihe verschiedene Bibliotheken mit achritekturspezifisch optimierten Algorithmen an. Einige dieser optimierten Bibliotheken sind im Umfang des EZSDK (siehe \textbf{Kapitel \ref{sec:ezsdk}}) enthalten. Im Folgenden werden die DSPLIB  und zum anderen die MATHLIB vorgestellt.
+
+\subsubsection{DSPLIB}
+Die DSPLIB beinhaltet Algorithmen aus der Signalverarbeitung. Unter anderem ist auch eine Mixed-Radix FFT vorhanden. Die Algorithmen liegen sowohl in C- als auch in Assembler-Code vor.
+
+\subsubsection{MATHLIB}
+
+Die MATHLIB beinhaltet mathematische Funktionen, die ebenfalls in C- und Assembler-Code vorliegen. Die mathematischen Funktionen sind sowohl für Single- als auch Double-Precision vorhanden und sind für skalare und Vektor-Daten ausgelegt.
 
 \subsection{Floating Point Berechnung mit der CodeSourcery-Toolchain}
 
@@ -448,7 +448,7 @@ Einbindung von NEON-SIMD-Instruktionen in den Programm-Code drei Wegen erfolgen.
 \end{lstlisting}
 
 Dieses hat den Vorteil, dass keine umständlichen Änderungen am Programm-Code vorgenommen werden müssen. Allerdings ist diese Erkennung von der Struktur des Programm-Codes abhängig. Kommen verschachtelte Schleifen oder Funktionsaufrufe in Schleifen vor, werden diese nicht parallelisiert. In solchen Fällen kann der Compiler mit Umstellung des Programm-Codes unterstützt werden. Wenn die Schleifendurchläufe allerdings variable sind, hat der Compiler damit immer noch Schwierigkeiten.\\
-In diesem Fall gibt es die Möglichkeit NEON-Intrinsics im Programm-Code zu verwenden. Hierbei werden Berechnungen durch entsprechende NEON-Intrinsics ersetzt.\textbf{Listing \ref{code:firstc}} - \textbf{\ref{code:firstneon}} zeigen ein Beispiel in dem die Addition innerhalb der Schleife durch NEON-Intrinsics für vier parallele Addtitionen ersetzt wurden.
+In diesem Fall ist der Einsatz von  NEON-Intrinsics im Programm-Code sinnvoll. Hierbei werden Berechnungen durch entsprechende NEON-Intrinsics ersetzt.\textbf{Listing \ref{code:firstc}} - \textbf{\ref{code:firstneon}} zeigen ein Beispiel in dem die Addition innerhalb der Schleife durch NEON-Intrinsics für vier parallele Addtitionen ersetzt sind.
 \begin{lstlisting}[caption=2. einfaches Beispiel in C, label=code:firstc]
 	int i;
  	for(i=0;i<200;i++) {
@@ -491,7 +491,7 @@ In diesem Fall gibt es die Möglichkeit NEON-Intrinsics im Programm-Code zu verwe
         bx       lr
 \end{lstlisting}
 
-Dieses bieten den Vorteil, dass durch relativ geringen Aufwand Schleifen parallelisiert werden können und der Datenfluss definiert werden kann. Allerdings wird ein Overhead durch Lade und Speicheroperationen erzeugt.\\
+Dies bieten den Vorteil, dass Schleifen parallelisiert werden können und der Datenfluss definiert werden kann. Allerdings wird ein Overhead durch Lade und Speicheroperationen erzeugt.\\
 Um diesen Overhead zu vermeiden gibt es noch die Möglichkeit den NEON-SIMD-Assembler per Hand zu schreiben. Hierbei werden sowohl Parallelisierung als auch Datenfluss per Hand bestimmt und Lade-, bzw. Speicheroperationen minimiert, allerdings besitzt diese Variante auch den größten Aufwand.\\
 Für jede dieser Varianten muss das NEON-Compilerflag aus \textbf{Tabelle \ref{tab:flags}} gesetzt sein.
 
@@ -505,8 +505,8 @@ Hierbei werden zwei unterschiedliche Versionen zur Kommunikation zwischen ARM un
 \item C6Runapp
 \end{itemize}
 
-Außerdem stellt C6EZRun Compiler für diese beiden Versionen bereit.\\
-Bei C6Runlib werden Programm-Codes auf dem als Funktionen durch den ARM aufgerufen. Dies bedeutet, dass der ARM erst nach Ende der DSP-Programm-Code Ausführung mit der eigenen Ausführung fortfahren kann. \textbf{Abbildung \ref{fig:c6lib}} verdeutlicht dieses Prinzip.\\
+Außerdem stellt C6EZRun geeignete Compiler für diese beiden Versionen bereit.\\
+Bei C6Runlib wird DSP-spezifischer Programm-Code durch Funktionsaufrufe im ARM-Programm ausgeführt. Dies bedeutet, dass der ARM erst nach Ende der DSP-Programm-Code Ausführung mit der eigenen Ausführung fortfahren kann. \textbf{Abbildung \ref{fig:c6lib}} verdeutlicht dieses Prinzip.\\
 %
 \begin{figure}[htb]
 	\centering
@@ -515,7 +515,7 @@ Bei C6Runlib werden Programm-Codes auf dem als Funktionen durch den ARM aufgeruf
 	\label{fig:c6lib}
 \end{figure} 
 %
-C6Runapp ermöglicht hingegen die Ausführung von ganzen Programmen auf dem DSP. Hierbei werden DSP-Programme von der Linux-Console des ARMs aufgerufen, als ob sie auf diesem ausgeführt würden. Der ARM fungiert hierbei als Initiator, außerdem ist es dem DSP so möglich Ausgaben auf der Console des ARM zu tätigen. Eine gleichzeitige Ausführung eines zweiten Programms auf dem ARM ist möglich, allerdings sind keine Protokolle zur Kommunikation dieser beiden Programme definiert und müssen gegebenenfalls geschrieben werden. \textbf{Abbildung \ref{fig:c6app}} verdeutlicht dieses Prinzip.\\ 
+Unter normalen Umständen besteht keine Möglichkeit vom embedded Linux des ARM Programme auf dem DSP auszuführen. Die Ausführung von Programmen auf dem DSP ist nur embedded möglich. Mit Hilfe von C6Runapp können C-Programme jedoch von der Linux-Console des ARM aufgerufen werden. Der ARM fungiert hierbei als Initiator und CIO-Server. Auf diese Weise ist es DSP-Programmen möglich Ausgaben über die Console des ARM zu tätigen und ebenfalls auf das Dateisystem des ARM zuzugreifen. Eine gleichzeitige Ausführung eines zweiten Programms auf dem ARM ist möglich, allerdings sind keine Protokolle zur Kommunikation dieser beiden Programme definiert. \textbf{Abbildung \ref{fig:c6app}} verdeutlicht dieses Prinzip.\\ 
 %
 \begin{figure}[htb]
 	\centering
@@ -576,3 +576,7 @@ Die letzte Optimierungsstufe wird mit \textit{\-opt\_level=3} oder \textit{\-O3}
 \item Propagierung von Argumenten in den Funktionskörper, wenn alle Aufrufe den selben Wert an der selben Position besitzen
 \item Identifizierung von File-Level Charakteristiken von Variablen
 \end{itemize}
+
+\section{Libav-Bibliothek}
+
+Die Libav-Bibliothek ist ein unter LGPL lizenziertes Opensource-Projekt, welches Plattform-übergreifende Werkzeuge für die Konvertierung, Manipulation von Audio- und Videoformaten. Diese Bibliothek bietet hierfür eine Vielzahl von Kodierern und Dekodierern, Multimediacodecs und Algorithmen, die für die Benutzung auf verschiedenen Plattformen optimiert sind. Im Spektrum der Achritekturen, für die die Bibliothek optimiert wurde, befinden sich auch ARM-spezifische Architekturen mit NEON-SIMD-Einheiten.
