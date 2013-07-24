@@ -1,7 +1,7 @@
 \chapter{Evaluation}
 \label{ch:results}
 \rm
-In diesem Kapitel wird eine Bewertung der heterongenen Architektur auf Grundlage der Erkenntnisse der einzelnen Prozessorkerne geschehen. Zu diesem Zweck wird zuerst ein Überblick über die zur Bewertung herangezogenen Metriken, sowie die Sammlung der hierfür verwendeten Daten gegeben. Also nächstes werden der ARM Cortex A8 und der C674x DSP auf Grundlage dieser Metriken bewertet, bevor eine Bewertung des heterogenen Systems bestehend aus beiden Prozessoren geschieht. Abschließend wird ein Fazit über die gesammelten Erkenntnisse gegeben.
+In diesem Kapitel wird eine Bewertung der heterogenen Architektur auf Grundlage der Erkenntnisse der einzelnen Prozessorkerne durchgeführt. Zu diesem Zweck wird zuerst ein Überblick über die zur Bewertung herangezogenen Metriken, sowie die Sammlung der hierfür verwendeten Daten gegeben. Also nächstes werden der ARM Cortex A8 und der C674x DSP auf Grundlage dieser Metriken bewertet, bevor eine Bewertung des heterogenen Systems bestehend aus beiden Prozessoren erfolgt. Abschließend wird ein Fazit über die gesammelten Erkenntnisse gegeben.
 
 \section{Einführung der Bewertungsmetriken}\label{sec:eveinf}
 Für die Bewertung der Optimierungen und der Einsatzmöglichkeit der Untersuchten Architekturen zur Musikklassifikation wird die Betrachtung der Laufzeit um folgende Metriken erweitert:
@@ -19,21 +19,28 @@ Als Extraktionsrate $R_{ex}$ ist das Verhältnis von der Anzahl verarbeiteter Fen
 \label{eqn:er}
 R_{ex}~=~\frac{L}{t}~=~\frac{t}{T_{Fenster}}
 \end{equation}
-
-Die Extraktionsrate hilft Merkmale zu vergleichen, deren Gesamtverarbeitungszeiten für unterschiedliche Fensteranzahlen gemessen wurden.\\
+Mit dieser Metrik können die Merkmalssätze hinsichtlich der erforderlichen Extraktionsrate vergleichen werden.\\
 In dieser Arbeit entspricht $t$ gleich einer Sekunde.
 
 \paragraph*{Energieeffizienz}$\;$ \\
 
 Die Energieeffizienz $E_{eff}$ wird allgemein als Kosten-Nutzen-Maß verwendet, also als Verhältnis von aufzubringender Energie, die für die Verrichtung einer definierten Aufgabe benötigt wird.\\
-In dieser Arbeit ist die Energie-Effizienz als verarbeitete Fenster $L$ pro Energie $E$ definiert. Sie lässt sich als Verhältnis der Extraktionsrate $R_{ex}$ und dem Leistungsverbrauch $P$ in Watt berechnet (vgl. \textbf{Formel \ref{eqn:en}}).
+In dieser Arbeit werden zwei verschiedene Berechnungsmethoden der Energie-Effizienz verwendet.\\
+Für die Bewertung der Merkmalsextraktion ist die Energie-Effizienz als verarbeitete Fenster $L$ pro Energie $E$ definiert. Sie lässt sich als Verhältnis der Extraktionsrate $R_{ex}$ und dem Leistungsverbrauch $P$ in Watt berechnet (vgl. \textbf{Formel \ref{eqn:en}}).
 
 \begin{equation}
 \label{eqn:en}
 E_{eff}~=~\frac{R_{ex}}{P}~=~\frac{\frac{L}{t}}{\frac{E}{t}}~=~\frac{L}{E}
 \end{equation}
 
-Der Leistungsverbrauch der beiden Prozessorkerne wird aus \cite{power} entnommen. Der ARM Cortex A8 kommt dabei auf einen Leistungsverbrauch von 169 mW und der C674x auf einen zusätzlichen Leistungsverbrauch von 141 mW, so dass das heterogene System auf einen Leistungsverbrauch von 310 mW kommt.
+Für die Bewertung der Musikklassifikation wird die Energie-Effizienz als durchgeführte Musikklassifikationen $MCL$ pro Energie $E$ definiert (vgl. \textbf{Formel \ref{eqn:enmcl}}).
+
+\begin{equation}
+\label{eqn:enmcl}
+E_{eff}~=~\frac{\frac{MCL}{t}}{\frac{E}{t}}~=~\frac{MCL}{E}
+\end{equation}
+
+Der Leistungsverbrauch der beiden Prozessorkerne wird aus \cite{power} entnommen. Hierbei wird die Grundeinstellung der Tabelle beibehalten. Diese geht von Prozessorauslastungen von 75\% beim ARM Cortea A8 und 25\% beim C674x DSP aus. Der ARM Cortex A8 kommt dabei auf einen Leistungsverbrauch von 169 mW und der C674x auf einen zusätzlichen Leistungsverbrauch von 198 mW, so dass das heterogene System auf einen Leistungsverbrauch von 367 mW kommt.
 
 \section{Evaluation der ARM-Optimierung}\label{sec:evarm}
 
@@ -69,7 +76,7 @@ Aus \textbf{Abbildung \ref{fig:enarm}} sind die Energie-Effizienzen pro FeatureS
 \begin{figure}[htp]
 	\centering
 		\includegraphics[width=1\textwidth]{../Pictures/enarm.pdf}
-	\caption{Energieeffizienz der einzelnen FeatureSets auf dem ARM Cortex-A8}
+	\caption{Energieeffizienz der FeatureSets auf dem ARM Cortex-A8}
 	\label{fig:enarm}
 \end{figure} 
 %
@@ -85,7 +92,7 @@ Für eine weitere Diskussion über das verbleibende Optimierungspotenzial werden a
 	\label{fig:potarm}
 \end{figure}
 %
-Das OSC-Merkmal besitzt mit einem Anteil von 57,7\% der Gesamtrechenzeit von FSet2 den größten Rechenaufwand von allen Merkmalen. Hierbei fallen 76\% der Laufzeit auf die Sortierung. Für diese werden die SIMD-Eigenschaften der NEON-SIMD-Einheit nicht genutzt, stattdessen werden alle Daten-Vergleiche während der Sortierung sequentiell durchgeführt. Maximal können zwei Daten-Vergleiche auf einmal vorgenommen werden. Damit lässt sich eine obere Schranke für den maximalen Speedup definieren, der bei einem Faktor von 2 liegt. Somit kann OSC maximal um den Faktor 1,6 beschleunigt werden. Jedoch wird selbst mit dieser Beschleunigung das OSC-Merkmal weiterhin die höchste Laufzeit aufweisen.  
+Das OSC-Merkmal besitzt mit einem Anteil von 57,7\% der Gesamtrechenzeit von FSet2 den größten Rechenaufwand von allen Merkmalen. Hierbei fallen 76\% der Laufzeit auf die Sortierung. Für diese werden die SIMD-Eigenschaften der NEON-SIMD-Einheit nicht genutzt, stattdessen werden alle Daten-Vergleiche während der Sortierung sequentiell durchgeführt. Maximal können zwei Daten-Vergleiche auf einmal vorgenommen werden. Damit lässt sich eine obere Schranke für den maximalen Speedup definieren, der bei einem Faktor von 2 liegt. Somit kann OSC maximal um den Faktor 1,6 beschleunigt werden. Jedoch wird selbst mit dieser Beschleunigung das OSC-Merkmal mit 29,4\% weiterhin die höchste Laufzeit aufweisen.  
 \\\\
 Mit 37,6\% ist die DCT der zeitintensivste Schritt der MFCC-Extraktion, welche insgesamt 16\% der Gesamtlaufzeit bei FSet1 erfordert. Hierbei kann eine Optimierung ähnlich wie bei der Anwendung der Filterbank durchgeführt werden, welche einen Speedup von 1,2 erreicht hat. Allerdings muss hierfür der DCT-Algorithmus der verwendeten Adress-Arithmetik geändert werden. Hierdurch kann der MFCC-Algorithmus maximal um 6,7\% beschleunigt werden.\\\\
 Das ZCR-Merkmal nimmt 86\% der Laufzeit von FSet3 in Anspruch. Dies ist zu 90\% durch die Signum-Funktion verursacht, welche sich aufgrund der datenabhängigen Programmverzweigungen nicht durch SIMD-Instruktionen beschleunigen lässt. Somit ist das Optimierungspotenzial als äußerst gering zu bewerten.
@@ -111,12 +118,12 @@ Aus diesen Laufzeiten werden im Anschluss die Extraktionszeiten berechnet, diese
 	\label{fig:erdsp}
 \end{figure} 
 %
-Auf Basis dieser Extraktionszeiten wird die Energie-Effizienz der einzelnen FeatureSets berechnet (vgl. \textbf{Abbildung \ref{fig:endsp}}). Auch hier ist erkennbar, dass FSet3 das Energie-effizienteste ist.\\
+Auf Basis dieser Extraktionszeiten wird die Energie-Effizienz der einzelnen FeatureSets berechnet (vgl. \textbf{Abbildung \ref{fig:endsp}}). Auch hier ist erkennbar, dass FSet3 das Energie-effizienteste ist. Außerdem zeigt sich, dass die Merkmalsextraktion auf dem DSP Energie-effizienter durchgeführt wird als auf dem ARM.\\
 %
 \begin{figure}[htp]
 	\centering
 		\includegraphics[width=1\textwidth]{../Pictures/endsp.pdf}
-	\caption{Energie-Effizienz der einzelnen FeatureSets auf dem C674x DSP}
+	\caption{Energie-Effizienz der FeatureSets auf dem C674x DSP}
 	\label{fig:endsp}
 \end{figure} 
 %
@@ -124,7 +131,7 @@ Auf Basis dieser Extraktionszeiten wird die Energie-Effizienz der einzelnen Feat
 
 \subsection{Weitere Optimierungspotenziale}\label{subsec:dspwopt}
 
-Für weitere Diskussionen über das verbleibende Optimerungspotenzial werden nur Algorithmen betrachtet, die eine Laufzeit von über 10 $\mu s$ besitzen (vgl. \textbf{Abbildung \ref{fig:potdsp}}).
+Für weitere Diskussionen über das verbleibende Optimerungspotenzial werden nur Algorithmen betrachtet, die eine Laufzeit von über 10 $\mu s$ besitzen (vgl. \textbf{Abbildung \ref{fig:potdsp}}), da diese zusammen 73\% der Laufzeit aller Merkmale einnehmen.
 %
 \begin{figure}[htp]
 	\centering
@@ -133,34 +140,55 @@ Für weitere Diskussionen über das verbleibende Optimerungspotenzial werden nur A
 	\label{fig:potdsp}
 \end{figure}
 %
-Bei der MAG-Berechnung sind Divison und Wurzelberechnung bereits optimiert worden. Auch die Addition wurde bereits für SPLOOP optimiert. Eine weitere Optimierung könnte einzig bei der Addition geschehen. Das Optimierungspotenzial in diese Richtung ist aber eher als gering zu bewerten.
+Bei der MAG-Berechnung sind Division und Wurzelberechnung bereits optimiert worden. Auch die Addition wurde bereits für SPLOOP optimiert. Eine weitere Optimierung könnte einzig bei der Akkumulation geschehen. Diese besteht aus einer Addition und einer Multiplikation. Die Additionen können nicht parallelisiert werden, da hierbei auf das selbe Register geschrieben wird. Jeder Datenpfad besitzt eine Multiplikationseinheit, welche nicht parallel betrieben werden. Eine parallele Berechnung könnte eine weitere Beschleunigung der Akkumulation bewirken. Das Optimierungspotenzial in diese Richtung ist jedoch als gering zu bewerten.
 
-Bei der Berechnung des MFCC-Merkmals wurde bereits die Logarithmierung optimiert. Eine weitere Optimierung wäre nur noch in Richtung DCT  und der Anwendung der Filterbank möglich. Hierbei hat die Anwendung der Filterbank mit 73,7\% den größten Anteil an der Rechenzeit. Diese ist bereits mit SPLOOP beschleunigt, so dass das Optimierungspotenzial in diese Richtung als gering zu bewerten ist.
+Bei der Berechnung des MFCC-Merkmals wurde bereits die Logarithmierung optimiert. Eine weitere Optimierung wäre nur noch in Richtung DCT  und der Anwendung der Filterbank möglich. Hierbei hat die Anwendung der Filterbank mit 73,7\% den größten Anteil an der Rechenzeit. Diese ist bereits mit SPLOOP beschleunigt. Hierbei werden nicht beide Multiplikationseinheiten parallel benutzt. Eine parallele Verwendung dieser Einheiten ist allerdings durch die datenabhängigen Durchläufe schwer zu realisieren, so dass das Optimierungspotenzial in diese Richtung als gering zu bewerten ist.
 
 Die Berechnung des OSC-Merkmals wurde bereits hinsichtlich der Sortierung optimiert. Auch Division und Logarithmus wurden bereits mit MATHLIB optimiert. Das weitere Optimierungspotenzial der Berechnung des OSC-Merkmals ist als gering zu bewerten.
+
+Die FFT-Berechnung ist mit Hilfe der DSPLIB realisiert, welche bereits für den C674x optimiert wurde. Eine weitere Optimierung in diese Richtung ist nicht möglich.
 
 \section{Evaluation heterogenes System}\label{sec:evhetsys}
 
 Für die Evaluation des heterogenen Systems wird angenommen, dass die drei Schritte der Musikklassifikation Extraktion, Prozessierung und Klassifikation nacheinander ausgeführt und dabei so auf die beiden Prozessorkerne verteilt werden, dass die Extraktion vom C674x DSP und die beiden anderen Schritte vom ARM Cortex A8 ausgeführt werden. Zu den Rechenzeiten dieser drei Schritte muss zusätzlich noch die Kommunikationszeit zwischen ARM und DSP betrachtet werden. Diese Kommunikationszeit wurde pro extrahiertem Musikstück zu 4 ms gemessen.\\
-Die Laufzeitunterschiede zwischen der Verwendung dem DSP-Referenz-Programm-Code und der optimierten DSP-Implementation ist in \textbf{Abbildung \ref{fig:hete}} zu sehen. Hierbei werden die Musikklassifikationsmethoden 1-4 um die Faktoren 8,5, 4,2, 2,1 und 7,2 beschleunigt.
+Die Laufzeiten und Energie-Effizienzen der Musikklassifikationsmethoden sind in \textbf{Abbildung \ref{fig:erhete}} und \textbf{Abbildung \ref{fig:enhete}} zu sehen.
 
-
-\section{Gegenüberstellung ARM und ARM+DSP}\label{sec:evarmdsp}
-\textbf{Abbildung \ref{fig:hete+arm}} zeigt den Laufzeitunterschied zwischen Referenz-Programm-Code und optimierter Version auf dem ARM und dem unoptimierten und optimierten heterogenen System.\\
 %
 \begin{figure}[htp]
 	\centering
-		\includegraphics[width=1\textwidth]{../Pictures/hete+arm.pdf}
-	\caption{Laufzeitvergleich von ARM Cortex A8 und dem heterogenen System (unoptimiert und optimiert)}
+		\includegraphics[width=1\textwidth]{../Pictures/erhete.pdf}
+	\caption{Laufzeit des heterogenen System (unoptimiert und optimiert)}
+	\label{fig:erhete}
+\end{figure}
+%
+%
+\begin{figure}[htp]
+	\centering
+		\includegraphics[width=1\textwidth]{../Pictures/enhete.pdf}
+	\caption{Energie-Effizienz des heterogenen System (unoptimiert und optimiert)}
+	\label{fig:enhete}
+\end{figure}
+%
+Aus den Abbildungen ist erkennbar, dass durch die Optimierung der Merkmalsextraktion auf dem DSP die Laufzeiten der Musikklassifikationsmethoden zwischen 32\% bei MCL3 und 60\% bei MCL1 beschleunigt werden. Ebenfalls ist zu sehen, dass die Energie-Effizienzen verdoppelt (MCL3) bis verachtfacht (MCL1) werden.
+
+
+\section{Bewertung der heterogenen Architektur}\label{sec:evarmdsp}
+\textbf{Abbildung \ref{fig:hete+arm}} zeigt den Laufzeitunterschied optimierter ARM-Version und optimierten heterogenen System.\\
+%
+\begin{figure}[htp]
+	\centering
+		\includegraphics[width=1\textwidth]{../Pictures/erarmhete.pdf}
+	\caption{Laufzeitvergleich von ARM Cortex A8 und dem heterogenen System}
 	\label{fig:hete+arm}
 \end{figure}
 %
-Aus der Abbildung wird ersichtlich, dass in den Vergleichen zwischen ARM und ARM+DSP der heterogene Ansatz für jede Musikklassifikationsmethode trotz Kommunikationszeit die geringeren Laufzeiten aufweist.\\
-Bei der Betrachtung der Energie-Effizienz beider Ansätze ist zu sehen, dass hier ebenfalls der heterogene Ansatz die besseren Ergebnisse liefert (vgl. \textbf{Abbildung \ref{fig:enhete}}). Besonders im Fall des MCL3 übertrifft der heterogene Ansatz den ARM Cortex A8 um Längen.
-
-
-
-\section{Fazit}\label{sec:evfaz}
-
-Als Fazit der erhobenen Ergebnisse kann festgestellt werden, dass besonders für die Musikklassifikationsmethoden 2 und 3 sowohl die Laufzeiten als auch die Energie-Effizienzen des heterogenen Systems besser sind. Einzig bei den Werten von MCL 1 und 4 erweist sich der ARM Cortex A8 als Energie-effizienter, die Laufzeiten des heterogenen Systems übertreffen hier jedoch ebenfalls die des ARM.\\
-Abschließend kann das heterogene System also als der effektivere Ansatz bewertet werden.
+Aus der Abbildung wird ersichtlich, das die Musikklassifikationsmethoden auf dem heterogenen System schneller ausgeführt werden, als auf dem ARM Cortex A8. In Zahlen ist das heterogene System mit Faktoren 1,17 (MCL4) zwischen 3,09 (MCL3) und schneller als der ARM.\\
+Bei der Betrachtung der Energie-Effizienz beider Ansätze ist zu sehen, dass ARM Cortex A8 die besseren Ergebnisse liefert (vgl. \textbf{Abbildung \ref{fig:enarmhete}}). Die einzige Ausnahme bildet hier MCL3, diese Methode wird auf dem heterogenen System Energie-effizienter ausgeführt.
+%
+\begin{figure}[htp]
+	\centering
+		\includegraphics[width=1\textwidth]{../Pictures/enarmhete.pdf}
+	\caption{Energie-Effizienz-Vergleich von ARM Cortex A8 und dem heterogenen System}
+	\label{fig:enarmhete}
+\end{figure}
+%

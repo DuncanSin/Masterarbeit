@@ -60,7 +60,7 @@ S_{all}=S_{comp} \cdot S_{SIMD}
 
 $S_{all}$ aus den beiden Messungen für ARM+NEON hat einen Wert von 20,1, somit kommt $S_{SIMD}$ auf einen Wert von 15,1. Insgesammt werden durch die Verwendung der Libav wird Fset2 um einen Faktor von 5,3 beschleunigt, FSet 1 und 4 sogar um 12,3, bzw. 14.
 
-\subsection{Laufzeitmessung nach der FFT-Optimierung mit Libav}
+\subsection{Optimierung der Extraktion für rechenintensive Merkmale}
 
 Aufgrund der Laufzeit werden folgende Features hinsichtlich einer Optimierung untersucht:
 
@@ -69,11 +69,11 @@ Aufgrund der Laufzeit werden folgende Features hinsichtlich einer Optimierung un
 \item Magnitude of Sprectrum (\textbf{\ref{subsec:optAOS}})
 \item MFCC (\textbf{\ref{subsec:optMFCC}})
 \item Hamming Window (\textbf{\ref{subsec:optHAM}})
-\item Zero Crossing Rate (siehe \textbf{Kapitel \ref{sec:vista}})
+\item Zero Crossing Rate (siehe \textbf{Kapitel \ref{subsec:armwopt}})
 \end{itemize}
 
-Die Optimierung von OSC erweist sich als sehr komplex. 76\% der Laufzeit dieses Merkmals fallen auf das verwendete Sortierverfahren. Eine Optimierung gängiger Sortierverfahren wie MergeSort oder QuickSort durch die Verwendung von SIMD-Instruktionen ist auf Grund der Sortierstrukturen und rekursiven Aufrufe nicht ohne weiteres möglich. Im schlimmster Fall wäre die Entwicklung eines eigenen Sortieralgorithmus auf Basis von SIMD-Instruktionen nötig, was den Rahmen dieser Arbeit aber übersteigen würden. Daher wird auf eine Optimierung der Berechnung des OSC-Merkmals verziechtet.
-Auch das ZCR-Merkmal ist nicht ohne weiteres mit SIMD-Instruktionen möglich, da über 90\% der Laufzeit auf die Signum-Berechnung fallen, welche nur schwer oder garnicht auf SIMD-Instruktionen abbildbar ist. Eine Optimierung der Signum-Berechnung ohne SIMD-Instruktionen ließe sich durch geschicktes Anordnen der Vergleiche erreichen. Diese wäre jedoch aufgrund der Datenabhängigkeit von Musikstück zu Musikstück unterschiedlich.
+Die OSC-Merkmale erfordern mit 57,7\% bei FSet2 die höchste Laufzeit. 76\% der Laufzeit dieses Merkmals fallen auf das verwendete Sortierverfahren. Eine Optimierung gängiger Sortierverfahren wie MergeSort oder QuickSort durch die Verwendung von SIMD-Instruktionen ist auf Grund der  Rechenkomplexität nicht ohne weiteres möglich. In dieser Arbeit wird daher das Sortierverfahren nciht optimiert, jedoch kann ein möglicher Optimierungsansatz für die Laufzeitreduktion durch SIMD-Instruktionen auf dem Bitonic-Sortierverfahren basieren, dessen Rechenkomplexität datenunabhängig ist.\\ 
+Auch das ZCR-Merkmal ist nicht ohne weiteres mit SIMD-Instruktionen möglich, da über 90\% der Laufzeit auf die Signum-Berechnung fallen, welche nicht mit SIMD-Instruktionen beschrieben werden können. Eine Optimierung der Signum-Berechnung ohne SIMD-Instruktionen ließe sich durch geschicktes Anordnen der Vergleiche erreichen. Diese wäre jedoch aufgrund der Datenabhängigkeit von Musikstück zu Musikstück unterschiedlich.
 
 
 \subsection{Optimierung der Magnitude of Spectrum}\label{subsec:optAOS}
@@ -161,8 +161,8 @@ for (unsigned int m = 1; m <= M; m++) {
 }
 \end{lstlisting}
 
-Aus diesem Code-Ausschnitt lässt sich entnehmen, dass die in den zwei Schleifen enthaltene Akkumulation nicht für jeden Durchlauf gleich oft ausgeführt wird. Dies führt dazu, dass die Anzahl der Schleifendurchläufe durch einen gemeinsamen Vielfachen beschrieben werden kann. Maximal können mit SIMD-Instruktionen vier Berechnungen quasi gleichzeitig ausgeführt werden (vgl. \textbf{Abschnitt \ref{ph:neon}}), daher muss als erstes die Anzahl der Schleifendurchläufe berechnet werden, in denen eine parallele Verarbeitung von vier Berechnungen möglich ist. Außerdem wird hierbei berechnet, wie viele Operationen danach noch ausgeführt werden müssen (maximal 3). Als nächstes wird geprüft, ob von den verbleibenden Operationen noch zwei parallel verarbeitet können. Am Schluss bleibt höchstens noch eine Operation übrig, die einzeln berechnet werden muss. Nachfolgend müssen die Einzelergebnisse der jeweiligen Parallelisierungsstufen zu einem Endergebnis aufsummiert werden.\\
-\textbf{Listing \ref{code:mfccint}} zeigt die gewählte Lösung und ersetzt die innere Schleife aus \textbf{Listing \ref{code:mfccc}}. In der Variable \textit{mod} wird die Anzahl der nicht durch vier parallele Rechnungen berechenbaren Durchläufe gespeichert, danach werden in den Zeilen 8-15 so viele parallelen vierfach Berechnung durchgeführt wie möglich. Sollte \textit{mod} größer als 1 sein, also noch zwei parallele Berechnungen möglich sein, werden diese in den Zeilen 17-25 durchgeführt. Wenn danach immer noch eine Berechnung fehlen sollte, wird diese in den Zeilen 27-29 durchgeführt. Abschließend werden in Zeile 31 die Einzelergebnisse aufsummiert. 
+Aus diesem Code-Ausschnitt lässt sich entnehmen, dass die in den zwei Schleifen enthaltene Akkumulation nicht für jeden Durchlauf gleich oft ausgeführt wird. Dies führt dazu, dass die Anzahl der Schleifendurchläufe durch ein gemeinsames Vielfaches beschrieben werden kann. Maximal können mit SIMD-Instruktionen bis zu vier Berechnungen in zwei Takten ausgeführt werden (vgl. \textbf{Abschnitt \ref{ph:neon}}). Daher muss als erstes die Anzahl der Schleifendurchläufe berechnet werden, in denen eine parallele Verarbeitung von vier Berechnungen möglich ist. Außerdem wird hierbei berechnet, wie viele Operationen danach noch ausgeführt werden müssen (maximal 3). Als nächstes wird geprüft, ob von den verbleibenden Operationen noch zwei parallel verarbeitet können. Am Schluss bleibt höchstens noch eine Operation übrig, die einzeln berechnet werden muss. Nachfolgend müssen die Einzelergebnisse der jeweiligen Parallelisierungsstufen zu einem Endergebnis aufsummiert werden.\\
+\textbf{Listing \ref{code:mfccint}} zeigt die gewählte Lösung und ersetzt die innere Schleife aus \textbf{Listing \ref{code:mfccc}}. In der Variable \textit{mod} wird die Anzahl der nicht durch vier parallele Rechnungen berechenbaren Durchläufe gespeichert, danach werden in den Zeilen 8-15 so viele parallelen vierfach Berechnung durchgeführt wie möglich. Sollte \textit{mod} größer als 1 sein, also noch zwei parallele Berechnungen möglich sein, werden diese in den Zeilen 17-25 durchgeführt. Wenn \textit{mod} drei oder eins sein sollte, muss noch eine einzelne Berechnung durchgeführt werden. Diese geschieht in den Zeilen 27-29. Abschließend werden in Zeile 31 die Einzelergebnisse aufsummiert. 
 \newpage
 \begin{lstlisting}[caption=Akkumulation innerhalb der MFCC-Berechnung mit NEON-Intrinsics, label=code:mfccint]
 	mod = (f_edge_table_bd[m + 1] - f_edge_table_bd[m - 1]+1) % 4;
