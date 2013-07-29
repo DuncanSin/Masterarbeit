@@ -118,7 +118,7 @@ Aus diesen Laufzeiten werden im Anschluss die Extraktionszeiten berechnet, diese
 	\label{fig:erdsp}
 \end{figure} 
 %
-Auf Basis dieser Extraktionszeiten wird die Energie-Effizienz der einzelnen FeatureSets berechnet (vgl. \textbf{Abbildung \ref{fig:endsp}}). Auch hier ist erkennbar, dass FSet3 das Energie-effizienteste ist. Außerdem zeigt sich, dass die Merkmalsextraktion auf dem DSP Energie-effizienter durchgeführt wird als auf dem ARM.\\
+Auf Basis dieser Extraktionszeiten wird die Energie-Effizienz der einzelnen FeatureSets berechnet (vgl. \textbf{Abbildung \ref{fig:endsp}}). Auch hier ist erkennbar, dass FSet3 am Energie-effizientesten verarbeitet wird. Außerdem zeigt sich, dass die Merkmalsextraktion auf dem DSP zwischen 15,5\% (MCL4) und 541\% (MCL3) Energie-effizienter durchgeführt wird als auf dem ARM.\\
 %
 \begin{figure}[htp]
 	\centering
@@ -140,7 +140,7 @@ Für weitere Diskussionen über das verbleibende Optimerungspotenzial werden nur A
 	\label{fig:potdsp}
 \end{figure}
 %
-Bei der MAG-Berechnung sind Division und Wurzelberechnung bereits optimiert worden. Auch die Addition wurde bereits für SPLOOP optimiert. Eine weitere Optimierung könnte einzig bei der Akkumulation geschehen. Diese besteht aus einer Addition und einer Multiplikation. Die Additionen können nicht parallelisiert werden, da hierbei auf das selbe Register geschrieben wird. Jeder Datenpfad besitzt eine Multiplikationseinheit, welche nicht parallel betrieben werden. Eine parallele Berechnung könnte eine weitere Beschleunigung der Akkumulation bewirken. Das Optimierungspotenzial in diese Richtung ist jedoch als gering zu bewerten.
+Bei der MAG-Berechnung sind Division und Wurzelberechnung bereits optimiert worden. Auch die Addition wurde bereits für SPLOOP optimiert. Eine weitere Optimierung könnte einzig bei der Akkumulation geschehen. Diese besteht aus einer Addition und einer Multiplikation. Die Additionen können nicht parallelisiert werden, da hierbei auf das selbe Register geschrieben wird, dieses gilt jedoch nicht für die Multiplikation. Jeder Datenpfad besitzt eine Multiplikationseinheit, welche nicht parallel betrieben werden. Eine parallele Berechnung könnte eine weitere Beschleunigung der Akkumulation bewirken. Das Optimierungspotenzial in diese Richtung ist jedoch als gering zu bewerten.
 
 Bei der Berechnung des MFCC-Merkmals wurde bereits die Logarithmierung optimiert. Eine weitere Optimierung wäre nur noch in Richtung DCT  und der Anwendung der Filterbank möglich. Hierbei hat die Anwendung der Filterbank mit 73,7\% den größten Anteil an der Rechenzeit. Diese ist bereits mit SPLOOP beschleunigt. Hierbei werden nicht beide Multiplikationseinheiten parallel benutzt. Eine parallele Verwendung dieser Einheiten ist allerdings durch die datenabhängigen Durchläufe schwer zu realisieren, so dass das Optimierungspotenzial in diese Richtung als gering zu bewerten ist.
 
@@ -157,7 +157,7 @@ Die Laufzeiten und Energie-Effizienzen der Musikklassifikationsmethoden sind in 
 \begin{figure}[htp]
 	\centering
 		\includegraphics[width=1\textwidth]{../Pictures/erhete.pdf}
-	\caption{Laufzeit des heterogenen System (unoptimiert und optimiert)}
+	\caption{Laufzeit des heterogenen System}
 	\label{fig:erhete}
 \end{figure}
 %
@@ -165,11 +165,11 @@ Die Laufzeiten und Energie-Effizienzen der Musikklassifikationsmethoden sind in 
 \begin{figure}[htp]
 	\centering
 		\includegraphics[width=1\textwidth]{../Pictures/enhete.pdf}
-	\caption{Energie-Effizienz des heterogenen System (unoptimiert und optimiert)}
+	\caption{Energie-Effizienz des heterogenen System}
 	\label{fig:enhete}
 \end{figure}
 %
-Aus den Abbildungen ist erkennbar, dass durch die Optimierung der Merkmalsextraktion auf dem DSP die Laufzeiten der Musikklassifikationsmethoden zwischen 32\% bei MCL3 und 60\% bei MCL1 beschleunigt werden. Ebenfalls ist zu sehen, dass die Energie-Effizienzen verdoppelt (MCL3) bis verachtfacht (MCL1) werden.
+%Aus den Abbildungen ist erkennbar, dass durch die Optimierung der Merkmalsextraktion auf dem DSP die Laufzeiten der Musikklassifikationsmethoden zwischen 32\% bei MCL3 und 60\% bei MCL1 beschleunigt werden. Ebenfalls ist zu sehen, dass die Energie-Effizienzen verdoppelt (MCL3) bis verachtfacht (MCL1) werden.
 
 
 \section{Bewertung der heterogenen Architektur}\label{sec:evarmdsp}

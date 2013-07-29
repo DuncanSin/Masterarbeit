@@ -1,19 +1,18 @@
-\chapter{Zusammenfassung und Ausblick}
+\chapter{Zusammenfassung}
 \label{ch:sum}
 \rm
 
-\section{Zusammenfassung}\label{sec:summary}
 Am Institut für Mikroelektronische System der Leibniz Universität Hannover werden in einem Projekt Algorithmen und Architekturen zur Konzeption Energie-effizienter Systeme zur Audio-Signalklassifikation untersucht. Hierbei wird der Entwurfsraum von Hardware-Architekturen zur Audio-Signalklassifikation insbesondere für mobile Endgeräte exploriert.
 
 Im Rahmen dieser Arbeit wurde eine heterogene Prozessorarchitektur der Firma Texas Instruments hinsichtlich der Laufzeiten und der Energie-Effizienz bei Anwendung der inhaltsbasierten Musikklassifikation untersucht. Hierbei wurde die rechenintensive Merkmalsextraktion von vier verschiedenen Musikklassififkationsmethoden für den ARM- und den DSP-Prozessor optimiert.
 
-Die Optimierungsmaßnahmen beschleunigen die Extraktionen auf dem Cortex A8 um Faktoren zwischen 2,5 (MCL3) und 22,5 (MCL4). Die Extraktion auf dem C674x DSP wird mit Faktoren zwischen 4,2 (MCL3) und 10,5 (MCL4) schneller durchgeführt als beim implementierten Referenz-Programm. Der C674x DSP ist somit besser für die Extraktion von Merkmalen geeignet als der ARM Cortex A8.
+Die Optimierungsmaßnahmen beschleunigen die Extraktionen auf dem Cortex A8 um Faktoren zwischen 2,5 (MCL3) und 22,5 (MCL4). Die Extraktion auf dem C674x DSP wird mit Faktoren zwischen 4,2 (MCL3) und 10,5 (MCL4) schneller durchgeführt als beim implementierten DSP-Referenz-Programm. Insgesamt werden Merkmalsextraktionen mit dem optimierten DSP-Programm zwischen 18\% (MCL4) und 209\% (MCL3) schneller verarbeitet als mit dem ARM-Programm. Der C674x DSP ist somit besser für die Extraktion von Merkmalen geeignet als der ARM Cortex A8.
 
-Für die Analyse des heterogenen Systems wurde die Ausführung der Musikklassifikation dahingehend realisiert, dass Merkmalsextraktion auf dem C674x DSP und Prozessierung und Klassifikation auf dem ARM Cortex A8 ausgeführt wurden. Die Ausführung der drei Schritte geschah dabei sequentiell.
+Für eine Bewertung der heterogenen Architektur wurde die Merkmalsextraktion auf dem DSP durchgeführt, während Prozessierung und Klassifikation auf dem ARM erfolgte. Hierbei wurde eine sequentielle Verarbeitungsreihenfolge dieser drei Schritte umgesetzt.
 
 Eine Musikklassifikation wird auf dem heterogenen System um das 2- (MCL3) bis 8-fache (MCL1) schneller verarbeitet als auf dem Cortex A8. Daraus folgt, dass unter dem Aspekt der Verarbeitungszeit das heterogene System vorzuziehen ist.\\
 Im Bezug auf die Energie-Effizienz ist der ARM Cortex A8 von 13\% bei MCL2 bis 84\% effizienter als das heterogene System. Die einzige Ausnahme bildet MCL3, bei der das heterogene System um 42\% effizienter ist.\\
-
+Mit dieser Arbeit steht eine optimierte Realisierung von Musikklassifikationsmethoden für die untersuchte heterogene Architektur zur Verfügung.
 
 %\section{Ausblick}\label{sec:vista}
 %
