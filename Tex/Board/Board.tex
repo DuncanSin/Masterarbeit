@@ -136,8 +136,8 @@ Die Weiterleitung von Befehlen vom ARM zum NEON-Coprozessor geschieht in folgend
 \begin{enumerate}
 \item NEON-SIMD- und VFPv3-Befehle durchlaufen die gesamte ARM-Pipeline und werden am Ende der Execute-Phase in eine NEON Instruction Queue geladen. Danach gelten die NEON-SIMD- und VFPv3-Befehle für den ARM als verarbeitet, so dass dieser weitere Befehle ausführen kann. Eine Ausnahme bildet hier der Fall, dass die NEON Instruction Queue voll ist. In diesem Fall muss der ARM warten bis weitere Befehle in die Instruction Queue geschrieben werden können.
 \item Der NEON-Coprozessor ließt dieser Queue aus und dekodiert die Befehle nochmals.
-\item Die NEON-SIMD- und VFPv3-Befehle werden auf dem NEON-Coprozessor verarbeitet
-\item Mit dem MRC-Befehl ließt der ARM die Ergebnisse des NEON-Coprozessors aus. Dieses dauert mindestens 20 Takte
+\item Die NEON-SIMD- und VFPv3-Befehle werden auf dem NEON-Coprozessor verarbeitet.
+\item Mit dem MRC-Befehl ließt der ARM die Ergebnisse des NEON-Coprozessors aus. Dieses dauert mindestens 20 Takte.
 \end{enumerate}
 
 Die Weiterleitung von Daten an den NEON-Coprozessor kann auf zwei Arten geschehen:
