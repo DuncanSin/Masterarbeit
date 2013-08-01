@@ -1,7 +1,7 @@
 \chapter{Grundlagen}
 \label{ch:grund}
 \rm
-In diesem Kapitel werden die Grundlagen  der Audio-Signalklassifikation respektive der Muskklassifikation eingeführt.\\
+In diesem Kapitel werden die Grundlagen  der Audio-Signalklassifikation respektive der Musikklassifikation eingeführt.\\
 Dabei werden verschiedene Audio-Merkmale und für diese Arbeit relevante Algorithmen zur Prozessierung und Klassifikation vorgestellt. Abschließend werden die vier verwendeten Musikklassifikationsmethoden erläutert.
 \section{Musikklassifikation}\label{sec:mcl}
 
@@ -21,7 +21,7 @@ Im ersten Schritt werden aus den betrachteten Musikstücken in der Extraktionspha
 \section{Extraktion}\label{subsec:ext}
 
 
-Zur Extraktion von Merkmalen wird eine zuvor festgelegte Zusammenstellung von Merkmalen (engl. Feature Sets) verwendet. Hierbei kann zwischen Merkmalen aus der Zeit-Domäne und Merkmalen aus der Frequenz-Domäne unterscheiden werden. Das Audio-Signal wird in gleichgroße Fenster eingeteilt, die sich überlappen können. Anschließend werden die zu betrachtenden Merkmale aus diesen Fenstern nacheinander extrahiert, so dass pro Fenster ein Merkmalsergebnis vorliegt. Diese Reihe der einzelnen Ergebnisse wird nachfolgend als Wertereihe bezeichnet. Außerdem wird nur ein Audio-Kanal verwendet. Bei Stereo-Signalen muss daher entweder ein Kanal selektiert oder beide Kanäle gemischt werden. \textbf{Abbildung \ref{fig:signal}} stellt die wesentlichen Parameter der Extraktionsphase heraus, zur Hilfe sind die ersten drei Fenster farblich markiert.
+Zur Extraktion von Merkmalen wird eine zuvor festgelegte Zusammenstellung von Merkmalen (engl. Feature Sets) verwendet. Hierbei kann zwischen Merkmalen aus der Zeit-Domäne und Merkmalen aus der Frequenz-Domäne unterscheiden werden. Das Audio-Signal wird in gleichgroße Fenster eingeteilt, die sich überlappen können. Anschließend werden die zu betrachtenden Merkmale aus diesen Fenstern nacheinander extrahiert, so dass pro Fenster ein Merkmalsergebnis vorliegt. Diese Reihe der einzelnen Ergebnisse wird nachfolgend als Wertereihe bezeichnet. Außerdem wird nur ein Audio-Kanal verwendet. Bei Stereo-Signalen muss daher entweder ein Kanal selektiert oder beide Kanäle gemischt werden. \textbf{Abbildung \ref{fig:signal}} stellt die wesentlichen Parameter der Extraktionsphase heraus; zur Hilfe sind die ersten drei Fenster farblich markiert.
 
 %
 \begin{figure}[h]
@@ -110,7 +110,7 @@ Bei der Zero Crossing Rate werden die Auftreten von Vorzeichenwechseln innerhalb
 
 \paragraph{Hamming Window (HAM)}\label{subsubsec:hw}$\;$ \\
 
-Hamming Window bezeichnet eine andere Form eines Fensters als der Standartform eines quadratischen Fensters. Das Hamming Window ergibt sich nach \textbf{Formel \ref{eqn:hw}}.
+Hamming Window ist eine andere Art der Fensterung von Signalen. Hierbei wird nicht ein quadratisches Fenster verwendet, sondern eine Kurve, die der Gauß'sche Glockenkurve ähnelt. Das Hamming Window ergibt sich nach \textbf{Formel \ref{eqn:hw}}.
 
 \begin{equation}\label{eqn:hw}
 w_{HW}(n)~=~0,54-0,46\cdot \cos \left( \frac{2 \pi n}{N-1} \right)
@@ -118,7 +118,7 @@ w_{HW}(n)~=~0,54-0,46\cdot \cos \left( \frac{2 \pi n}{N-1} \right)
 
 \paragraph{Fast Fourier Transformation (FFT)}\label{subsubsec:fft}$\;$ \\
 
-Unter dem Begriff \textit{Fast Fourier Transformation} werden Algorithmen zusammengefasst, die eine schnelle und effiziente Berechnung von \textit{diskreten Fourier-Transformationen (DFT)} bieten. Diese effizienten Algorithmen kann man im Wesentlichen in zwei Gruppen unterteilen, diejenigen die mit Zeitzerlegung (\textbf{\ref{ph:dit}}) und diejenigen die mit Frequenzzerlegung (\textbf{\ref{ph:dif}}) arbeiten.\\
+Unter dem Begriff \textit{Fast Fourier Transformation} werden Algorithmen zusammengefasst, die eine schnelle und effiziente Berechnung von \textit{diskreten Fourier-Transformationen (DFT)} bieten. Diese effizienten Algorithmen kann man im Wesentlichen in zwei Gruppen unterteilen, diejenigen, die mit Zeitzerlegung (\textbf{\ref{ph:dit}}) und diejenigen, die mit Frequenzzerlegung (\textbf{\ref{ph:dif}}), arbeiten.\\
 Für beide Gruppen von Algorithmen wird immer eine Operation benötigt, die entweder die Eingänge oder die Ausgänge in einer bestimmten Form sortiert. Diese Operation wird als \textit{Bitumkehrordnung} oder engl. \textit{bit-reversed order} bezeichnet (\textbf{\ref{ph:bit}}).
 
 \subparagraph{FFT mit Zeitzerlegung (DIT)}\label{ph:dit}$\;$ \\
@@ -127,7 +127,7 @@ Bei einer FFT mit Zeitzerlegung wird durch Ausnutzen der Symmetrie- und Periodiz
 
 \begin{equation}
 	\label{eqn:dit1}			   
-	X[k]~=~ \sum_{n gerade} x[n]W^{nk}_N~+~ \sum_{n ungerade} x[n]W^{nk}_N
+	X[k]~=~ \sum_{n\, gerade} x[n]W^{nk}_N~+~ \sum_{n\, ungerade} x[n]W^{nk}_N
 \end{equation}
 
 Substituiert man nun $n = 2r$ für die gerade und $n=2r+1$ für die ungerade Teilfolge, so entsteht \textbf{Formel \ref{eqn:dit2}}.
@@ -140,7 +140,7 @@ Substituiert man nun $n = 2r$ für die gerade und $n=2r+1$ für die ungerade Teilf
 	\end{split}
 \end{equation}
 
-Da $W^2_N=W_{N/2}$ gilt kann man \textbf{Formel \ref{eqn:dit2}} vereinfachen zu \textbf{Formel \ref{eqn:dit3}}.
+Da $W^2_N=W_{N/2}$ gilt, kann man \textbf{Formel \ref{eqn:dit2}} vereinfachen zu \textbf{Formel \ref{eqn:dit3}}.
 
 \begin{align}
 	\label{eqn:dit3}			   
@@ -148,7 +148,7 @@ Da $W^2_N=W_{N/2}$ gilt kann man \textbf{Formel \ref{eqn:dit2}} vereinfachen zu 
 	~=~G[k]~+~W^k_NH[k]
 \end{align}
 
-Eine ähnliche Vereinfachung kann nun für beide Teilfolgen durchgeführt werden, bis am ende nur noch 2-Punkt DFTs durchgeführt werden müssen.\\
+Eine ähnliche Vereinfachung kann nun für beide Teilfolgen durchgeführt werden, bis am Ende nur noch 2-Punkt DFTs durchgeführt werden müssen.\\
 Diese 2-Punkt DFTs führen zu einem Signalflussgraph, wie er in \textbf{Abbildung \ref{fig:BF-DIT}} dargestellt ist.\\
 %
 \begin{figure}[ht]
@@ -241,7 +241,7 @@ In \textbf{Abbildung \ref{fig:BF-DIF}} ist der aus \textbf{Formel \ref{eqn:dif6}
 %
 \subparagraph{Bitumkehrungordnung (bit-reversed order)}\label{ph:bit}$\;$ \\
 
-Wie man in \textbf{Abbildung \ref{fig:dit}} und \textbf{Abbildung \ref{fig:dif}} gut erkennen kann, liegen entweder die Eingänge oder die Ausgänge in einer nicht numerisch sortierten Form vor. Diese Sortierung ergibt sich aus den in (\textbf{\ref{ph:dit}}) und (\textbf{\ref{ph:dif}}) gezeigten Algorithmen, folgt aber immer dem selben Schema.\\ 
+Wie man in \textbf{Abbildung \ref{fig:dit}} und \textbf{Abbildung \ref{fig:dif}} gut erkennen kann, liegen entweder die Eingänge oder die Ausgänge in einer nicht numerisch sortierten Form vor. Diese Sortierung ergibt sich aus den in (\textbf{\ref{ph:dit}}) und (\textbf{\ref{ph:dif}}) gezeigten Algorithmen, erfolgt aber immer nach dem selben Schema.\\ 
 Es werden die Indizes des Ein- oder Ausgangs anhand ihrer Bits vom \textit{Least Significant Bit (LSB)} zum \textit{Most Significant Bit (MSB)} sortiert, so dass pro Ebene in der oberen Hälfte die Indizes stehen, die beim momentan betrachteten Bit eine 0 aufweisen.\\
 Dieses Prinzip soll in \textbf{Tabelle \ref{tab:bit}} für 3-Bit lange Indizes veranschaulicht werden.\\
 %
@@ -265,14 +265,14 @@ Dieses Prinzip soll in \textbf{Tabelle \ref{tab:bit}} für 3-Bit lange Indizes ve
 %
 
 \subparagraph{Fourier-Transformation von Audio-Signalen}$\;$ \\
-In der Musikklassifikation liegen Audio-Samples als reelwertige Wertefolgen vor. DFT- und FFT-Algorithmen sind aber für komplexwertige Eingangsfolgen definiert. Um nun Audio-Samples mit einer DFT oder FFT zu transformieren, müssen diese in komplexwertige Folgen umdefiniert werden. Die einfachste Methode dieses zu erreichen, ist den Imaginär-Teil als Null anzunehmen. Dieses führt dazu, dass die sich ergebenden Fourier-Koeffizienten in der  konjugiert komplexe Achsensymmetrien aus \textbf{Formel \ref{eqn:achs}} vorliegen.
+In der Musikklassifikation liegen Audio-Samples als reelwertige Wertefolgen vor. DFT- und FFT-Algorithmen sind aber für komplexwertige Eingangsfolgen definiert. Um nun Audio-Samples mit einer DFT oder FFT zu transformieren, müssen diese in komplexwertige Folgen umdefiniert werden. Die einfachste Methode, um dieses zu erreichen, ist den Imaginär-Teil als Null anzunehmen. Dieses führt dazu, dass die sich ergebenden Fourier-Koeffizienten in der  konjugiert komplexen Achsensymmetrie aus \textbf{Formel \ref{eqn:achs}} vorliegen.
 
 \begin{equation}
 \label{eqn:achs}
 X[k]=X[-k]^*=X[N-k]^*~0\leq n \le N
 \end{equation}  
 
-Dieses hat zu Folge, dass für die Weiterverarbeitung der Fourier-Koeffizienten nur die Hälfte der berechneten Koeffizienten benötigt wird. Daraus folgt, dass für die Berechnung einer DFT oder FFT bei reellwertigen Eingangsfolgen der Länge N eine halb so große DFT beziehungsweise FFT der Länge $\frac{N}{2}$ verwendet werden kann. Eine solche Transformation setzt eine anschießende Nachverarbeitung der Fourier-Koeffizienten voraus, die die erwarteten Real- und Imaginärteile in die richtige Reihenfolge gebracht werden. Um dieses zu erreichen muss als erstes die reellwertige Eingangsfolge $x[n]$ der Länge N mit Hilfe von \textbf{Formel \ref{eqn:comp}} in eine komplexwertige Eingangsfolge $x^+[n]$ konvertiert werden.
+Dieses hat zu Folge, dass für die Weiterverarbeitung der Fourier-Koeffizienten nur die Hälfte der berechneten Koeffizienten benötigt werden. Es folgt, dass für die Berechnung einer DFT oder FFT bei reellwertigen Eingangsfolgen der Länge N eine halb so große DFT, beziehungsweise FFT, der Länge $\frac{N}{2}$ verwendet werden kann. Eine solche Transformation setzt eine anschließende Nachverarbeitung der Fourier-Koeffizienten voraus, die die erwarteten Real- und Imaginärteile in die richtige Reihenfolge bringt. Um dieses zu erreichen, muss als erstes die reellwertige Eingangsfolge $x[n]$ der Länge N mit Hilfe von \textbf{Formel \ref{eqn:comp}} in eine komplexwertige Eingangsfolge $x^+[n]$ konvertiert werden.
 
 \begin{equation}
 \label{eqn:comp}
@@ -282,13 +282,11 @@ Im\left\lbrace x^+[n]\right\rbrace =x[2n+1]
 \end{split}
 \end{equation}
 
-Aus der so entstandenen Eingangsfolge $x^+[n]$ können die $\frac{N}{2}$ Fourier-Koeffizienten $X^+[k]$ berechnet werden. Unter Berücksichtigung von
+Aus der so entstandenen Eingangsfolge $x^+[n]$ können die $\frac{N}{2}$ Fourier-Koeffizienten $X^+[k]$ berechnet werden. Unter Berücksichtigung von \textbf{Formel \ref{eqn:x+}} können durch \textbf{Formel \ref{eqn:koeff}} die ersten $\frac{N}{2}$ Fourier-Koeffizienten bestimmt werden.
 
-\begin{equation}
+\begin{equation}\label{eqn:x+}
 X^+\left[\frac{N}{2}\right]=X^+[0]
 \end{equation} 
-
-können durch \textbf{Formel \ref{eqn:koeff}} die ersten $\frac{N}{2}$ Fourier-Koeffizienten bestimmt werden.
 
 \begin{equation}
 \label{eqn:koeff}
@@ -296,8 +294,8 @@ X[k]=\frac{1}{2}\left(\left(X^+[k]+X^+\left[\frac{N}{2}-k\right]^*\right)-W^k_N\
 \end{equation}
 
 \paragraph{Magnitude of Spectrum (MAG)}\label{subsubsec:aos}$\;$ \\
-Bei der Magnitude of Spectrum werden die normalisierten Spektralkomponenten eines Fenster berechnet. \\
-Hierfür wird zu erst der Betrag der diskreten Transformierten berechnet, welche danach durch die Größe des betrachteten Fensters geteilt werden (\textbf{Formel \ref{eqn:aos}}).
+Bei der Magnitude of Spectrum werden die normalisierten Spektralkomponenten eines Fensters berechnet. \\
+Hierfür wird zuerst der Betrag der diskreten Transformierten berechnet, welcher danach durch die Größe des betrachteten Fensters geteilt wird (\textbf{Formel \ref{eqn:aos}}).
 
 \begin{equation}
 	\label{eqn:aos}			   
@@ -330,9 +328,9 @@ Die maximale Amplitude des Chromagrams gibt den maximalen Chroma Vektor an und s
 
 \paragraph{Mel Frequency Cepstral Coefficients (MFCC)}\label{subsubsec:mfcc}$\;$ \\
 
-Das Cepstrum ist definiert als die Fouriertransformation (oder die DCT) des logerithmierten Amplitudenspektrums.\\
-Normalerweise wird ein Cepstrum auf der Basis des Frequenzspektrums berechnet, für die Berechnung der MFCC wird allerdings das Mel-Band zugrunde gelegt. Das Mel-Band basiert auf der Mel-Skala, die als psychoakustische Maßeinheit definiert ist. Wird zum Beispiel eine Frequenz als doppelt so hoch wahrgenommen wie eine festgelegte Referenzfrequenz, so wird auf der Mel-Skala diesem auch der doppelte Wert der Referenzfrequenz zugewiesen. Die hierfür verwendete Referenzfrequenz liegt bei 1000 Hz.\\
-Soll nun eine Frequenz $f$ in den zugehörigen Mel-Wert $m$ umrechnen werden, wird hierfür die \textbf{Formel \ref{eqn:mel}} verwendet.
+Das Cepstrum ist definiert als die Fouriertransformation (oder die DCT) des logarithmierten Amplitudenspektrums.\\
+Normalerweise wird ein Cepstrum auf der Basis des Frequenzspektrums berechnet. Für die Berechnung der MFCC wird allerdings das Mel-Band zugrunde gelegt. Das Mel-Band basiert auf der Mel-Skala, die als psychoakustische Maßeinheit definiert ist. Wird zum Beispiel eine Frequenz als doppelt so hoch wahrgenommen wie eine festgelegte Referenzfrequenz, so wird auf der Mel-Skala diesem auch der doppelte Wert der Referenzfrequenz zugewiesen. Die hierfür verwendete Referenzfrequenz liegt bei 1000 Hz.\\
+Soll nun eine Frequenz $f$ in den zugehörigen Mel-Wert $m$ umgerechnen werden, wird hierfür \textbf{Formel \ref{eqn:mel}} verwendet.
 
 \begin{equation}
 	\label{eqn:mel}			   
@@ -340,7 +338,7 @@ Soll nun eine Frequenz $f$ in den zugehörigen Mel-Wert $m$ umrechnen werden, wir
 \end{equation}
 
 Die Berechnung der MFCC wird in 4 Schritten durchgeführt.\\
-Als Erstes wird wie bei allen Features des Frequenzbereiches die Spektralkomponenten durch eine Fouriertransformation berechnet. Der zweite Schritt besteht in einer Bandpassfilterung dieser Spektralkomponenten nach \textbf{Formel \ref{eqn:melm}}.
+Als Erstes werden, wie bei allen Features des Frequenzbereiches, die Spektralkomponenten durch eine Fouriertransformation berechnet. Der zweite Schritt besteht in einer Bandpassfilterung dieser Spektralkomponenten nach \textbf{Formel \ref{eqn:melm}}.
 
 \begin{equation}
 	\label{eqn:melm}			   
@@ -353,20 +351,20 @@ Wird die Bandpassfilterung mit 12 Dreiecksfenstern durchgeführt, liefert dieser 
 
 \paragraph{Normalized Audio Spectrum Envelope (NASE)}\label{subsubsec:nase}$\;$ \\
 
-Der Normalized Audio Spectrum Envelope (NASE) gibt Auskunft über das Energiespektrum jedes Fensters. Hierbei wird pro Fenster ein Vektor generiert, bei dem jedes Vektorelement die normalisierte, quadrierte Magnitude eines definierten Frequenz-Unterbandes entspricht.\\
+Der Normalized Audio Spectrum Envelope (NASE) gibt Auskunft über das Energiespektrum jedes Fensters. Hierbei wird pro Fenster ein Vektor generiert, bei dem jedes Vektorelement der normalisierten, quadrierten Magnitude eines definierten Frequenz-Unterbandes entspricht.\\
 Die Frequenz-Unterbänder spannen sich logarithmisch zwischen 62.4 Hz ("`loEdge"') und 16 kHz ("`hiEdge"') über 8 Oktaven. Die Anzahl $B$ von Unterbändern wird hierbei mit
 
 \begin{equation}
 	\label{eqn:naseb}			   
 	B~=~\frac{8}{r}
 \end{equation}
-berechnet, wobei $r$ für die Spektralauflösung steht und 
+berechnet, wobei  für die Spektralauflösung $r$ gilt (vgl. \textbf{Abbildung \ref{fig:nase}}):
 
 \begin{equation}
 	\label{eqn:naser}			   
 	r~=~2^j Oktaven,~-4\leq j \leq 3
 \end{equation}
-gilt (vgl. \textbf{Abbildung \ref{fig:nase}}).
+
 
 \begin{figure}[htbp]
 	\centering
@@ -413,7 +411,7 @@ Aus den einzelnen NASE-Werten der einzelnen Unterbänder wird abschließend der Er
 
 \paragraph{Octave Spectral Contrast (OSC)}\label{subsubsec:osc}$\;$ \\
 
-Beim Octave Spectral Contrast wird das Frequenzspektrum als erstes mit Bandpass-Filtern in Unterbänder aufgeteilt (siehe \textbf{Tabelle \ref{tab:osc}}. Danach werden für jedes Unterband \textit{spektrale Peaks} (\textbf{Formel \ref{eqn:peak}}) und \textit{spektrale Valleys}(\textbf{Formel \ref{eqn:valley}}) berechnet, wobei Peaks den harmonischen Komponenten und Valleys nicht-harmonischen Komponenten oder Rauschen des Unterbandes $b$ entsprechen. Hierbei werden die Power Spektren $P_{b,n}$ vorher so sortiert, dass $P_{b,1}\geq P_{b,2}\geq ... \geq P_{b,n}$ gilt.\\
+Beim Octave Spectral Contrast wird das Frequenzspektrum zunächst mit Bandpass-Filtern in Unterbänder aufgeteilt (siehe \textbf{Tabelle \ref{tab:osc}}). Danach werden für jedes Unterband \textit{spektrale Peaks} (\textbf{Formel \ref{eqn:peak}}) und \textit{spektrale Valleys}(\textbf{Formel \ref{eqn:valley}}) berechnet, wobei Peaks den harmonischen Komponenten und Valleys den nicht-harmonischen Komponenten oder Rauschen des Unterbandes $b$ entsprechen. Hierbei werden die Power Spektren $P_{b,n}$ vorher so sortiert, dass $P_{b,1}\geq P_{b,2}\geq ... \geq P_{b,n}$ gilt.\\
 \begin{table}[ht]
 	\centering
 		\begin{tabular}{c | c}
@@ -443,7 +441,7 @@ Beim Octave Spectral Contrast wird das Frequenzspektrum als erstes mit Bandpass-
 	\label{eqn:valley}			   	
 	Valley(b)~=~\log\left(\frac{1}{\alpha N_b}\sum\limits^{\alpha N_b}_{i=1}P_{b,N_b - i+1}\right)
 \end{equation}
-In diesem Zusammenhang ist $\alpha$ ein Nachbarschaftsfactor, der in der Literatur mit 0,2 angenommen wird. Der spektrale Kontrast eines Unterbandes errechnet sich nun als Differenz von $Peak(b)$ und $Valley(b)$ (\textbf{Formel \ref{eqn:oscsc}}).
+In diesem Zusammenhang ist $\alpha$ ein Nachbarschaftsfactor, der in der Literatur mit 0,2 angenommen wird. Der spektrale Kontrast eines Unterbandes errechnet sich nun als Differenz von $Peak(b)$ und $Valley(b)$ (\textbf{Formel \ref{eqn:oscsc}})
 \begin{equation}
 	\label{eqn:oscsc}			   	
 	SC(b)~=~Peak(b)~-~Valley(b)
@@ -476,7 +474,7 @@ Der Spectral Centroid gibt den Schwerpunkt des Amplitudenspektrums des Signals a
 
 \paragraph{Spectral Crest Factor (SCF)}\label{subsubsec:scf}$\;$ \\
 
-Der Spectral Crest Factor stellt ein Maß der spektralen Flachheit eines Frequenzbandes dar und ist im Wertebereich $\left[1,\infty\right]$ definiert. Hierbei bedeutet 1, dass alle Spektralamplituden gleich sind und $\infty$ das gar keine Flachheit existiert (\textbf{Formel \ref{eqn:scf}}).\\
+Der Spectral Crest Factor stellt ein Maß der spektralen Flachheit eines Frequenzbandes dar und ist im Wertebereich $\left[1,\infty\right]$ definiert. Hierbei entspricht 1 maximaler Flachheit (d.h. Spektralamplituden sind gleich) und $\infty$ minimaler Flachheit (\textbf{Formel \ref{eqn:scf}}).\\
 Dieser Faktor wird auf folgenden Frequenzbändern berechnet:
 \begin{itemize}
 	\item 250 - 500 Hz ($k_{1l}$ - $K_{1u}$)
@@ -503,7 +501,7 @@ Der Spectral Flux ist definiert als die quadrierte Differenz zwischen den normal
 
 \paragraph{Spectral Rolloff (SR)}\label{subsubsec:sr}$\;$ \\
 
-Als Spectral Rolloff bezeichnet man der Frequenzwert ($k_{rolloff}$) unter dem sich eine bestimmte Prozentzahl ($p_{rolloff}$) der Spektralwerte konzentrieren (\textbf{Formel \ref{eqn:sr}}). 
+Als Spectral Rolloff bezeichnet man den Frequenzwert ($k_{rolloff}$), unter dem sich eine bestimmte Prozentzahl ($p_{rolloff}$) der Spektralwerte konzentrieren (\textbf{Formel \ref{eqn:sr}}). 
 
 \begin{equation}
 	\label{eqn:sr}			   
@@ -520,28 +518,28 @@ Die Sub-Band Energy Ratio gibt die Verteilung der Spektralenergie auf die Freque
 \end{equation}
 
 \section{Prozessierung}\label{subsec:proc}
-Klassifikationsalgorithmen setzen eine festgelegte Anzahl von Variablen voraus, mit welchen Musikstücke dargestellt werden. Da Mustikstücke z.B. unterschiedliche Laufzeiten aufweisen, ist auch die Anzahl extrahierter Merkmale verschieden. Daher ist die Erstellung von Merkmalsvektoren erforderlich, die die Merkmale nach zum Beispiel statistischen Eigenschaften zusammenfasst. Hierdurch wird außerdem die zu speichernde Datenmenge pro Musikstück reduziert.\\
+Klassifikationsalgorithmen setzen eine festgelegte Anzahl von Variablen voraus, mit welchen Musikstücke dargestellt werden. Da Musikstücke z.B. unterschiedliche Laufzeiten aufweisen, ist auch die Anzahl extrahierter Merkmale verschieden. Daher ist die Erstellung von Merkmalsvektoren erforderlich, die die Merkmale nach zum Beispiel statistischen Eigenschaften zusammenfasst. Hierdurch wird außerdem die zu speichernde Datenmenge pro Musikstück reduziert.\\
 Zwei in dieser Arbeit eingesetzte Methoden werden im Folgenden vorgestellt.
 
 \subsection{Running Mean and Runnind Deviation (RMD)}
 
 Diese Prozessierungsmethode basiert auf der Berechnung von Mittelwert und Abweichung für jedes Merkmalelement. Diese Datenreduktion geschieht in zwei Schritten.\\
-Im erste Schritt wird die Wertereihe eines Merkmals in gleichgroße Fenster der Länge L unterteilt. Danach wird für jedes Fenster Mittelwert und Abweichung berechnet, so dass zwei gleich lange Wertereihen pro Merkmal-Element entstehen, die den Mittelwerten und Abweichungen über den Zeitverlauf entsprechen.\\
+Im ersten Schritt wird die Wertereihe eines Merkmals in gleichgroße Fenster der Länge L unterteilt. Danach wird für jedes Fenster Mittelwert und Abweichung berechnet, so dass zwei gleich lange Wertereihen pro Merkmal-Element entstehen, die den Mittelwerten und Abweichungen über den Zeitverlauf entsprechen.\\
 Im zweiten Schritt werden von diesen Wertereihen ebenfalls Mittelwert und Abweichung bestimmt, so dass am Ende jedes Merkmal durch vier statistische Werte repräsentiert wird.
 
 \subsection{Modulation Spectral Analysis (MDA)}
 Diese Prozessierungsmethode basiert auf der Ermittlung von statistischen Daten aus der spektralen Dynamik eines Merkmals. Hierbei wird von D Elementen pro Vektor ausgegangen. Die Prozessierung wird in vier Schritten durchgeführt.\\
-Im ersten Schritt wird jede Elementreihe eines Merkmals in k gleichgroße Fenster der Länge L unterteilt, die sich um 50\% überlappen. Anschließend werden diese mit Hilfe einer FFT in den Frequenzbereich transformiert.\\
+Im ersten Schritt wird jede Elementreihe eines Merkmals in k gleichgroße Fenster der Länge L unterteilt, die sich um 50\% überlappen. Diese werden mit Hilfe einer FFT in den Frequenzbereich transformiert.\\
 Im zweiten Schritt werden aus diesen $D\cdot k$ Fourier-Spektren Betragsspektren berechnet und diese für jedes Merkmalselement gemittelt.\\
-Die gemittelten Betragsspektren werden anschließend logarithmisch in acht Subbänder unterteilt. Aus dieser Unterteilung wird eine Dx8-Matrix erstellt in der für jedes Element der kleinste im Subband vorkommende Betrag (\glqq Valley\grqq) und die Differenz vom größten und kleinsten Betrag (\glqq Contrast\grqq) gespeichert wird.\\
+Die gemittelten Betragsspektren werden im dritten Schritt logarithmisch in acht Subbänder unterteilt. Aus dieser Unterteilung wird eine Dx8-Matrix erstellt in der für jedes Element der kleinste im Subband vorkommende Betrag (\glqq Valley\grqq) und die Differenz vom größten und kleinsten Betrag (\glqq Contrast\grqq) gespeichert wird.\\
 Im vierten Schritt werden von allen Valley- und Contrast-Werten Mittelwert und Abweichung berechnet. Hierbei erfolgt die Berechnung sowohl zeilen- als auch spaltenweise.
 
 
 \section{Klassifikation}\label{subsec:cla}
-Während der Klassifikation weist ein Klassifikator einem Merkmalsvektor respektive dem dazu gehörigen Musikstück eine Musikkategorie zu. Hierfür ist ein Klassifikationsmodell erforderlich, das in einer sogenannten Trainingsphase zu erstellen ist. Die Trainingsphase setzt bereits vorklassifizierte Merkmalsvektoren voraus, so dass die Anzahl und Bezeichnungen der Kategorien bzw. Klassen festgelegt wird und der Klassifikator lernen kann, wie er zwischen Klassen anhand der Vektoren unterscheiden kann.\\
+Während der Klassifikation weist ein Klassifikator einem Merkmalsvektor respektive dem dazu gehörigen Musikstück eine Musikkategorie zu. Hierfür ist ein Klassifikationsmodell erforderlich, das in einer sogenannten Trainingsphase zu erstellen ist. Die Trainingsphase setzt bereits vorklassifizierte Merkmalsvektoren voraus, so dass die Anzahl und Bezeichnungen der Kategorien bzw. Klassen festgelegt wird und der Klassifikator lernt, wie er zwischen Klassen anhand der Vektoren unterscheiden kann.\\
 Das Prinzip soll anhand der Support Vector Maschine (SVM) erklärt werden.
 \\\\
-Zur Vereinfachung wird angenommen, dass die Vektoren nur zwei Elemente besitzen und nur zwischen zwei Kategorien zu unterscheiden ist. Die Vektoren lassen sich in einem Merkmalsraum darstellen, der aufgrund der Elementanzahl ebenfalls zweidimensional ist.
+Zur Vereinfachung wird angenommen, dass die Vektoren nur zwei Elemente besitzen und daher nur zwischen zwei Kategorien zu unterscheiden ist. Die Vektoren lassen sich in einem Merkmalsraum darstellen, der aufgrund der Elementanzahl ebenfalls zweidimensional ist.
 %
 \begin{figure}[htp]
 	\centering
@@ -550,7 +548,7 @@ Zur Vereinfachung wird angenommen, dass die Vektoren nur zwei Elemente besitzen 
 	\label{fig:svm}
 \end{figure}
 %
-Der SVM-Klassifikator sucht in der Trainingsphase nach einer Hyperebene, die die Vektoren unterschiedlicher Klassen mit maximalem Abstand voneinander trennt. Hierbei kann eine geeignete Ebene mehr Dimensionen aufweisen als der Merkmalsraum (vgl. \textbf{Abbildung \ref{fig:svm}}). Die gefundene Ebene wird anhand der Vektoren beschrieben, die am nächsten zur Ebene liegen. Diese werden als Support Vektoren bezeichnet. Danach kann ein zu klassifizierendes Objekt (grünes Dreieck) anhand seiner Lage zur aufgespannten Hyperebene eindeutig einer der beiden Klassen zugeordnet werden.
+Der SVM-Klassifikator sucht in der Trainingsphase nach einer Hyperebene, die die Vektoren unterschiedlicher Klassen mit maximalem Abstand voneinander trennt. Hierbei kann eine geeignete Ebene mehr Dimensionen aufweisen als der Merkmalsraum (vgl. \textbf{Abbildung \ref{fig:svm}}). Die gefundene Ebene wird anhand der Vektoren beschrieben, die am nächsten zur Ebene liegen. Diese werden als Support-Vektoren bezeichnet. Danach kann ein zu klassifizierendes Objekt (grünes Dreieck) anhand seiner Lage zur aufgespannten Hyperebene eindeutig einer der beiden Klassen zugeordnet werden.
 
 \subsection{Klassifikationsgüte}
 

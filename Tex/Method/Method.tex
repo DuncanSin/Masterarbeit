@@ -3,14 +3,14 @@
 \rm
 
 In diesem Kapitel werden die Implementierung und die Optimierung des Referenz-Programm-Codes auf dem ARM Cortex A8 und dem C674x DSPs beschrieben.\\
-Hierfür wir in \textbf{Abschnitt \ref{sec:str}} als erstes die Optimierungsstrategie vorgestellt nach der die Optimierungen in den folgenden Abschnitten durchgeführt werden. Anschließend werden in \textbf{Abschnitt \ref{sec:optarm}} die Implementierung und Optimierung des Referenz-Programm-Codes auf dem ARM Cortex A8 und in \textbf{Abschnitt \ref{sec:optdsp}} die auf dem C674x DSP vorgestellt.
+Hierfür wir in \textbf{Abschnitt \ref{sec:str}} als erstes die Optimierungsstrategie vorgestellt, nach der die Optimierungen in den folgenden Abschnitten durchgeführt werden. Anschließend werden in \textbf{Abschnitt \ref{sec:optarm}} die Implementierung und Optimierung des Referenz-Programm-Codes auf dem ARM Cortex A8 und in \textbf{Abschnitt \ref{sec:optdsp}} die auf dem C674x DSP vorgestellt.
 
 \section{Optimierungsstrategie}\label{sec:str}
 Das Ziel der in den folgenden Abschnitten vorgestellten Optimierungen ist die Verbesserung der Laufzeit der Musikklassifikation. Hierfür wird angestrebt, die von den Prozessoren zur Verfügung gestellten Rechenressourcen effizient auszunutzen.\\
 Für die Berechnung dieser Effizienz sind mehrere Gütemaße vorhanden, unter anderem Werte für \textit{Instruktionen pro Takt} (engl. Instruction per Cycle oder kurz IPC), \textit{Takte pro Instruktion} (engl. Cycles per Instruktion oder kurz CPI), die Messung von \textit{Cache Hits und Misses} und die \textit{Laufzeit} des Programms. Aufgrund der von Texas Instrument zur Verfügung gestellten Werkzeuge ist eine Messung von IPC/CPI-Werten oder Cache Hits/Misses nicht ohne weiteres möglich, so dass in dieser Arbeit auf die Messung der Laufzeit zur Bewertung der Effizienz zurückgegriffen wird.\\
-Um bei der Optimierung den größten Gewinn zu erreichen, werden gezielt die Programmteile optimiert, die den größten Anteil an der Verarbeitungszeit des Musikklassifikators besitzen. Hierfür wird als erstes aus den drei Schritten der Musikklassifikation derjenige identifiziert, der am Laufzeit-intensivsten ist. Als nächstes werden aus diesem Schritt, ebenfalls jene Algorithmen identifiziert und optimiert, die den größten Anteil an der Verarbeitungszeit dieses Schrittes einnehmen. Auf diese Weise wird versucht, mit gezielten Optimierungen große Verbesserungen an der Gesamtverarbeitungszeit zu erreichen. 
+Um bei der Optimierung den größten Gewinn zu erreichen, werden gezielt die Programmteile optimiert, die den größten Anteil an der Verarbeitungszeit des Musikklassifikators besitzen. Hierfür wird als erstes aus den drei Schritten der Musikklassifikation derjenige identifiziert, der am Laufzeit-intensivsten ist. Als nächstes werden aus diesem Schritt ebenfalls jene Algorithmen identifiziert und optimiert, die den größten Anteil an der Verarbeitungszeit dieses Schrittes einnehmen. Auf diese Weise wird versucht, mit gezielten Optimierungen große Verbesserungen an der Gesamtverarbeitungszeit zu erreichen. 
 Als nächstes muss entschieden werden, wie Optimierungspotenziale identifiziert werden.\\
-Sowohl die Untersuchungen auf dem ARM Cortex A8, als auch die auf dem C674x DSP werden hierfür in drei Schritten durchgeführt:
+Sowohl die Untersuchungen auf dem ARM Cortex-A8 als auch die auf dem C674x DSP werden hierfür in drei Schritten durchgeführt:
 
 \begin{enumerate}
 \item Laufzeitanalyse des Programmteils zur Identifikation zeitkritischer Algorithmen oder Codesegmente
@@ -18,4 +18,4 @@ Sowohl die Untersuchungen auf dem ARM Cortex A8, als auch die auf dem C674x DSP 
 \item Bewertung der durchgeführten Optimierungen
 \end{enumerate}
 
-Hierbei handelt es sich um einen iterativen Prozess, das heißt, dass nach einer durchgeführten Optimierung eine weitere Laufzeitmessung durchgeführt wird. Dieses geschieht zum einen für die Bewertung einer durchgeführten Optimierung und zum anderen um eventuell neue zeitkritische Algorithmen zu identifizieren.
+Hierbei handelt es sich um einen iterativen Prozess. Das heißt, dass nach einer durchgeführten Optimierung eine weitere Laufzeitmessung durchgeführt wird. Dieses geschieht zum einen für die Bewertung einer durchgeführten Optimierung und zum anderen, um eventuell neue zeitkritische Algorithmen zu identifizieren.

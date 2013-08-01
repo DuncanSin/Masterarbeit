@@ -8,7 +8,7 @@ Für die Bewertung der Optimierungen und der Einsatzmöglichkeit der Untersuchten 
 
 \begin{itemize}
 \item Extraktionsrate
-\item Energieeffizienz
+\item Energie-Effizienz
 \end{itemize}
 
 \paragraph*{Extraktionsrate}$\;$ \\
@@ -22,11 +22,11 @@ R_{ex}~=~\frac{L}{t}~=~\frac{t}{T_{Fenster}}
 Mit dieser Metrik können die Merkmalssätze hinsichtlich der erforderlichen Extraktionsrate vergleichen werden.\\
 In dieser Arbeit entspricht $t$ gleich einer Sekunde.
 
-\paragraph*{Energieeffizienz}$\;$ \\
+\paragraph*{Energie-Effizienz}$\;$ \\
 
-Die Energieeffizienz $E_{eff}$ wird allgemein als Kosten-Nutzen-Maß verwendet, also als Verhältnis von aufzubringender Energie, die für die Verrichtung einer definierten Aufgabe benötigt wird.\\
+Die Energieeffizienz $E_{eff}$ wird allgemein als Kosten-Nutzen-Maß verwendet, also als Verhältnis von aufzubringender Energie, die für die Verrichtung einer definierten Aufgabe benötigt wird und dem Ergebnis der Aufgabe.\\
 In dieser Arbeit werden zwei verschiedene Berechnungsmethoden der Energie-Effizienz verwendet.\\
-Für die Bewertung der Merkmalsextraktion ist die Energie-Effizienz als verarbeitete Fenster $L$ pro Energie $E$ definiert. Sie lässt sich als Verhältnis der Extraktionsrate $R_{ex}$ und dem Leistungsverbrauch $P$ in Watt berechnet (vgl. \textbf{Formel \ref{eqn:en}}).
+Für die Bewertung der Merkmalsextraktion ist die Energie-Effizienz als verarbeitete Fenster $L$ pro Energie $E$ definiert. Sie lässt sich als Verhältnis der Extraktionsrate $R_{ex}$ und dem Leistungsverbrauch $P$ in Watt berechnen (vgl. \textbf{Formel \ref{eqn:en}}).
 
 \begin{equation}
 \label{eqn:en}
@@ -61,8 +61,7 @@ Aus den Verarbeitungszeiten der Extraktion $T_{total}$ werden die Extraktionszei
 T_{Fenster}~=~\frac{T_{total}}{L_{total}}
 \end{equation}
 
-In \textbf{Abbildung \ref{fig:erarm}} sind die Extraktionsraten pro FeatureSet für die höchste Optimierung des ARM Cortex A8 zu sehen. 
-
+In \textbf{Abbildung \ref{fig:erarm}} sind die Extraktionsraten pro FeatureSet für die höchste Optimierung des ARM Cortex A8 zu sehen.\\
 %
 \begin{figure}[htp]
 	\centering
@@ -71,7 +70,7 @@ In \textbf{Abbildung \ref{fig:erarm}} sind die Extraktionsraten pro FeatureSet f
 	\label{fig:erarm}
 \end{figure} 
 %
-Aus \textbf{Abbildung \ref{fig:enarm}} sind die Energie-Effizienzen pro FeatureSet entnehmbar. Die Energie-Effzienzen von Prozessierung und Klassifikation können pro Musikklassifikationsmethode als konstant anzunehmen. 
+Aus \textbf{Abbildung \ref{fig:enarm}} sind die Energie-Effizienzen pro FeatureSet entnehmbar. Die Energie-Effzienzen von Prozessierung und Klassifikation können pro Musikklassifikationsmethode als konstant angenommen werden. 
 %
 \begin{figure}[htp]
 	\centering
@@ -83,7 +82,7 @@ Aus \textbf{Abbildung \ref{fig:enarm}} sind die Energie-Effizienzen pro FeatureS
 Es zeigt sich, dass FSet 3 und damit MCL3 am Energie-effizientesten verarbeitet wird.
 
 \subsection{Weitere Optimierungspotenziale}\label{subsec:armwopt}
-Für eine weitere Diskussion über das verbleibende Optimierungspotenzial werden an dieser Stelle diejenigen Merkmale betrachtet, die eine höhere Laufzeit als der hoch-optimierte FFT-Algorithmus aufweisen (vgl. \textbf{Abbildung \ref{fig:potarm}}).\\\\
+Für eine weitere Diskussion über das verbleibende Optimierungspotenzial werden an dieser Stelle diejenigen Merkmale betrachtet, die eine höhere Laufzeit als der hoch-optimierte FFT-Algorithmus aufweisen (vgl. \textbf{Abbildung \ref{fig:potarm}}).\\
 %
 \begin{figure}[htp]
 	\centering
@@ -92,7 +91,7 @@ Für eine weitere Diskussion über das verbleibende Optimierungspotenzial werden a
 	\label{fig:potarm}
 \end{figure}
 %
-Das OSC-Merkmal besitzt mit einem Anteil von 57,7\% der Gesamtrechenzeit von FSet2 den größten Rechenaufwand von allen Merkmalen. Hierbei fallen 76\% der Laufzeit auf die Sortierung. Für diese werden die SIMD-Eigenschaften der NEON-SIMD-Einheit nicht genutzt, stattdessen werden alle Daten-Vergleiche während der Sortierung sequentiell durchgeführt. Maximal können zwei Daten-Vergleiche auf einmal vorgenommen werden. Damit lässt sich eine obere Schranke für den maximalen Speedup definieren, der bei einem Faktor von 2 liegt. Somit kann OSC maximal um den Faktor 1,6 beschleunigt werden. Jedoch wird selbst mit dieser Beschleunigung das OSC-Merkmal mit 29,4\% weiterhin die höchste Laufzeit aufweisen.  
+Das OSC-Merkmal besitzt mit einem Anteil von 57,7\% der Gesamtrechenzeit von FSet2 den größten Rechenaufwand von allen Merkmalen. Hierbei fallen 76\% der Laufzeit auf die Sortierung. Für diese werden die SIMD-Eigenschaften der NEON-SIMD-Einheit nicht genutzt. Stattdessen werden alle Daten-Vergleiche während der Sortierung sequentiell durchgeführt. Maximal können zwei Daten-Vergleiche auf einmal vorgenommen werden. Damit lässt sich eine obere Schranke für den maximalen Speedup definieren, der bei einem Faktor von 2 liegt. Somit kann OSC maximal um den Faktor 1,6 beschleunigt werden. Jedoch wird selbst mit dieser Beschleunigung das OSC-Merkmal mit 29,4\% weiterhin die höchste Laufzeit aufweisen.  
 \\\\
 Mit 37,6\% ist die DCT der zeitintensivste Schritt der MFCC-Extraktion, welche insgesamt 16\% der Gesamtlaufzeit bei FSet1 erfordert. Hierbei kann eine Optimierung ähnlich wie bei der Anwendung der Filterbank durchgeführt werden, welche einen Speedup von 1,2 erreicht hat. Allerdings muss hierfür der DCT-Algorithmus der verwendeten Adress-Arithmetik geändert werden. Hierdurch kann der MFCC-Algorithmus maximal um 6,7\% beschleunigt werden.\\\\
 Das ZCR-Merkmal nimmt 86\% der Laufzeit von FSet3 in Anspruch. Dies ist zu 90\% durch die Signum-Funktion verursacht, welche sich aufgrund der datenabhängigen Programmverzweigungen nicht durch SIMD-Instruktionen beschleunigen lässt. Somit ist das Optimierungspotenzial als äußerst gering zu bewerten.
@@ -109,7 +108,7 @@ Als erstes werden die Laufzeitverbesserungen pro Musikklassifikationsmethode bet
 \end{figure} 
 %
 
-Aus diesen Laufzeiten werden im Anschluss die Extraktionszeiten berechnet, diese sind \textbf{Abbildung \ref{fig:erdsp}} zu entnehmen.
+Aus diesen Laufzeiten werden im Anschluss die Extraktionszeiten berechnet, die aus \textbf{Abbildung \ref{fig:erdsp}} zu entnehmen sind.
 %
 \begin{figure}[htp]
 	\centering
@@ -150,7 +149,7 @@ Die FFT-Berechnung ist mit Hilfe der DSPLIB realisiert, welche bereits für den C
 
 \section{Evaluation heterogenes System}\label{sec:evhetsys}
 
-Für die Evaluation des heterogenen Systems wird angenommen, dass die drei Schritte der Musikklassifikation Extraktion, Prozessierung und Klassifikation nacheinander ausgeführt und dabei so auf die beiden Prozessorkerne verteilt werden, dass die Extraktion vom C674x DSP und die beiden anderen Schritte vom ARM Cortex A8 ausgeführt werden. Zu den Rechenzeiten dieser drei Schritte muss zusätzlich noch die Kommunikationszeit zwischen ARM und DSP betrachtet werden. Diese Kommunikationszeit wurde pro extrahiertem Musikstück zu 4 ms gemessen.\\
+Für die Evaluation des heterogenen Systems wird angenommen, dass die drei Schritte der Musikklassifikation Extraktion, Prozessierung und Klassifikation nacheinander ausgeführt und dabei so auf die beiden Prozessorkerne verteilt werden, dass die Extraktion vom C674x DSP und die beiden anderen Schritte vom ARM Cortex-A8 ausgeführt werden. Zu den Rechenzeiten dieser drei Schritte muss zusätzlich noch die Kommunikationszeit zwischen ARM und DSP betrachtet werden. Diese Kommunikationszeit wurde pro extrahiertem Musikstück mit 4 ms gemessen.\\
 Die Laufzeiten und Energie-Effizienzen der Musikklassifikationsmethoden sind in \textbf{Abbildung \ref{fig:erhete}} und \textbf{Abbildung \ref{fig:enhete}} zu sehen.
 
 %

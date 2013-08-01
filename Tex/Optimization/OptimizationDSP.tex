@@ -1,7 +1,7 @@
 
 \section{DSP-spezifische Optimierung der implementierten Merkmalsextraktion}\label{sec:optdsp}
-Für die Merkmalsextraktion auf dem C674x DSP wurde eine C-Version der C++-Referenz-Klasse geschrieben. da der Compiler C++ nur in geringem Umfang unterstützt. Außerdem wurde für die Einbindung der Merkmalsextraktion in den ARM-Code C6Runlib gewählt, da für C6Runapp keine Komunikationsprotokolle definiert sind.\\
-Die Laufzeiten zur Extraaktion der Merkmale und zur Durchführung erforderlicher Algorithmen sin in \textbf{Abbildung \ref{fig:startdsp}}zu sehen.\\
+Für die Merkmalsextraktion auf dem C674x DSP wurde eine C-Version der C++-Referenz-Klasse geschrieben, da der Compiler C++ nur in geringem Umfang unterstützt. Außerdem wurde für die Einbindung der Merkmalsextraktion in den ARM-Code C6Runlib gewählt, weil für C6Runapp keine Komunikationsprotokolle definiert sind.\\
+Die Laufzeiten zur Extraktion der Merkmale und zur Durchführung erforderlicher Algorithmen sind in \textbf{Abbildung \ref{fig:startdsp}}  zu sehen.\\
 %
 \begin{figure}[h]
 	\centering
@@ -13,7 +13,7 @@ Die Laufzeiten zur Extraaktion der Merkmale und zur Durchführung erforderlicher 
 Wie der Abbildung entnommen werden kann, fällt der größte Anteil der Ausführungszeit mit über 60\% der MAG-Berechnung zu.\\
 
 \subsection{Optimierung der Rechenfunktionen mit MATHLIB}\label{sec:mathlib}
-Eine genaue Analyse der Laufzeit der MAG-Berechnung zeigt, dass 98\% der Verarbeitungszeit auf die Berechnung der Division und Wurzelberechnung fallen, die mehrfach ausgeführt werden. Zur Beschleunigung dieser Operationen eignen sich die MATHLIB-Funktionen für vektorielle Eingabewerte.\\
+Eine genaue Analyse der Laufzeit der MAG-Berechnung zeigt, dass 98\% der Verarbeitungszeit auf die Berechnungen der Division und Wurzeln fallen, die mehrfach ausgeführt werden. Zur Beschleunigung dieser Operationen eignen sich die MATHLIB-Funktionen für vektorielle Eingabewerte.\\
 \textbf{Listing \ref{code:aoscc}} zeigt den Referenz-Code der MAG-Berechnung und \textbf{Listing \ref{code:aoscm}} durch MATHLIB optimierten Code.
 
 \begin{lstlisting}[caption=Referenzcode von Magnitude of Spectrum, label=code:aoscc]
@@ -32,7 +32,7 @@ Eine genaue Analyse der Laufzeit der MAG-Berechnung zeigt, dass 98\% der Verarbe
 	divsp_v(A, pG, A, G);
 \end{lstlisting}
 
-Hierbei ist zu erwähnen, dass die Addition innerhalb der Wurzelberechnung wird zusätzlich für eine bessere Ausführung durch SPLOOP aufgetrennt wird.\\
+Hierbei ist zu erwähnen, dass die Addition innerhalb der Wurzelberechnung zusätzlich für eine bessere Ausführung durch SPLOOP aufgetrennt wird.\\
 Mit dieser Optimierung wird für FSet 1 und 4 eine Beschleunigung um den Faktor 45,5 und bei FSet2 um 45,2 erreicht.\\
 Die MATHLIB wird außerdem für die Optimierung folgender Algorithmen eingesetzt:
 

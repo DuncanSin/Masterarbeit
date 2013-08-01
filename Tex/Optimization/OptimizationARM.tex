@@ -1,7 +1,7 @@
 
 \section{ARM-spezifische Implementierung und Optimierung des Referenz-Programm-Codes}\label{sec:optarm}
 In diesem Abschnitt wird zunächst der Referenz-Programm-Code auf den ARM Cortex A8 portiert. Diese Portierung ist ohne Änderungen möglich und soll daher nicht weiter beschrieben werden.\\
-Als nächstes wird eine Laufzeitmessung der gesamten Signalverarbeitung durchgeführt. Hierbei wird der Programmcode ohne beschleunigte Fließpunkt-Berechnungen, mit VFP-Unterstützung, sowie für die Verwendung von SIMD-Instruktionen kompliliert. Auf diese Weise kann der Vorteil der Fließpunkt-Hardware quantitativ bewertet werden. Im Anschluss daran wird der rechenintensivste Schritt, die Merkmalsextraktion, auf Basis der definierten Optimierungsstrategie schrittweise beschleunigt.
+Als nächstes wird eine Laufzeitmessung der gesamten Signalverarbeitung durchgeführt. Hierbei wird der Programmcode ohne beschleunigte Fließpunkt-Berechnungen, mit VFP-Unterstützung, sowie für die Verwendung von SIMD-Instruktionen kompiliert. Auf diese Weise kann der Vorteil der Fließpunkt-Hardware quantitativ bewertet werden. Im Anschluss daran wird der rechenintensivste Schritt, die Merkmalsextraktion, auf Basis der definierten Optimierungsstrategie schrittweise beschleunigt.
 
 
 
@@ -11,11 +11,11 @@ Als nächstes wird eine Laufzeitmessung der gesamten Signalverarbeitung durchgefü
 \begin{figure}[htp]
 	\centering
 		\includegraphics[scale=0.5]{../Pictures/MCLAVN.pdf}
-	\caption{Laufzeiten in ms des Musikklassifikators mit ohne und mit beschleunigter Fließpunkt-Berechnung}
+	\caption{Laufzeiten in ms des Musikklassifikators ohne und mit beschleunigter Fließpunkt-Berechnung}
 	\label{fig:MCLAVN}
 \end{figure} 
 %
-Aus der Abbildung lässt sich entnehmen, dass ARM+VFP und ARM+NEON die schnelleren Varianten sind. Diese erzielen bereits einen Speedup zwischen 2,1 (MCL3) und 3,1 (MCL4) für die Verwendung der VFP-Einheit und 2,6 (MCL3) und 3,3 (MCL4) für die Verwendung der NEON-SIMD-Einheit gegenüber der Variante ohne beschleunigte Fließpunktberechnung. Das größte Optimierungspotenzial bietet hierbei die ARM+NEON-Variante, da bei der ARM+VFP-Variante aufgrund der zugrundeliegenden Hardwareeinheit (vgl. \textbf{Kapitel \ref{ph:vfp}}) keine großen Verbesserungen der Laufzeit mehr zu erwarten sind. Die nahezu gleichen Ausführungszeiten sind damit begründet, dass der Compiler fast keine SIMD-Instruktionen beim ARM+NEON verwendet. Stattdessen werden die skalaren VFP-Instruktionen über die SIMD-Pipeline verarbeitet. Aus \cite{tineon} lässt sich des weiteren entnehmen, dass der Instruktionendurchsatz der NEON-SIMD-Einheit gegenüber der VFP-Einheit deutlich höher ist.\\
+Aus der Abbildung lässt sich entnehmen, dass ARM+VFP und ARM+NEON die schnelleren Varianten sind. Diese erzielen bereits einen Speedup zwischen 2,1 (MCL3) und 3,1 (MCL4) für die Verwendung der VFP-Einheit und 2,6 (MCL3) und 3,3 (MCL4) für die Verwendung der NEON-SIMD-Einheit gegenüber der Variante ohne beschleunigte Fließpunktberechnung. Das größte Optimierungspotenzial hierbei bietet die ARM+NEON-Variante, da bei der ARM+VFP-Variante aufgrund der zugrundeliegenden Hardwareeinheit (vgl. \textbf{Kapitel \ref{ph:vfp}}) keine großen Verbesserungen der Laufzeit mehr zu erwarten sind. Die nahezu gleichen Ausführungszeiten sind damit begründet, dass der Compiler fast keine SIMD-Instruktionen beim ARM+NEON verwendet. Stattdessen werden die skalaren VFP-Instruktionen über die SIMD-Pipeline verarbeitet. Aus \cite{tineon} lässt sich des weiteren entnehmen, dass der Instruktionsdurchsatz der NEON-SIMD-Einheit gegenüber der VFP-Einheit deutlich höher ist.\\
 %
 \begin{figure}[htp]
 	\centering
@@ -24,7 +24,7 @@ Aus der Abbildung lässt sich entnehmen, dass ARM+VFP und ARM+NEON die schnellere
 	\label{fig:mclneon}
 \end{figure} 
 %
-In \textbf{Abbildung \ref{fig:mclneon}} sind die Laufzeiten der einzelnen Schritte innerhalb der Musikklassifikation für die Variante mit beschleunigter Fließpunkt-Berechnung durch SIMD-Instruktionen zu sehen. Aus der Abbildung sind zwei Erkenntnisse zu ziehen. Erstens nimmt der Schritt der Merkmalsextraktion den größten Anteil an der Laufzeit der Musikklassifikation ein und zweitens benötigt die die Musikklassifikation mit MCL2 die längste Zeit. Daher wird eine Optimierung der Merkmalsextraktion durchgeführt und diese wird auf Basis der Musikklassifikationsmethode 2 geschehen. Messergebnisse der anderen Methoden befinden sich im Anhang.\\
+In \textbf{Abbildung \ref{fig:mclneon}} sind die Laufzeiten der einzelnen Schritte innerhalb der Musikklassifikation für die Variante mit beschleunigter Fließpunkt-Berechnung durch SIMD-Instruktionen zu sehen. Aus der Abbildung sind zwei Erkenntnisse zu ziehen. Erstens nimmt der Schritt der Merkmalsextraktion den größten Anteil an der Laufzeit der Musikklassifikation ein und zweitens benötigt die Musikklassifikation mit MCL2 die längste Zeit. Daher wird eine Optimierung der Merkmalsextraktion durchgeführt und diese wird auf Basis der Musikklassifikationsmethode 2 geschehen.\\
 %
 \begin{figure}[htp]
 	\centering
@@ -33,13 +33,13 @@ In \textbf{Abbildung \ref{fig:mclneon}} sind die Laufzeiten der einzelnen Schrit
 	\label{fig:fset2AVN}
 \end{figure} 
 %
-\textbf{Abbildung \ref{fig:fset2AVN}} zeigt eine nähere Analyse des Extraktionsschritts. Hierbei stellt die Durchführung der FFT mit 58,6\% bei FSet2, sowie knapp 50\% bei FSet1 und FSet4, den zeitkritischsten Schritt der Extraktion dar. Zu 72\% sind die Laufzeiten durch die Butterfly-Operationen verursacht. Daher wird eine Optimierung der FFTs durch Verwendung von SIMD-Instruktionen für die Butterfly-Operationen verfolgt.
+\textbf{Abbildung \ref{fig:fset2AVN}} zeigt eine nähere Analyse des Extraktionsschritts. Hierbei stellt die Durchführung der FFT mit 58,6\% bei FSet2, sowie knapp 50\% bei FSet1 und FSet4, den zeitkritischsten Schritt der Extraktion dar. Zu 72\% sind die Laufzeiten durch die Butterfly-Operationen verursacht. Daher wird eine Optimierung der FFTs durch Verwendung von SIMD-Instruktionen für die Butterfly-Operationen angestrebt.
 
 \subsection{Libav zur Beschleunigung der FFT}\label{subsec:optFFT}
 
 Zur Beschleunigung der FFT durch SIMD-Instruktionen wird auf die Libav-Bibliothek (kurz Libav) zurückgegriffen, welche für NEON-SIMD-Instruktionen optimiert ist und in vielen Software-Produkten Verwendung findet.\\
 Libav ist eine opensource Bibliothek zur Audio- und Videoverarbeitung, die eine Vielzahl von Audio- und Videocodecs, Prozessierungsalgorithmen und Werkzeuge zur Audio- und Videoverarbeitung  besitzt.\\
-Im Gegensatz zur FFT des Referenz-Programms basiert die Libav-FFT auf einer Split-Radix-Struktur. Die Beschleunigung der Libav-FFT resultiert somit aus einer Reduktion der Rechenkomplexität und aus der Verwendung von SIMD-Instruktionen. Um die Beschleunigung durch SIMD-Instruktionen bewerten zu können, muss also auch der Anteil der Laufzeitreduktion aufgrund der unterschiedlichen Rechenkomplexität bekannt sein. Diese beiden Anteile werden nachfolgend mit $S_{comp}$ für den Komplexitätsanteil und $S_{SIMD}$ für den SIMD-Anteil bezeichnet. Das Datenformat der Libav-FFT weicht von der Referenz-FFT ab und macht daher eine Konvertierung nach \cite{libavtemp} erforderlich. Diese Konvertierung wird allerdings in einem Schritt durchgeführt, der für die Referenz-FFT ebenfalls benötigt wird und hat daher keinen Einfluss auf die Berechnung von $S_{comp}$ und $S_{SIMD}$.
+Im Gegensatz zur FFT des Referenz-Programms basiert die Libav-FFT auf einer Split-Radix-Struktur. Die Beschleunigung der Libav-FFT resultiert somit aus einer Reduktion der Rechenkomplexität und aus der Verwendung von SIMD-Instruktionen. Um die Beschleunigung durch SIMD-Instruktionen bewerten zu können, muss auch der Anteil der Laufzeitreduktion aufgrund der unterschiedlichen Rechenkomplexität bekannt sein. Diese beiden Anteile werden nachfolgend mit $S_{comp}$ für den Komplexitätsanteil und $S_{SIMD}$ für den SIMD-Anteil bezeichnet. Das Datenformat der Libav-FFT weicht von der Referenz-FFT ab und macht daher eine Konvertierung nach \cite{libavtemp} erforderlich. Diese Konvertierung wird allerdings in einem Schritt durchgeführt, der für die Referenz-FFT ebenfalls benötigt wird und hat daher keinen Einfluss auf die Berechnung von $S_{comp}$ und $S_{SIMD}$.
 
 
 \subsubsection{Bestimmung von $S_{comp}$ und $S_{SIMD}$}
@@ -51,14 +51,14 @@ Im Gegensatz zur FFT des Referenz-Programms basiert die Libav-FFT auf einer Spli
 	\label{fig:libavtime}
 \end{figure} 
 %
-\textbf{Abbildung \ref{fig:libavtime}} zeigt den Laufzeitvergleich von Referenz-FFT und Libav-FFT. Aus den Messungen ohne Fließpunkt-Beschleunigung lässt sich $S_{comp}$ mit einem Wert 1,33 von berechnen, da hier keine Beschleunigung durch Hardwareeinheiten besteht. Der $S_{SIMD}$ lässt sich aus \textbf{Formel \ref{eqn:speed}} berechnen.
+\textbf{Abbildung \ref{fig:libavtime}} zeigt den Laufzeitvergleich von Referenz-FFT und Libav-FFT. Aus den Messungen ohne Fließpunkt-Beschleunigung lässt sich $S_{comp}$ mit einem Wert von 1,33 berechnen, da hier keine Beschleunigung durch Hardwareeinheiten besteht. Der $S_{SIMD}$ lässt sich aus \textbf{Formel \ref{eqn:speed}} berechnen.
 
 \begin{equation}
 \label{eqn:speed}
 S_{all}=S_{comp} \cdot S_{SIMD}
 \end{equation}
 
-$S_{all}$ aus den beiden Messungen für ARM+NEON hat einen Wert von 20,1, somit kommt $S_{SIMD}$ auf einen Wert von 15,1. Insgesammt werden durch die Verwendung der Libav wird Fset2 um einen Faktor von 5,3 beschleunigt, FSet 1 und 4 sogar um 12,3, bzw. 14.
+$S_{all}$ aus den beiden Messungen für ARM+NEON hat einen Wert von 20,1, somit kommt $S_{SIMD}$ auf einen Wert von 15,1. Insgesamt werden durch die Verwendung der Libav wird Fset2 um einen Faktor von 5,3 beschleunigt, FSet 1 und 4 sogar um 12,3, bzw. 14.
 
 \subsection{Optimierung der Extraktion für rechenintensive Merkmale}
 
@@ -72,7 +72,7 @@ Aufgrund der Laufzeit werden folgende Features hinsichtlich einer Optimierung un
 \item Zero Crossing Rate (siehe \textbf{Kapitel \ref{subsec:armwopt}})
 \end{itemize}
 
-Die OSC-Merkmale erfordern mit 57,7\% bei FSet2 die höchste Laufzeit. 76\% der Laufzeit dieses Merkmals fallen auf das verwendete Sortierverfahren. Eine Optimierung gängiger Sortierverfahren wie MergeSort oder QuickSort durch die Verwendung von SIMD-Instruktionen ist auf Grund der  Rechenkomplexität nicht ohne weiteres möglich. In dieser Arbeit wird daher das Sortierverfahren nciht optimiert, jedoch kann ein möglicher Optimierungsansatz für die Laufzeitreduktion durch SIMD-Instruktionen auf dem Bitonic-Sortierverfahren basieren, dessen Rechenkomplexität datenunabhängig ist.\\ 
+Die OSC-Merkmale erfordern mit 57,7\% bei FSet2 die höchste Laufzeit. 76\% der Laufzeit dieses Merkmals fallen auf das verwendete Sortierverfahren. Eine Optimierung gängiger Sortierverfahren wie MergeSort oder QuickSort durch die Verwendung von SIMD-Instruktionen ist auf Grund der  Rechenkomplexität nicht ohne weiteres möglich. In dieser Arbeit wird daher das Sortierverfahren nicht optimiert, jedoch kann ein möglicher Optimierungsansatz für die Laufzeitreduktion durch SIMD-Instruktionen auf dem Bitonic-Sortierverfahren basieren, dessen Rechenkomplexität datenunabhängig ist.\\ 
 Auch das ZCR-Merkmal ist nicht ohne weiteres mit SIMD-Instruktionen möglich, da über 90\% der Laufzeit auf die Signum-Berechnung fallen, welche nicht mit SIMD-Instruktionen beschrieben werden können. Eine Optimierung der Signum-Berechnung ohne SIMD-Instruktionen ließe sich durch geschicktes Anordnen der Vergleiche erreichen. Diese wäre jedoch aufgrund der Datenabhängigkeit von Musikstück zu Musikstück unterschiedlich.
 
 
@@ -85,8 +85,8 @@ Auch das ZCR-Merkmal ist nicht ohne weiteres mit SIMD-Instruktionen möglich, da 
 	\label{fig:mag}
 \end{figure} 
 %
-\textbf{Abbildung \ref{fig:mag}} zeigt die Laufzeit von MAG bei den drei Fließpunkt-Berechnungsmethoden. Es lässt sich erkennen, dass durch die Verwendung der Fließpunkt-Hardware eine Beschleunigung vom Faktor 13,6 erreichen lässt. Ein Blick in den Assembler-Code zeigt aber, dass keine NEON-SIMD-Instruktionen verwendet wurden. Der Grund hierfür besteht darin, dass im Instruktionssatz der NEON-SIMD-Einheit keine Operationen zur Wurzelberechnung existieren und der Compiler diese daher nicht auf SIMD-Instruktionen abbilden kann.\\
-Die einfachste Möglichkeit dieses zu lösen, besteht darin die Wurzelberechnung aus der Schleife zu entfernen und in einer gesonderten Schleife zu platzieren. Die parallelisierbare Division befindet sich aber nach der Wurzelberechnung. Die Lösung hierfür besteht darin, die Division auf mathematischen Weg in die Wurzel zu ziehen. \textbf{Listing \ref{code:aosc}} zeig den auf diese Weise geänderten Quellcode und \textbf{Listing \ref{code:aosasm}} den daraus resultierten Assemblercode. 
+\textbf{Abbildung \ref{fig:mag}} zeigt die Laufzeit von MAG bei den drei Fließpunkt-Berechnungsmethoden. Es lässt sich erkennen, dass durch die Verwendung der Fließpunkt-Hardware eine Beschleunigung vom Faktor 13,6 erreichen lässt. Ein Blick in den Assembler-Code zeigt aber, dass keine NEON-SIMD-Instruktionen verwendet werden. Der Grund hierfür besteht darin, dass im Instruktionssatz der NEON-SIMD-Einheit keine Operationen zur Wurzelberechnung existieren und der Compiler diese daher nicht auf SIMD-Instruktionen abbilden kann.\\
+Die einfachste Möglichkeit, dieses zu lösen, besteht darin, die Wurzelberechnung aus der Schleife zu entfernen und in einer gesonderten Schleife zu platzieren. Die parallelisierbare Division befindet sich aber nach der Wurzelberechnung. Die Lösung hierfür besteht darin, die Division auf mathematischen Weg in die Wurzel zu ziehen. \textbf{Listing \ref{code:aosc}} zeigt den auf diese Weise geänderten Quellcode und \textbf{Listing \ref{code:aosasm}} den daraus resultierten Assemblercode. 
 
 \begin{lstlisting}[caption=Codeanpassung der Magnitude of Spectrum, label=code:aosc]
 	realv tmp, size2;
@@ -102,8 +102,6 @@ Die einfachste Möglichkeit dieses zu lösen, besteht darin die Wurzelberechnung a
 		amplitude[k] = sqrt(temp[k]);
 	}
 \end{lstlisting}
-Aus den beiden Listings lässt sich erkennen, dass sowohl die Zeile 5 aus \textbf{Listing \ref{code:aosc}} als auch die Division mit der NEON-SIMD-Einheit parallelisiert wurden, was eine kürzere Ausführungszeit bewirkt.
-
 \begin{lstlisting}[caption=Resultierender Assemblercode, label=code:aosasm]
 	add	r2, r7, r1
 	add	r3, r6, r1
@@ -121,9 +119,13 @@ Aus den beiden Listings lässt sich erkennen, dass sowohl die Zeile 5 aus \textbf
 	cmp	r5, sl
 	mov	r1, sl
 \end{lstlisting}
-
+Aus den beiden Listings lässt sich erkennen, dass sowohl die Zeile 5 aus \textbf{Listing \ref{code:aosc}} als auch die Division mit der NEON-SIMD-Einheit parallelisiert wurden, was eine kürzere Ausführungszeit bewirkt.\\
 Auf diese Weise lässt sich die Laufzeit von MAG gegenüber der Laufzeit von ARM+NEON aus \textbf{Abbildung \ref{fig:mag}} um den Faktor 2,1 beschleunigen, so dass insgesamt eine Beschleunigung von 27,9 gegenüber der Laufzeitmessung von ARM erreicht wird.\\
 Die Gesamtlaufzeiten von FSet 1, 2 und 4 wurden damit im Vergleich zur complieroptimierten SIMD-Version um einen Faktor von knapp 1,2 beschleunigt.
+
+
+
+
 
 \subsection{Optimierung von Hamming Window}\label{subsec:optHAM}
 
@@ -149,7 +151,7 @@ In die Variablen \textit{s4} und \textit{t4} werden jeweils vier Werte vom Einga
 Auf diese Weise kann die Berechnung des Hamming Windows im Vergleich zur Berechnung ohne beschleunigte Fließpunkt-Berechnung um den Faktor 2,6 beschleunigt werden. Insgesamt wird hierdurch die Berechnung des FSet2 zusätzlich um den Faktor 1,2 beschleunigt.
 
 \subsection{Optimierung von MFCC}\label{subsec:optMFCC}
-Zur Optimierung der MFCC-Extraktion werden die Laufzeiten der drei wesentlichen Extraktionsschritte (siehe \textbf{Abschnitt \ref{subsubsec:mfcc}}) gemessen. Hierbei lässt sich feststellen, dass der größte Anteil mit knapp 44\% auf die Anwendung der Filterbank fällt, während jeweils 29\% durch die Logerithmierung und die DCT verursacht sind. Daher wird im Folgenden eine Optimierung der Filterbank-Anwendung angestrebt.\\
+Zur Optimierung der MFCC-Extraktion werden die Laufzeiten der drei wesentlichen Extraktionsschritte (siehe \textbf{Abschnitt \ref{subsubsec:mfcc}}) gemessen. Hierbei lässt sich feststellen, dass der größte Anteil mit knapp 44\% auf die Anwendung der Filterbank fällt, während jeweils 28\% durch die Logarithmierung und die DCT verursacht sind. Daher wird im Folgenden eine Optimierung der Filterbank-Anwendung angestrebt.\\
 \textbf{Listing \ref{code:mfccc}} zeigt den Referenzcode der Akkumulation innerhalb der MFCC-Berechnung.
 
 \begin{lstlisting}[caption=Referenzcode der Akkumulation innerhalb der MFCC-Berechnung, label=code:mfccc]
@@ -161,8 +163,8 @@ for (unsigned int m = 1; m <= M; m++) {
 }
 \end{lstlisting}
 
-Aus diesem Code-Ausschnitt lässt sich entnehmen, dass die in den zwei Schleifen enthaltene Akkumulation nicht für jeden Durchlauf gleich oft ausgeführt wird. Dies führt dazu, dass die Anzahl der Schleifendurchläufe durch ein gemeinsames Vielfaches beschrieben werden kann. Maximal können mit SIMD-Instruktionen bis zu vier Berechnungen in zwei Takten ausgeführt werden (vgl. \textbf{Abschnitt \ref{ph:neon}}). Daher muss als erstes die Anzahl der Schleifendurchläufe berechnet werden, in denen eine parallele Verarbeitung von vier Berechnungen möglich ist. Außerdem wird hierbei berechnet, wie viele Operationen danach noch ausgeführt werden müssen (maximal 3). Als nächstes wird geprüft, ob von den verbleibenden Operationen noch zwei parallel verarbeitet können. Am Schluss bleibt höchstens noch eine Operation übrig, die einzeln berechnet werden muss. Nachfolgend müssen die Einzelergebnisse der jeweiligen Parallelisierungsstufen zu einem Endergebnis aufsummiert werden.\\
-\textbf{Listing \ref{code:mfccint}} zeigt die gewählte Lösung und ersetzt die innere Schleife aus \textbf{Listing \ref{code:mfccc}}. In der Variable \textit{mod} wird die Anzahl der nicht durch vier parallele Rechnungen berechenbaren Durchläufe gespeichert, danach werden in den Zeilen 8-15 so viele parallelen vierfach Berechnung durchgeführt wie möglich. Sollte \textit{mod} größer als 1 sein, also noch zwei parallele Berechnungen möglich sein, werden diese in den Zeilen 17-25 durchgeführt. Wenn \textit{mod} drei oder eins sein sollte, muss noch eine einzelne Berechnung durchgeführt werden. Diese geschieht in den Zeilen 27-29. Abschließend werden in Zeile 31 die Einzelergebnisse aufsummiert. 
+Aus diesem Code-Ausschnitt lässt sich entnehmen, dass die in den zwei Schleifen enthaltene Akkumulation nicht für jeden Durchlauf gleich oft ausgeführt wird. Dies führt dazu, dass die Anzahl der Schleifendurchläufe durch ein gemeinsames Vielfaches beschrieben werden kann. Maximal können mit SIMD-Instruktionen bis zu vier Berechnungen in zwei Takten ausgeführt werden (vgl. \textbf{Abschnitt \ref{ph:neon}}). Daher muss als erstes die Anzahl der Schleifendurchläufe berechnet werden, in denen eine parallele Verarbeitung von vier Berechnungen möglich ist. Außerdem wird hierbei berechnet, wie viele Operationen danach noch ausgeführt werden müssen (maximal 3). Als nächstes wird geprüft, ob von den verbleibenden Operationen noch zwei parallel verarbeitet werden können. Am Schluss bleibt höchstens noch eine Operation übrig, die einzeln berechnet werden muss. Nachfolgend müssen die Einzelergebnisse der jeweiligen Parallelisierungsstufen zu einem Endergebnis aufsummiert werden.\\
+\textbf{Listing \ref{code:mfccint}} zeigt die gewählte Lösung und ersetzt die innere Schleife aus \textbf{Listing \ref{code:mfccc}}. In der Variable \textit{mod} wird die Anzahl der nicht durch vier parallele Rechnungen berechenbaren Durchläufe gespeichert. Danach werden in den Zeilen 8-15 so viele parallele vierfach Berechnungen durchgeführt wie möglich. Sollte \textit{mod} größer als 1 sein, also noch zwei parallele Berechnungen möglich sein, werden diese in den Zeilen 17-25 durchgeführt. Wenn \textit{mod} drei oder eins sein sollte, muss noch eine einzelne Berechnung durchgeführt werden. Diese geschieht in den Zeilen 27-29. Abschließend werden in Zeile 31 die Einzelergebnisse aufsummiert. 
 \newpage
 \begin{lstlisting}[caption=Akkumulation innerhalb der MFCC-Berechnung mit NEON-Intrinsics, label=code:mfccint]
 	mod = (f_edge_table_bd[m + 1] - f_edge_table_bd[m - 1]+1) % 4;
@@ -198,7 +200,7 @@ Aus diesem Code-Ausschnitt lässt sich entnehmen, dass die in den zwei Schleifen 
 	log_M[m - 1] += temp[0] + temp[1] + temp[2] + temp[3]+1;
 \end{lstlisting}
 
-Mit dieser Lösung kann die MFCC-Berechnung um den Faktor 1,9 für FSet 1 und 2 im Vergleich zur Realisierung ohne beschleunigte Fließpunkt-Berechnung beschleunigt werden. Insgesamt werden FSet1 und FSet2 nochmals um den Faktor 1,2 beschleunigt.
+Mit dieser Lösung kann die MFCC-Berechnung um den Faktor 1,9 für FSet 1 und 2 im Vergleich zur Realisierung ohne beschleunigte Fließpunkt-Berechnung verbessert werden. Insgesamt werden FSet1 und FSet2 nochmals um den Faktor 1,2 beschleunigt.
 
 
 
